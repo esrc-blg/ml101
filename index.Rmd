@@ -1,0 +1,19 @@
+---
+title: "Suffolk 2019"
+#author: "Philipp Broniecki"
+site: bookdown::bookdown_site
+#documentclass: book
+#output:
+#  bookdown::gitbook: default
+  #bookdown::pdf_book: default
+---
+
+# About this course {-}
+
+This course is an introduction R, RStudio and statistics. Our primary aims are to get comfortable working with R and to be able to prepare, manipulate, analyse and visualise data.
+
+----
+
+<div class="container btn-container">
+  <button type = "button" class = "btn btn-lg btn-primary" onclick="window.open('https://github.com/philippbroniecki/statistics1/raw/master/admin/slides day 1.pdf');">Slides day 1</button>
+</div>

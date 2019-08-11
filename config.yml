@@ -1,0 +1,6 @@
+name: Data_Science_101
+description: Introduction to Data Science
+
+config_file: ~/.ml101
+working_dir: ~/ml101
+
