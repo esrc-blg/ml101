@@ -38,7 +38,7 @@ Participants are expected to have a solid understanding of linear regression mod
 
 ***Acknowledgements***
 
-The material in this course is based on the text book: James Gareth, Daniela Witten, Trevor Hastie and Robert Tibshirani. 2013. An introduction to statistical learning. Springer. In addition, the material is based on a machine learning class at the Essex Summer School with [Lucas Leeman](https://lucasleemann.ch).
+The material in this course is based on the text book: [James Gareth, Daniela Witten, Trevor Hastie and Robert Tibshirani. 2013. An introduction to statistical learning. Springer](http://faculty.marshall.usc.edu/gareth-james/ISL/ISLR%20Seventh%20Printing.pdf). In addition, the material is based on a machine learning class at the Essex Summer School with [Lucas Leeman](https://lucasleemann.ch).
 
 ----
 
