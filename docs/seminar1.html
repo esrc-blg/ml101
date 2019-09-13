@@ -56,6 +56,69 @@ $(document).ready(function () {
 </script>
 
 
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
 
 <link rel="stylesheet" href="lib\bootstrap\3.3.7\css\bootstrap.min.css" type="text/css" />
 <link rel="stylesheet" href="css\readthedocs.css" type="text/css" />
@@ -74,10 +137,20 @@ $(document).ready(function () {
 <ul class="summary">
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>About this course</a></li>
 <li class="chapter" data-level="1" data-path="seminar1.html"><a href="seminar1.html"><i class="fa fa-check"></i><b>1</b> Linear Regression</a><ul>
-<li class="chapter" data-level="1.1" data-path="seminar1.html"><a href="seminar1.html#learning-objectives"><i class="fa fa-check"></i><b>1.1</b> Learning objectives</a></li>
+<li class="chapter" data-level="1.1" data-path="seminar1.html"><a href="seminar1.html#learning-objectives"><i class="fa fa-check"></i><b>1.1</b> Learning objectives</a><ul>
+<li class="chapter" data-level="1.1.1" data-path="seminar1.html"><a href="seminar1.html#dplyr-package"><i class="fa fa-check"></i><b>1.1.1</b> Dplyr package</a></li>
+<li class="chapter" data-level="1.1.2" data-path="seminar1.html"><a href="seminar1.html#visualising-a-relationship-bw-two-continuous-variables"><i class="fa fa-check"></i><b>1.1.2</b> Visualising a relationship b/w two continuous variables</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="seminar2.html"><a href="seminar2.html"><i class="fa fa-check"></i><b>2</b> Classification</a><ul>
-<li class="chapter" data-level="2.1" data-path="seminar2.html"><a href="seminar2.html#seminar"><i class="fa fa-check"></i><b>2.1</b> Seminar</a></li>
+<li class="chapter" data-level="2.1" data-path="seminar2.html"><a href="seminar2.html#seminar"><i class="fa fa-check"></i><b>2.1</b> Seminar</a><ul>
+<li class="chapter" data-level="2.1.1" data-path="seminar2.html"><a href="seminar2.html#the-non-western-foreigners-data-set"><i class="fa fa-check"></i><b>2.1.1</b> The Non-Western Foreigners Data Set</a></li>
+<li class="chapter" data-level="2.1.2" data-path="seminar2.html"><a href="seminar2.html#logistic-regression"><i class="fa fa-check"></i><b>2.1.2</b> Logistic Regression</a></li>
+<li class="chapter" data-level="2.1.3" data-path="seminar2.html"><a href="seminar2.html#the-logit-model"><i class="fa fa-check"></i><b>2.1.3</b> The logit model</a></li>
+<li class="chapter" data-level="2.1.4" data-path="seminar2.html"><a href="seminar2.html#predict-outcomes-from-logit"><i class="fa fa-check"></i><b>2.1.4</b> Predict Outcomes from logit</a></li>
+<li class="chapter" data-level="2.1.5" data-path="seminar2.html"><a href="seminar2.html#k-nearest-neighbors"><i class="fa fa-check"></i><b>2.1.5</b> K-Nearest Neighbors</a></li>
+<li class="chapter" data-level="2.1.6" data-path="seminar2.html"><a href="seminar2.html#model-the-underlying-continuous-process"><i class="fa fa-check"></i><b>2.1.6</b> Model the Underlying Continuous Process</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="seminar3.html"><a href="seminar3.html"><i class="fa fa-check"></i><b>3</b> Cross-Validation</a><ul>
 <li class="chapter" data-level="3.1" data-path="seminar3.html"><a href="seminar3.html#seminar-1"><i class="fa fa-check"></i><b>3.1</b> Seminar</a></li>
@@ -118,8 +191,241 @@ $(document).ready(function () {
 <h1><span class="header-section-number">Chapter 1</span> Linear Regression</h1>
 <div id="learning-objectives" class="section level2">
 <h2><span class="header-section-number">1.1</span> Learning objectives</h2>
-<p>Placeholder</p>
+<p>In this part, we cover the linear regression model. The linear model is commonly applied and versatile enough to be suitable for most tasks. We will use a dataset from the 1990 US Census which provides demographic and socio-economic data. The dataset includes observations from 1994 communities with each observation identified by a <code>state</code> and <code>communityname</code> variable. Before we start analysing, we load the dataset and do some pre-processing.</p>
+<p>We load a part of the census data using the <code>read.csv()</code> function and confirm that the <code>state</code> and <code>communityname</code> are present in each dataset. The dataset is named <code>communities.csv</code> and is included on your memory stick. You can copy it over to your computer and set the working directory in R to work in that folder. Alternatively, you can download the dataset <a href="http://philippbroniecki.github.io/ML2017.io/data/communities.csv">here</a>.</p>
+<p>We assign the dataset to an object that resides in working memory. Let’s call that object <code>communities</code>.</p>
+<pre class="sourceCode r"><code class="sourceCode r">communities &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="dt">file =</span> <span class="st">&quot;communities.csv&quot;</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</code></pre>
+<p>The <code>stringsAsFactors</code> argument stops R from converting text variables into categorical variables called factors in R. The dataset is rather large and we are only interested in a few variables. In the following, we introduce a new package for data manipulation.</p>
+<div id="dplyr-package" class="section level3">
+<h3><span class="header-section-number">1.1.1</span> Dplyr package</h3>
+<p>The <code>dplyr</code> package is useful for data manipulation. We install it by running <code>install.packages("dplyr")</code>. We only install a package once. To update the package, run <code>update.packages("dplyr")</code>. Loading multiple packages can cause clashes if packages include functions with similar names. In order to avoid such clashes, we will not load the package into the session with the <code>library()</code> function but instead call dplyr functions directly from the package like so: <code>dplyr::function_name()</code>. We demonstrate this as we go along.</p>
+<div id="the-dplyrselect-function" class="section level4">
+<h4><span class="header-section-number">1.1.1.1</span> The <code>dplyr::select()</code> function</h4>
+<p>Since our dataset has more columns (variables) than we need, let’s select only a few and rename them using more meaningful names. An easy way to accomplish this is using <code>dplyr::select()</code>. The function allows us to select the columns we need and rename them at the same time.</p>
+<pre class="sourceCode r"><code class="sourceCode r">communities &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">select</span>(
+  communities, 
+  state, 
+  <span class="dt">community =</span> communityname, 
+  <span class="dt">UnemploymentRate =</span> PctUnemployed, 
+  <span class="dt">NoHighSchool =</span> PctNotHSGrad,
+  <span class="dt">white =</span> racePctWhite)</code></pre>
+<p>Note that the first argument in <code>dplyr::select</code> is the name of the dataset (<code>communities</code> in our case). The remaining arguments are the variables that we keep. The first variable <code>state</code> has a meaningful name and does not need to be renamed. The second variable <code>communityname</code> could be shorter and we rename it to <code>community</code>. Similarly, we rename <code>PctUnemployed</code>, <code>PctNotHSGrad</code> and <code>racePctWhite</code>.</p>
+</div>
+</div>
+<div id="visualising-a-relationship-bw-two-continuous-variables" class="section level3">
+<h3><span class="header-section-number">1.1.2</span> Visualising a relationship b/w two continuous variables</h3>
+<p>A good way gauge whether two variables that both contiunous are related is to draw a scatter plot. We do so for the unemployment rate and for the lack of high shool education. Both variables are measured in percent, where <code>NoHighSchool</code> is the percentage of adults without high school education in a community.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(
+  <span class="dt">x =</span> communities<span class="op">$</span>NoHighSchool, 
+  <span class="dt">y =</span> communities<span class="op">$</span>UnemploymentRate,
+  <span class="dt">xlab =</span> <span class="st">&quot;Proportion of adults without high school education&quot;</span>,
+  <span class="dt">ylab =</span> <span class="st">&quot;Unemployment rate&quot;</span>,
+  <span class="dt">bty =</span> <span class="st">&quot;n&quot;</span>,
+  <span class="dt">pch =</span> <span class="dv">16</span>,
+  <span class="dt">col =</span> <span class="st">&quot;gray&quot;</span>)</code></pre>
+<p><img src="ml101_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>Use <code>?plot()</code> or google <code>R plot</code> for a description of the arguments.</p>
+<p>It looks like communities with lower education levels suffer higher unemployment. To assess (1) whether that relationship is systematic (not a chance finding) and (2) what the magnitude of the relationship is, we estimate a linear model with the <code>lm()</code> function. The two arguments we need to provide to the function are described below.</p>
+<table>
+<colgroup>
+<col width="11%" />
+<col width="88%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Argument</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>formula</code></td>
+<td>The <code>formula</code> describes the relationship between the dependent and independent variables, for example <code>dependent.variable ~ independent.variable</code> <br> In our case, we’d like to model the relationship using the formula: <code>UnemploymentRate ~ NoHighSchool</code></td>
+</tr>
+<tr class="even">
+<td><code>data</code></td>
+<td>This is simply the name of the dataset that contains the variable of interest. In our case, this is the merged dataset called <code>communities</code>.</td>
+</tr>
+</tbody>
+</table>
+<p>For more information on the <code>lm()</code> function, run <code>?lm()</code>. Let’s run the linear model.</p>
+<pre class="sourceCode r"><code class="sourceCode r">m1 &lt;-<span class="st"> </span><span class="kw">lm</span>(UnemploymentRate <span class="op">~</span><span class="st"> </span>NoHighSchool, <span class="dt">data =</span> communities)</code></pre>
+<p>The <code>lm()</code> function modele the relationship between <code>UnemploymentRate</code> and <code>NoHighSchool</code> and we’ve assigned the estimated model to the object <code>m1</code>. We can use the <code>summary()</code> function on <code>m1</code> for the key results.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(m1)</code></pre>
+<pre><code>
+Call:
+lm(formula = UnemploymentRate ~ NoHighSchool, data = communities)
 
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.42347 -0.08499 -0.01189  0.07711  0.56470 
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  0.078952   0.006483   12.18   &lt;2e-16 ***
+NoHighSchool 0.742385   0.014955   49.64   &lt;2e-16 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 0.1352 on 1992 degrees of freedom
+Multiple R-squared:  0.553, Adjusted R-squared:  0.5527 
+F-statistic:  2464 on 1 and 1992 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>The output from <code>lm()</code> might seem overwhelming at first so let’s break it down one item at a time.</p>
+<p><img src="img/lm.png" /></p>
+<table>
+<colgroup>
+<col width="7%" />
+<col width="92%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>#</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><img src="img/circle1.png" style="width:100.0%" /></td>
+<td>The <em>dependent</em> variable, also sometimes called the outcome variable. We are trying to model the effects of <code>NoHighSchool</code> on <code>UnemploymentRate</code> so <code>UnemploymentRate</code> is the <em>dependent</em> variable.</td>
+</tr>
+<tr class="even">
+<td><img src="img/circle2.png" style="width:100.0%" /></td>
+<td>The <em>independent</em> variable or the predictor variable. In our example, <code>NoHighSchool</code> is the <em>independent</em> variable.</td>
+</tr>
+<tr class="odd">
+<td><img src="img/circle3.png" style="width:100.0%" /></td>
+<td>The differences between the observed values and the predicted values are called <em>residuals</em>.</td>
+</tr>
+<tr class="even">
+<td><img src="img/circle4.png" style="width:100.0%" /></td>
+<td>The <em>coefficients</em> for the intercept and the <em>independent</em> variables. Using the <em>coefficients</em> we can write down the relationship between the <em>dependent</em> and the <em>independent</em> variables as: <br><br><code>UnemploymentRate</code> = 0.078952 + ( 0.7423853 * <code>NoHighSchool</code> ) <br><br>This tells us that for each unit increase in the variable <code>NoHighSchool</code>, the <code>UnemploymentRate</code> increases by 0.7423853.</td>
+</tr>
+<tr class="odd">
+<td><img src="img/circle5.png" style="width:100.0%" /></td>
+<td>The <em>p-value</em> of the model. Recall that according to the null hypotheses, the coefficient of interest is zero. The <em>p-value</em> tells us whether can can reject the null hypotheses or not.</td>
+</tr>
+<tr class="even">
+<td><img src="img/circle6.png" style="width:100.0%" /></td>
+<td>The <em>standard error</em> estimates the standard deviation of the coefficients in our model. We can think of the <em>standard error</em> as the measure of precision for the estimated coefficients.</td>
+</tr>
+<tr class="odd">
+<td><img src="img/circle7.png" style="width:100.0%" /></td>
+<td>The <em>t statistic</em> is obtained by dividing the <em>coefficients</em> by the <em>standard error</em>.</td>
+</tr>
+<tr class="even">
+<td><img src="img/circle8.png" style="width:100.0%" /></td>
+<td>The <em>R-squared</em> and <em>adjusted R-squared</em> tell us how much of the variance in our model is accounted for by the <em>independent</em> variable. The <em>adjusted R-squared</em> is always smaller than <em>R-squared</em> as it takes into account the number of <em>independent</em> variables and degrees of freedom.</td>
+</tr>
+</tbody>
+</table>
+<div id="predictions" class="section level4">
+<h4><span class="header-section-number">1.1.2.1</span> Predictions</h4>
+<p>We are often interested in predicting values for the dependent variable based on a values for the independent variable. For instance, what is the predicted unemployment rate given 50 percent of the adults without high school education? We use the <code>predict()</code> function to assess this. Instead of making the forecaset for the case were 50 percent do not have high school education, we make a prediction for each level of low education.</p>
+<p>We create a sequence of values for low education using the sequence function first <code>seq()</code>. We create 100 values from 0 to 1.</p>
+<pre class="sourceCode r"><code class="sourceCode r">edu &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dt">from =</span> <span class="dv">0</span>, <span class="dt">to =</span> <span class="dv">1</span>, <span class="dt">length.out =</span> <span class="dv">100</span>)</code></pre>
+<p>We now define a dataset where the variable names are called exactly the same as in our regression model <code>m1</code>. Let’s check the name of the independent variable in <code>m1</code> by calling the object. We then copy and paste the variable name to make sure that we don’t have a typo in our code.</p>
+<pre class="sourceCode r"><code class="sourceCode r">m1</code></pre>
+<pre><code>
+Call:
+lm(formula = UnemploymentRate ~ NoHighSchool, data = communities)
+
+Coefficients:
+ (Intercept)  NoHighSchool  
+     0.07895       0.74239  </code></pre>
+<p>We now use the <code>predict()</code> function to make a prediction for each of the 100 <code>edu</code> values.</p>
+<pre class="sourceCode r"><code class="sourceCode r">preds &lt;-<span class="st"> </span><span class="kw">predict</span>(m1, <span class="dt">newdata =</span> <span class="kw">data.frame</span>(<span class="dt">NoHighSchool =</span> edu), <span class="dt">se.fit =</span> <span class="ot">TRUE</span>)</code></pre>
+<p>We create a new dataset including the education values from 0 to 1 and the predictions. In the <code>predict()</code> function, we set the argument <code>se.fit</code> to TRUE. This returns a standard error for our prediction and lets us quantify our uncertainty. IN the dataset, we will save the point estimates (the best quesses) as well as values for the upper and lower bound of our confidence intervals</p>
+<pre class="sourceCode r"><code class="sourceCode r">out &lt;-<span class="st"> </span><span class="kw">data.frame</span>( <span class="dt">NoHighSchool =</span> edu, 
+                   <span class="dt">predicted_unemployment_rate =</span> preds<span class="op">$</span>fit, 
+                   <span class="dt">lb =</span> preds<span class="op">$</span>fit <span class="op">-</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>preds<span class="op">$</span>se.fit,
+                   <span class="dt">ub =</span> preds<span class="op">$</span>fit <span class="op">+</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>preds<span class="op">$</span>se.fit)</code></pre>
+<p>Let’s inspect the first ten values of our data.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(out)</code></pre>
+<pre><code>  NoHighSchool predicted_unemployment_rate         lb         ub
+1   0.00000000                  0.07895202 0.06624469 0.09165936
+2   0.01010101                  0.08645087 0.07400458 0.09889715
+3   0.02020202                  0.09394971 0.08176286 0.10613655
+4   0.03030303                  0.10144855 0.08951944 0.11337766
+5   0.04040404                  0.10894739 0.09727420 0.12062058
+6   0.05050505                  0.11644623 0.10502702 0.12786544</code></pre>
+<p>We now add our prediction to the scatter plot.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">lines</span>( <span class="dt">x =</span> edu, <span class="dt">y =</span> out<span class="op">$</span>predicted_unemployment_rate, <span class="dt">lwd =</span> <span class="dv">2</span>)
+<span class="kw">lines</span>( <span class="dt">x =</span> edu, <span class="dt">y =</span> out<span class="op">$</span>lb, <span class="dt">lwd =</span> <span class="dv">2</span>, <span class="dt">lty =</span> <span class="st">&quot;dashed&quot;</span>)
+<span class="kw">lines</span>( <span class="dt">x =</span> edu, <span class="dt">y =</span> out<span class="op">$</span>ub, <span class="dt">lwd =</span> <span class="dv">2</span>, <span class="dt">lty =</span> <span class="st">&quot;dashed&quot;</span>)</code></pre>
+<p><img src="ml101_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p>As the plot shows, the precision of our estimates is quite good (the 95 percent confidence interval is narrow).</p>
+<p>Returning to our example, are there other variables that might explain unemployment rates in our communities dataset? For example, is unemployment rate higher or lower in communities with different levels of minority population?</p>
+<p>We first create a new variable called <code>Minority</code> by subtracting the percent of <code>White</code> population from 1. Alternatively, we could have added up the percent of Black, Hispanic and Asians to get the percentage of minority population since our census data also has those variables.</p>
+<pre class="sourceCode r"><code class="sourceCode r">communities<span class="op">$</span>Minority &lt;-<span class="st"> </span><span class="dv">1</span> <span class="op">-</span><span class="st"> </span>communities<span class="op">$</span>white</code></pre>
+<p>Next we fit a linear model using <code>Minority</code> as the independent variable.</p>
+<pre class="sourceCode r"><code class="sourceCode r">m2 &lt;-<span class="st"> </span><span class="kw">lm</span>(UnemploymentRate <span class="op">~</span><span class="st"> </span>Minority, <span class="dt">data =</span> communities)
+<span class="kw">summary</span>(m2)</code></pre>
+<pre><code>
+Call:
+lm(formula = UnemploymentRate ~ Minority, data = communities)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.45521 -0.12189 -0.02369  0.10162  0.68203 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 0.257948   0.005506   46.85   &lt;2e-16 ***
+Minority    0.428702   0.015883   26.99   &lt;2e-16 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 0.173 on 1992 degrees of freedom
+Multiple R-squared:  0.2678,    Adjusted R-squared:  0.2674 
+F-statistic: 728.5 on 1 and 1992 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>Now let’s see how this model compares to our first model. We can show regression line from <code>model2</code> just like we did with our first model.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># plot</span>
+<span class="kw">plot</span>(communities<span class="op">$</span>Minority, communities<span class="op">$</span>UnemploymentRate,
+     <span class="dt">xlab =</span> <span class="st">&quot;Minority population rate&quot;</span>,
+     <span class="dt">ylab =</span> <span class="st">&quot;Unemployment rate&quot;</span>,
+     <span class="dt">bty =</span> <span class="st">&quot;n&quot;</span>,
+     <span class="dt">pch =</span> <span class="dv">16</span>,
+     <span class="dt">col =</span> <span class="st">&quot;gray&quot;</span>)
+
+<span class="co"># predict outcomes</span>
+minority.seq &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dt">from =</span> <span class="dv">0</span>, <span class="dt">to =</span> <span class="dv">1</span>, <span class="dt">length.out =</span> <span class="dv">100</span>)
+preds2 &lt;-<span class="st"> </span><span class="kw">predict</span>(m2, <span class="dt">newdata =</span> <span class="kw">data.frame</span>(<span class="dt">Minority =</span> minority.seq), <span class="dt">se.fit =</span> <span class="ot">TRUE</span>)
+out2 &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">Minority =</span> minority.seq, 
+                   <span class="dt">predicted_unemployment_rate =</span> preds2<span class="op">$</span>fit, 
+                   <span class="dt">lb =</span> preds2<span class="op">$</span>fit <span class="op">-</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>preds2<span class="op">$</span>se.fit,
+                   <span class="dt">ub =</span> preds2<span class="op">$</span>fit <span class="op">+</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>preds2<span class="op">$</span>se.fit)
+<span class="kw">lines</span>( <span class="dt">x =</span> minority.seq, <span class="dt">y =</span> out2<span class="op">$</span>predicted_unemployment_rate, <span class="dt">lwd =</span> <span class="dv">2</span>)
+<span class="kw">lines</span>( <span class="dt">x =</span> minority.seq, <span class="dt">y =</span> out2<span class="op">$</span>lb, <span class="dt">lwd =</span> <span class="dv">2</span>, <span class="dt">lty =</span> <span class="st">&quot;dashed&quot;</span>)
+<span class="kw">lines</span>( <span class="dt">x =</span> minority.seq, <span class="dt">y =</span> out2<span class="op">$</span>ub, <span class="dt">lwd =</span> <span class="dv">2</span>, <span class="dt">lty =</span> <span class="st">&quot;dashed&quot;</span>)</code></pre>
+<p><img src="ml101_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<p>Does <code>m2</code> offer a better fit than <code>m1</code>? Maybe we can answer that question by looking at the regression tables instead. Let’s print the two models side-by-side in a single table with the <code>screenreg()</code> function contained in the <code>texreg</code> package.</p>
+<p>Let’s install <code>texreg</code> first like so:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">&quot;texreg&quot;</span>)</code></pre>
+<p>We now compare the models using the <code>texreg()</code> function like so:</p>
+<pre class="sourceCode r"><code class="sourceCode r">texreg<span class="op">::</span><span class="kw">screenreg</span>(<span class="kw">list</span>( m1, m2 ))</code></pre>
+<pre><code>
+======================================
+              Model 1      Model 2    
+--------------------------------------
+(Intercept)      0.08 ***     0.26 ***
+                (0.01)       (0.01)   
+NoHighSchool     0.74 ***             
+                (0.01)                
+Minority                      0.43 ***
+                             (0.02)   
+--------------------------------------
+R^2              0.55         0.27    
+Adj. R^2         0.55         0.27    
+Num. obs.     1994         1994       
+RMSE             0.14         0.17    
+======================================
+*** p &lt; 0.001, ** p &lt; 0.01, * p &lt; 0.05</code></pre>
+<p>Contemplate the output from the table for a moment. Slope coefficients (everything except the intercept) are always the effect of a 1-unit change of the indepedent variable on the dependent variable in the units of the dependent variable. Both our independent variables are proportions. Hence a 1-unit change covers the entire ranges of our independent variables (0 to 1). Model 1 suggests that the unemployment rate is 74 percent larger in a district where no one has a high school degree than in a district where everone has a high school degree. Similarly, model 2 suggests that in a district where everone has a minority background (making everyone is a minority an oxymoron), the unemployment rate 43 percent higher than in a community where no one is. Please note that these predictive models should not be mistaken to capture causal relationships.</p>
+<p><img src="ml101_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<p>These are the two plots that we created earlier. In the model using <code>NoHighSchool</code> the points which are the actual unemployment rates are much closer to our prediction (the regression line) than in the model using <code>Minority</code>. This means that variation in <code>NoHighSchool</code> better explains variation in <code>UnemploymentRate</code> than variation in <code>Minority</code>. This is captured in the <code>R^2</code> and <code>Adj. R^2</code>. Both <code>R^2</code> and <code>Adj. R^2</code> are measues of model fit. The difference between them is that <code>Adj. R^2</code> is a measure that penalises model complexity (more variables). In models with more than one independent variable, we rely on <code>Adj. R^2</code> and in models with one independent variable, we use <code>R^2</code>, i.e. here we would use <code>R^2</code>.</p>
+
+</div>
+</div>
 </div>
 </div>
             </section>
@@ -174,6 +480,19 @@ gitbook.start({
 });
 </script>
 
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:" && /^https?:/.test(src))
+      src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
 </body>
 
 </html>

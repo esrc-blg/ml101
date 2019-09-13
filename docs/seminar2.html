@@ -56,6 +56,69 @@ $(document).ready(function () {
 </script>
 
 
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
 
 <link rel="stylesheet" href="lib\bootstrap\3.3.7\css\bootstrap.min.css" type="text/css" />
 <link rel="stylesheet" href="css\readthedocs.css" type="text/css" />
@@ -74,10 +137,20 @@ $(document).ready(function () {
 <ul class="summary">
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>About this course</a></li>
 <li class="chapter" data-level="1" data-path="seminar1.html"><a href="seminar1.html"><i class="fa fa-check"></i><b>1</b> Linear Regression</a><ul>
-<li class="chapter" data-level="1.1" data-path="seminar1.html"><a href="seminar1.html#learning-objectives"><i class="fa fa-check"></i><b>1.1</b> Learning objectives</a></li>
+<li class="chapter" data-level="1.1" data-path="seminar1.html"><a href="seminar1.html#learning-objectives"><i class="fa fa-check"></i><b>1.1</b> Learning objectives</a><ul>
+<li class="chapter" data-level="1.1.1" data-path="seminar1.html"><a href="seminar1.html#dplyr-package"><i class="fa fa-check"></i><b>1.1.1</b> Dplyr package</a></li>
+<li class="chapter" data-level="1.1.2" data-path="seminar1.html"><a href="seminar1.html#visualising-a-relationship-bw-two-continuous-variables"><i class="fa fa-check"></i><b>1.1.2</b> Visualising a relationship b/w two continuous variables</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="seminar2.html"><a href="seminar2.html"><i class="fa fa-check"></i><b>2</b> Classification</a><ul>
-<li class="chapter" data-level="2.1" data-path="seminar2.html"><a href="seminar2.html#seminar"><i class="fa fa-check"></i><b>2.1</b> Seminar</a></li>
+<li class="chapter" data-level="2.1" data-path="seminar2.html"><a href="seminar2.html#seminar"><i class="fa fa-check"></i><b>2.1</b> Seminar</a><ul>
+<li class="chapter" data-level="2.1.1" data-path="seminar2.html"><a href="seminar2.html#the-non-western-foreigners-data-set"><i class="fa fa-check"></i><b>2.1.1</b> The Non-Western Foreigners Data Set</a></li>
+<li class="chapter" data-level="2.1.2" data-path="seminar2.html"><a href="seminar2.html#logistic-regression"><i class="fa fa-check"></i><b>2.1.2</b> Logistic Regression</a></li>
+<li class="chapter" data-level="2.1.3" data-path="seminar2.html"><a href="seminar2.html#the-logit-model"><i class="fa fa-check"></i><b>2.1.3</b> The logit model</a></li>
+<li class="chapter" data-level="2.1.4" data-path="seminar2.html"><a href="seminar2.html#predict-outcomes-from-logit"><i class="fa fa-check"></i><b>2.1.4</b> Predict Outcomes from logit</a></li>
+<li class="chapter" data-level="2.1.5" data-path="seminar2.html"><a href="seminar2.html#k-nearest-neighbors"><i class="fa fa-check"></i><b>2.1.5</b> K-Nearest Neighbors</a></li>
+<li class="chapter" data-level="2.1.6" data-path="seminar2.html"><a href="seminar2.html#model-the-underlying-continuous-process"><i class="fa fa-check"></i><b>2.1.6</b> Model the Underlying Continuous Process</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="seminar3.html"><a href="seminar3.html"><i class="fa fa-check"></i><b>3</b> Cross-Validation</a><ul>
 <li class="chapter" data-level="3.1" data-path="seminar3.html"><a href="seminar3.html#seminar-1"><i class="fa fa-check"></i><b>3.1</b> Seminar</a></li>
@@ -118,8 +191,353 @@ $(document).ready(function () {
 <h1><span class="header-section-number">Chapter 2</span> Classification</h1>
 <div id="seminar" class="section level2">
 <h2><span class="header-section-number">2.1</span> Seminar</h2>
-<p>Placeholder</p>
+<div id="the-non-western-foreigners-data-set" class="section level3">
+<h3><span class="header-section-number">2.1.1</span> The Non-Western Foreigners Data Set</h3>
+<p>We start by clearing our workspace.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># clear workspace</span>
+<span class="kw">rm</span>(<span class="dt">list =</span> <span class="kw">ls</span>())</code></pre>
+<p>Let’s check the codebook of our data.</p>
+<table>
+<colgroup>
+<col width="11%" />
+<col width="88%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Variable Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>IMMBRIT</td>
+<td>Out of every 100 people in Britain, how many do you think are immigrants from Non-western countries?</td>
+</tr>
+<tr class="even">
+<td>over.estimate</td>
+<td>1 if estimate is higher than 10.7%.</td>
+</tr>
+<tr class="odd">
+<td>RSex</td>
+<td>1 = male, 2 = female</td>
+</tr>
+<tr class="even">
+<td>RAge</td>
+<td>Age of respondent</td>
+</tr>
+<tr class="odd">
+<td>Househld</td>
+<td>Number of people living in respondent’s household</td>
+</tr>
+<tr class="even">
+<td>party_self</td>
+<td>1 = Conservatives; 2 = Labour; 3 = SNP; 4 = Ukip; 5 = BNP; 6 = GP; 7 = party.other</td>
+</tr>
+<tr class="odd">
+<td>paper</td>
+<td>Do you normally read any daily morning newspaper 3+ times/week?</td>
+</tr>
+<tr class="even">
+<td>WWWhourspW</td>
+<td>How many hours WWW per week?</td>
+</tr>
+<tr class="odd">
+<td>religious</td>
+<td>Do you regard yourself as belonging to any particular religion?</td>
+</tr>
+<tr class="even">
+<td>employMonths</td>
+<td>How many mnths w. present employer?</td>
+</tr>
+<tr class="odd">
+<td>urban</td>
+<td>Population density, 4 categories (highest density is 4, lowest is 1)</td>
+</tr>
+<tr class="even">
+<td>health.good</td>
+<td>How is your health in general for someone of your age? (0: bad, 1: fair, 2: fairly good, 3: good)</td>
+</tr>
+<tr class="odd">
+<td>HHInc</td>
+<td>Income bands for household, high number = high HH income</td>
+</tr>
+</tbody>
+</table>
+<p>The dataset is on your memory sticks and also available for download <a href="http://philippbroniecki.github.io/ML2017.io/data/BSAS_manip.RData">here</a>.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># load non-western foreigners data set</span>
+<span class="kw">load</span>(<span class="st">&quot;non_western_immigrants.RData&quot;</span>)
 
+<span class="co"># data manipulation</span>
+fdata<span class="op">$</span>RSex &lt;-<span class="st"> </span><span class="kw">factor</span>(fdata<span class="op">$</span>RSex, <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;Male&quot;</span>, <span class="st">&quot;Female&quot;</span>))
+fdata<span class="op">$</span>health.good &lt;-<span class="st"> </span><span class="kw">factor</span>(fdata<span class="op">$</span>health.good, <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;bad&quot;</span>, <span class="st">&quot;fair&quot;</span>, <span class="st">&quot;fairly good&quot;</span>, <span class="st">&quot;good&quot;</span>) )
+fdata<span class="op">$</span>party_self &lt;-<span class="st"> </span><span class="kw">factor</span>(fdata<span class="op">$</span>party_self, <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;Conservatives&quot;</span>, <span class="st">&quot;Labour&quot;</span>, <span class="st">&quot;SNP&quot;</span>, 
+                                                         <span class="st">&quot;Ukip&quot;</span>, <span class="st">&quot;BNP&quot;</span>, <span class="st">&quot;Greens&quot;</span>, <span class="st">&quot;Other&quot;</span>))
+
+<span class="co"># urban to dummies (for knn later)</span>
+<span class="kw">table</span>(fdata<span class="op">$</span>urban) <span class="co"># 3 is the modal category (keep as baseline) but we create all categories</span></code></pre>
+<pre><code>
+  1   2   3   4 
+214 281 298 256 </code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">fdata<span class="op">$</span>rural &lt;-<span class="st"> </span><span class="kw">ifelse</span>( fdata<span class="op">$</span>urban <span class="op">==</span><span class="st"> </span><span class="dv">1</span>, <span class="dt">yes =</span> <span class="dv">1</span>, <span class="dt">no =</span> <span class="dv">0</span>)
+fdata<span class="op">$</span>partly.rural &lt;-<span class="st"> </span><span class="kw">ifelse</span>( fdata<span class="op">$</span>urban <span class="op">==</span><span class="st"> </span><span class="dv">2</span>, <span class="dt">yes =</span> <span class="dv">1</span>, <span class="dt">no =</span> <span class="dv">0</span>)
+fdata<span class="op">$</span>partly.urban &lt;-<span class="st"> </span><span class="kw">ifelse</span>( fdata<span class="op">$</span>urban <span class="op">==</span><span class="st"> </span><span class="dv">3</span>, <span class="dt">yes =</span> <span class="dv">1</span>, <span class="dt">no =</span> <span class="dv">0</span>)
+fdata<span class="op">$</span>urban &lt;-<span class="st"> </span><span class="kw">ifelse</span>( fdata<span class="op">$</span>urban <span class="op">==</span><span class="st"> </span><span class="dv">4</span>, <span class="dt">yes =</span> <span class="dv">1</span>, <span class="dt">no =</span> <span class="dv">0</span>)</code></pre>
+<p>In our data manipulation, we first turned <code>RSex</code> into a factor variable. Factor is a variable type in R, that is handy because we declare that a variable is categorical. When we run models with a factor variable, R will handle them correctly, i.e. break them up into binary variables internaly.</p>
+<p>Alternatively, with <code>urban</code>, we show how to break up such a variable into binary variables manually. We use the <code>ifelse()</code> function were the first argument is a logical condition such as <code>fdata$urban == 1</code> meaning "if the variable <code>urban</code> in <code>fdata</code> takes on the value 1. This condition is evaluated for every observation in the dataset and if it is met we asign a 1 (<code>yes = 1</code>) and if not we assign a 0 (<code>no = 0</code>).</p>
+</div>
+<div id="logistic-regression" class="section level3">
+<h3><span class="header-section-number">2.1.2</span> Logistic Regression</h3>
+<p>We want to predict whether respondents over-estimate immigration from non-western contexts. We begin by normalizing our variables (we make them comparable). Then we look at the distribution of the dependent variable. We check how well we could predict misperception of immigration in our sample without a statistical model.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># create a copy of the original IMMBRIT variable (needed for classification with lm)</span>
+fdata<span class="op">$</span>IMMBRIT_original_scale &lt;-<span class="st"> </span>fdata<span class="op">$</span>IMMBRIT
+
+<span class="co"># our function for normalization</span>
+our.norm &lt;-<span class="st"> </span><span class="cf">function</span>(x){
+  <span class="kw">return</span>((x <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(x)) <span class="op">/</span><span class="st"> </span><span class="kw">sd</span>(x))
+}
+
+<span class="co"># continuous variables</span>
+c.vars &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;IMMBRIT&quot;</span>, <span class="st">&quot;RAge&quot;</span>, <span class="st">&quot;Househld&quot;</span>, <span class="st">&quot;HHInc&quot;</span>, <span class="st">&quot;employMonths&quot;</span>, <span class="st">&quot;WWWhourspW&quot;</span>)
+
+<span class="co"># normalize</span>
+fdata[, c.vars] &lt;-<span class="st"> </span><span class="kw">apply</span>( <span class="dt">X =</span> fdata[, c.vars], <span class="dt">MARGIN =</span> <span class="dv">2</span>, <span class="dt">FUN =</span> our.norm )</code></pre>
+<p>First, we copied the variable IMMBRIT before normalising it. Don’t worry about this now, it will become clear why we did this further down in the code.</p>
+<p>We then define our own function. A function takes some input which we called <code>x</code> and does something with that input. In case, x is a numeric variable. For every value of x, we substract the mean of x. Therefore, we centre the variable on 0, i.e. the new mean will be 0. We then divide by the standard deviation of the variable. This is necessary to make the variables comparable. The units of all variables are then represented in average deviations from their means.</p>
+<p>In the next step, we create a characer vector with the variable names of all variables that are continuous and lastly we normalise. We do this by subsetting our data with square brackets. So <code>fdata[ , c.vars]</code> is the part of our dataset that includes the continuous variables. The function <code>apply()</code> lets us carry out the same operation repeadetly for all the variables. The argument <code>X</code> is the data. The argument <code>MARGIN</code> says we want to apply our normalisation column-wise. The argument <code>FUN</code> means function. Here, we input our normlisation function.</p>
+<p>We now have a look at our dependent variable of interest. The variable <code>over.estimate</code> measures whether a respondent over estimates the number of non-western immigrants or not (yes = 1; no = 0). The actual percentage of non-western immigrants was 10.7 percent at the time of the survey.</p>
+<div id="the-naive-guess" class="section level4">
+<h4><span class="header-section-number">2.1.2.1</span> The naive guess</h4>
+<p>The naive guess is the best prediction without a model. Or put differently, the best prediction we could make without having any context information. Have a look at the variable <code>over.estimate</code> and decide on your own what you would do to maximise your predictive accuracy…</p>
+<pre class="sourceCode r collapsible"><code class="sourceCode r"><span class="co"># proportion of people who over-estimate</span>
+<span class="kw">mean</span>(fdata<span class="op">$</span>over.estimate)</code></pre>
+<pre><code>[1] 0.7235462</code></pre>
+<pre class="sourceCode r collapsible"><code class="sourceCode r"><span class="co"># naive guess</span>
+<span class="kw">ifelse</span>( <span class="kw">mean</span>(fdata<span class="op">$</span>over.estimate) <span class="op">&gt;=</span><span class="st"> </span><span class="fl">0.5</span>, <span class="dt">yes =</span> <span class="dv">1</span>, <span class="dt">no =</span> <span class="dv">0</span> )</code></pre>
+<pre><code>[1] 1</code></pre>
+<pre class="sourceCode r collapsible"><code class="sourceCode r"><span class="co"># So, to maximise prediction accuracy without a model, we must simply always predict the more common category. If more people over estimate than under estimate, we predict over estimation every time.</span></code></pre>
+<p>Alright, now that we have figured out what to predict, what would be our predictive power based on that prediction? Try to figure this out on your own…</p>
+<pre class="sourceCode r collapsible"><code class="sourceCode r"><span class="co"># predicitive power based on the naive guess</span>
+
+<span class="kw">ifelse</span>( <span class="kw">mean</span>(fdata<span class="op">$</span>over.estimate) <span class="op">&gt;=</span><span class="st"> </span><span class="fl">0.5</span>,
+        <span class="dt">yes =</span> <span class="kw">mean</span>(fdata<span class="op">$</span>over.estimate),
+        <span class="dt">no =</span> <span class="dv">1</span> <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(fdata<span class="op">$</span>over.estimate))</code></pre>
+<pre><code>[1] 0.7235462</code></pre>
+<pre class="sourceCode r collapsible"><code class="sourceCode r"><span class="co"># So our predicitive accuracy depends on the proportion of people who over estimate. If the proportion is more than 0.5, the mean is the percent of correct predictions. Otherwise, 1 - mean is the percentage of correct predictions.</span></code></pre>
+<p>A predictive model must always beat the predictive power of the naive guess.</p>
+</div>
+</div>
+<div id="the-logit-model" class="section level3">
+<h3><span class="header-section-number">2.1.3</span> The logit model</h3>
+<p>We use the generalized linear model function <code>glm()</code> to estimate a logistic regression. The syntax is very similar to the <code>lm</code> regression function that we are already familiar with, but there is an additional argument that we need to specify (the <code>family</code> argument) in order to tell R that we would like to estimate a logistic regression model.</p>
+<table>
+<colgroup>
+<col width="11%" />
+<col width="88%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Argument</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>formula</code></td>
+<td>As before, the <code>formula</code> describes the relationship between the dependent and independent variables, for example <code>dependent.variable ~ independent.variable</code> <br> In our case, we will use the formula: <code>vote ~ wifecoethnic + distance</code></td>
+</tr>
+<tr class="even">
+<td><code>data</code></td>
+<td>Again as before, this is simply the name of the dataset that contains the variable of interest. In our case, this is the dataset called <code>afb</code>.</td>
+</tr>
+<tr class="odd">
+<td><code>family</code></td>
+<td>The <code>family</code> argument provides a description of the error distribution and link function to be used in the model. For our purposes, we would like to estimate a binary logistic regression model and so we set <code>family = binomial(link = "logit")</code></td>
+</tr>
+</tbody>
+</table>
+<p>We tell <code>glm()</code> that we have a binary dependent variable and we want to use the logistic link function using the <code>family = binomial(link = "logit")</code> argument:</p>
+<pre class="sourceCode r"><code class="sourceCode r">m.logit &lt;-<span class="st"> </span><span class="kw">glm</span>( over.estimate <span class="op">~</span><span class="st"> </span>RSex <span class="op">+</span><span class="st"> </span>RAge <span class="op">+</span><span class="st"> </span>Househld <span class="op">+</span><span class="st"> </span>party_self <span class="op">+</span><span class="st"> </span>paper <span class="op">+</span><span class="st"> </span>WWWhourspW <span class="op">+</span><span class="st">  </span>
+<span class="st">                  </span>religious <span class="op">+</span><span class="st">  </span>employMonths <span class="op">+</span><span class="st"> </span>rural <span class="op">+</span><span class="st"> </span>partly.rural <span class="op">+</span><span class="st"> </span>urban <span class="op">+</span><span class="st"> </span>health.good <span class="op">+</span><span class="st"> </span>
+<span class="st">                  </span>HHInc, <span class="dt">data =</span> fdata, <span class="dt">family =</span> <span class="kw">binomial</span>(<span class="dt">link =</span> <span class="st">&quot;logit&quot;</span>))
+<span class="kw">summary</span>(m.logit)</code></pre>
+<pre><code>
+Call:
+glm(formula = over.estimate ~ RSex + RAge + Househld + party_self + 
+    paper + WWWhourspW + religious + employMonths + rural + partly.rural + 
+    urban + health.good + HHInc, family = binomial(link = &quot;logit&quot;), 
+    data = fdata)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-2.2342  -1.1328   0.6142   0.8262   1.3815  
+
+Coefficients:
+                       Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)             0.72437    0.36094   2.007   0.0448 *  
+RSexFemale              0.64030    0.15057   4.253 2.11e-05 ***
+RAge                    0.01031    0.09073   0.114   0.9095    
+Househld                0.02794    0.08121   0.344   0.7308    
+party_selfLabour       -0.31577    0.19964  -1.582   0.1137    
+party_selfSNP           1.85513    1.05603   1.757   0.0790 .  
+party_selfUkip         -0.51315    0.46574  -1.102   0.2706    
+party_selfBNP           0.05604    0.44846   0.125   0.9005    
+party_selfGreens        0.92131    0.57305   1.608   0.1079    
+party_selfOther         0.12542    0.18760   0.669   0.5038    
+paper                   0.14855    0.15210   0.977   0.3287    
+WWWhourspW             -0.02598    0.08008  -0.324   0.7457    
+religious               0.05139    0.15274   0.336   0.7365    
+employMonths            0.01899    0.07122   0.267   0.7897    
+rural                  -0.35097    0.21007  -1.671   0.0948 .  
+partly.rural           -0.37978    0.19413  -1.956   0.0504 .  
+urban                   0.12732    0.21202   0.601   0.5482    
+health.goodfair        -0.09534    0.33856  -0.282   0.7782    
+health.goodfairly good  0.11669    0.31240   0.374   0.7087    
+health.goodgood         0.02744    0.31895   0.086   0.9314    
+HHInc                  -0.48513    0.08447  -5.743 9.30e-09 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 1236.9  on 1048  degrees of freedom
+Residual deviance: 1143.3  on 1028  degrees of freedom
+AIC: 1185.3
+
+Number of Fisher Scoring iterations: 5</code></pre>
+</div>
+<div id="predict-outcomes-from-logit" class="section level3">
+<h3><span class="header-section-number">2.1.4</span> Predict Outcomes from logit</h3>
+<p>We can use the <code>predict()</code> function to calculate fitted values for the logistic regression model, just as we did for the linear model. Here, however, we need to take into account the fact that we model the <em>log-odds</em> that <span class="math inline">\(Y = 1\)</span>, rather than the <em>probability</em> that <span class="math inline">\(Y=1\)</span>. The <code>predict()</code> function will therefore, by default, give us predictions for Y on the log-odds scale. To get predictions on the probability scale, we need to add an additional argument to <code>predict()</code>: we set the <code>type</code> argument to <code>type = "response"</code>.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># predict probabilities</span>
+preds.logit &lt;-<span class="st"> </span><span class="kw">predict</span>( m.logit, <span class="dt">type =</span> <span class="st">&quot;response&quot;</span>)</code></pre>
+<p>To see how good our classification model is we need to compare the classification with the actual outcomes. We first create an object <code>exp.logit</code> which will be either <code>0</code> or <code>1</code>. In a second step, we cross-tab it with the true outcomes and this allows us to see how well the classification model is doing.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># predict whether respondent over-estimates or not</span>
+exp.logit &lt;-<span class="st"> </span><span class="kw">ifelse</span>( preds.logit <span class="op">&gt;</span><span class="st"> </span><span class="fl">0.5</span>, <span class="dt">yes =</span> <span class="dv">1</span>, <span class="dt">no =</span> <span class="dv">0</span>)
+
+<span class="co"># confusion matrix (table of predictions and true outcomes)</span>
+<span class="kw">table</span>(<span class="dt">prediction =</span> exp.logit, <span class="dt">truth =</span> fdata<span class="op">$</span>over.estimate)</code></pre>
+<pre><code>          truth
+prediction   0   1
+         0  41  40
+         1 249 719</code></pre>
+<p>The diagonal elements are the correct classifications and the off-diagonal ones are wrong. We can compute the share of correct classified observations as a ratio.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># percent correctly classified</span>
+(<span class="dv">35</span> <span class="op">+</span><span class="st"> </span><span class="dv">728</span>) <span class="op">/</span><span class="st"> </span><span class="dv">1049</span></code></pre>
+<pre><code>[1] 0.7273594</code></pre>
+<p>We can also write code that will estimate the percentage correctly classified for different values.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># more generally</span>
+<span class="kw">mean</span>( exp.logit <span class="op">==</span><span class="st"> </span>fdata<span class="op">$</span>over.estimate)</code></pre>
+<pre><code>[1] 0.7244995</code></pre>
+<p>This is the performance on the training data and we expect the test error to be higher than this. To get at a better indication of the model’s classification error we can split the dataset into a training set and a test set.</p>
+<p>This is the performance on the training data and we expect the test error to be higher than this. To get at a better indication of the model’s classification error we can split the dataset into a training set and a test set.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># set the random number generator</span>
+<span class="kw">set.seed</span>(<span class="dv">123</span>)
+
+<span class="co"># random draw of 80% of the observations (row numbers) to train the model</span>
+train.ids &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="kw">nrow</span>(fdata), <span class="dt">size =</span> <span class="kw">as.integer</span>( (<span class="kw">nrow</span>(fdata)<span class="op">*</span>.<span class="dv">80</span>) ), <span class="dt">replace =</span> <span class="ot">FALSE</span>)
+
+<span class="co"># the validation data </span>
+fdata.test &lt;-<span class="st"> </span>fdata[ <span class="op">-</span>train.ids, ]
+<span class="kw">dim</span>(fdata.test)</code></pre>
+<pre><code>[1] 210  17</code></pre>
+<p>So, we first set the random number generator with <code>set.seed()</code>. It does not matter which number we use to set the RNG but the point is that re-running our script will always lead to the same result (Disclaimer: In April 2019, it was changed how the RNG works. To replicate anything that was created prior to that data or anything that was created on an old R version, the options have to be adjusted like so: <code>RNGkind(sample.kind = "Rounding")</code>)</p>
+<p>We then take a random sample with <code>sample()</code> function. The first argument is what we draw from. Here, we use <code>nrow()</code> which returns the number of rows in the data set. We therefore, draw numbers between 1 and the number of observations in our dataset. We draw 80 percent of the observations, so we multiply the number of observations with 0.8. Since that number might not be whole, we cut off decimal places with the <code>as.integer()</code> function. Finally, the argument <code>replace = FALSE</code> ensures that we can draw an observation only once.</p>
+<p>Now we fit the model using the training data only and then test its performance on the test data.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># re-fit the model on the raining data</span>
+m.logit &lt;-<span class="st"> </span><span class="kw">glm</span>(over.estimate <span class="op">~</span><span class="st"> </span>RSex <span class="op">+</span><span class="st"> </span>RAge <span class="op">+</span><span class="st"> </span>Househld <span class="op">+</span><span class="st"> </span>party_self <span class="op">+</span><span class="st"> </span>paper <span class="op">+</span><span class="st"> </span>WWWhourspW <span class="op">+</span><span class="st">  </span>religious <span class="op">+</span><span class="st"> </span>
+<span class="st">               </span>employMonths <span class="op">+</span><span class="st"> </span>rural <span class="op">+</span><span class="st"> </span>partly.rural <span class="op">+</span><span class="st"> </span>urban <span class="op">+</span><span class="st"> </span>health.good <span class="op">+</span><span class="st"> </span>HHInc, <span class="dt">data =</span> fdata, 
+               <span class="dt">subset =</span> train.ids, 
+               <span class="dt">family =</span> <span class="kw">binomial</span>(<span class="dt">link =</span> <span class="st">&quot;logit&quot;</span>))
+
+<span class="co"># predict probabilities of over-estimating but for the unseen data</span>
+preds.logit &lt;-<span class="st"> </span><span class="kw">predict</span>(m.logit, <span class="dt">newdata =</span> fdata.test, <span class="dt">type =</span> <span class="st">&quot;response&quot;</span>)
+
+<span class="co"># classify predictions as over-estimating or not</span>
+exp.logit &lt;-<span class="st"> </span><span class="kw">ifelse</span>( preds.logit <span class="op">&gt;</span><span class="st"> </span><span class="fl">0.5</span>, <span class="dt">yes =</span> <span class="dv">1</span>, <span class="dt">no =</span> <span class="dv">0</span>)
+
+<span class="co"># confusion matrix of predictions against truth</span>
+<span class="kw">table</span>( <span class="dt">prediction =</span> exp.logit, <span class="dt">truth =</span> fdata.test<span class="op">$</span>over.estimate)</code></pre>
+<pre><code>          truth
+prediction   0   1
+         0   6   9
+         1  49 146</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># percent correctly classified</span>
+<span class="kw">mean</span>( exp.logit <span class="op">==</span><span class="st"> </span>fdata.test<span class="op">$</span>over.estimate )</code></pre>
+<pre><code>[1] 0.7238095</code></pre>
+<p>The accuarcy of the model is slightly lower in the test dataset than in the training data. The difference is not big here but in practice it can be quite large.</p>
+<p>Let’s try to improve the classification model by relying on the best predictors.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># try to improve the prediction model by relying on &quot;good&quot; predictors</span>
+m.logit &lt;-<span class="st"> </span><span class="kw">glm</span>(over.estimate <span class="op">~</span><span class="st"> </span>RSex <span class="op">+</span><span class="st"> </span>rural <span class="op">+</span><span class="st"> </span>partly.rural <span class="op">+</span><span class="st"> </span>urban <span class="op">+</span><span class="st"> </span>HHInc, 
+             <span class="dt">data =</span> fdata, <span class="dt">subset =</span> train.ids, <span class="dt">family =</span> <span class="kw">binomial</span>(<span class="dt">link =</span> <span class="st">&quot;logit&quot;</span>))
+preds.logit &lt;-<span class="st"> </span><span class="kw">predict</span>(m.logit, <span class="dt">newdata =</span> fdata.test, <span class="dt">type =</span> <span class="st">&quot;response&quot;</span>)
+exp.logit &lt;-<span class="st"> </span><span class="kw">ifelse</span>( preds.logit <span class="op">&gt;</span><span class="st"> </span><span class="fl">0.5</span>, <span class="dt">yes =</span> <span class="dv">1</span>, <span class="dt">no =</span> <span class="dv">0</span>)
+<span class="kw">table</span>( <span class="dt">prediction =</span> exp.logit, <span class="dt">truth =</span> fdata.test<span class="op">$</span>over.estimate )</code></pre>
+<pre><code>          truth
+prediction   0   1
+         0   7   2
+         1  48 153</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mean</span>( exp.logit <span class="op">==</span><span class="st"> </span>fdata.test<span class="op">$</span>over.estimate )</code></pre>
+<pre><code>[1] 0.7619048</code></pre>
+<p>We improved our model by removing variables. This will never be the case if we apply the same data for training a model and testing it. But this illustrates that a model that is not parsimonious starts fitting noise and will do poorly with new data.</p>
+</div>
+<div id="k-nearest-neighbors" class="section level3">
+<h3><span class="header-section-number">2.1.5</span> K-Nearest Neighbors</h3>
+<p>Thera are many models for classification. One of the more simple ones is KNN. For it, we need to provide the data in a slightly different format and we need to install the <code>class</code> package.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># training &amp; test data set of predictor variables only</span>
+train.X &lt;-<span class="st"> </span><span class="kw">cbind</span>( fdata<span class="op">$</span>RSex, fdata<span class="op">$</span>rural, fdata<span class="op">$</span>partly.rural, fdata<span class="op">$</span>urban, fdata<span class="op">$</span>HHInc )[train.ids, ]
+test.X &lt;-<span class="st"> </span><span class="kw">cbind</span>( fdata<span class="op">$</span>RSex, fdata<span class="op">$</span>rural, fdata<span class="op">$</span>partly.rural, fdata<span class="op">$</span>urban, fdata<span class="op">$</span>HHInc )[<span class="op">-</span>train.ids, ]
+
+<span class="co"># response variable for training observations</span>
+train.Y &lt;-<span class="st"> </span>fdata<span class="op">$</span>over.estimate[ train.ids ]
+
+<span class="co"># re-setting the random number generator</span>
+<span class="kw">set.seed</span>(<span class="dv">123</span>)
+
+<span class="co"># run knn</span>
+knn.out &lt;-<span class="st"> </span>class<span class="op">::</span><span class="kw">knn</span>(train.X, test.X, train.Y, <span class="dt">k =</span> <span class="dv">1</span>)
+
+<span class="co"># confusion matrix</span>
+<span class="kw">table</span>( <span class="dt">prediction =</span> knn.out, <span class="dt">truth =</span> fdata.test<span class="op">$</span>over.estimate )</code></pre>
+<pre><code>          truth
+prediction   0   1
+         0  11  15
+         1  44 140</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># percent correctly classified</span>
+<span class="kw">mean</span>( knn.out <span class="op">==</span><span class="st"> </span>fdata.test<span class="op">$</span>over.estimate )</code></pre>
+<pre><code>[1] 0.7190476</code></pre>
+<p>We can try and increase the accuracy by changing the number of nearest neighbors we are using:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># try to increae accuracy by varying k</span>
+knn.out &lt;-<span class="st"> </span>class<span class="op">::</span><span class="kw">knn</span>(train.X, test.X, train.Y, <span class="dt">k =</span> <span class="dv">7</span>)
+<span class="kw">mean</span>( knn.out <span class="op">==</span><span class="st"> </span>fdata.test<span class="op">$</span>over.estimate )</code></pre>
+<pre><code>[1] 0.752381</code></pre>
+</div>
+<div id="model-the-underlying-continuous-process" class="section level3">
+<h3><span class="header-section-number">2.1.6</span> Model the Underlying Continuous Process</h3>
+<p>We can try to model the underlying process and classify afterwards. By doing that, the depdendent variable provides more information. In effect we turn our classification problem into a regression problem.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># fit the linear model on the numer of immigrants per 100 Brits</span>
+m.lm &lt;-<span class="st"> </span><span class="kw">lm</span>(IMMBRIT <span class="op">~</span><span class="st"> </span>RSex <span class="op">+</span><span class="st"> </span>rural <span class="op">+</span><span class="st"> </span>partly.rural <span class="op">+</span><span class="st"> </span>urban <span class="op">+</span><span class="st"> </span>HHInc, 
+           <span class="dt">data =</span> fdata, <span class="dt">subset =</span> train.ids)
+
+<span class="co"># preditions</span>
+preds.lm &lt;-<span class="st"> </span><span class="kw">predict</span>(m.lm, <span class="dt">newdata =</span> fdata.test)
+
+<span class="co"># threshold for classfication</span>
+threshold &lt;-<span class="st"> </span>(<span class="fl">10.7</span> <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(fdata<span class="op">$</span>IMMBRIT_original_scale)) <span class="op">/</span><span class="st"> </span><span class="kw">sd</span>(fdata<span class="op">$</span>IMMBRIT_original_scale)
+
+<span class="co"># now we do the classfication </span>
+exp.lm &lt;-<span class="st"> </span><span class="kw">ifelse</span>( preds.lm <span class="op">&gt;</span><span class="st"> </span>threshold, <span class="dt">yes =</span> <span class="dv">1</span>, <span class="dt">no =</span> <span class="dv">0</span>)
+
+<span class="co"># confusion matrix</span>
+<span class="kw">table</span>( <span class="dt">prediction =</span> exp.lm, <span class="dt">truth =</span> fdata.test<span class="op">$</span>over.estimate)</code></pre>
+<pre><code>          truth
+prediction   0   1
+         1  55 155</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># percent correctly classified</span>
+<span class="kw">mean</span>( exp.lm <span class="op">==</span><span class="st"> </span>fdata.test<span class="op">$</span>over.estimate)</code></pre>
+<pre><code>[1] 0.7380952</code></pre>
+<p>We do worse by treating this as a regression problem rather than a classification problem - often, however, this would be the other way around.</p>
+
+</div>
 </div>
 </div>
             </section>
@@ -174,6 +592,19 @@ gitbook.start({
 });
 </script>
 
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:" && /^https?:/.test(src))
+      src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
 </body>
 
 </html>

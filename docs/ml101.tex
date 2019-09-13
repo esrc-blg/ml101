@@ -28,6 +28,46 @@
             pdfborder={0 0 0},
             breaklinks=true}
 \urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
 \usepackage{longtable,booktabs}
 \usepackage{graphicx,grffile}
 \makeatletter
@@ -141,7 +181,375 @@ Placeholder
 \hypertarget{learning-objectives}{%
 \subsection{Learning objectives}\label{learning-objectives}}
 
-Placeholder
+In this part, we cover the linear regression model. The linear model is commonly applied and versatile enough to be suitable for most tasks. We will use a dataset from the 1990 US Census which provides demographic and socio-economic data. The dataset includes observations from 1994 communities with each observation identified by a \texttt{state} and \texttt{communityname} variable. Before we start analysing, we load the dataset and do some pre-processing.
+
+We load a part of the census data using the \texttt{read.csv()} function and confirm that the \texttt{state} and \texttt{communityname} are present in each dataset. The dataset is named \texttt{communities.csv} and is included on your memory stick. You can copy it over to your computer and set the working directory in R to work in that folder. Alternatively, you can download the dataset \href{http://philippbroniecki.github.io/ML2017.io/data/communities.csv}{here}.
+
+We assign the dataset to an object that resides in working memory. Let's call that object \texttt{communities}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{communities <-}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\DataTypeTok{file =} \StringTok{"communities.csv"}\NormalTok{, }\DataTypeTok{stringsAsFactors =} \OtherTok{FALSE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+The \texttt{stringsAsFactors} argument stops R from converting text variables into categorical variables called factors in R. The dataset is rather large and we are only interested in a few variables. In the following, we introduce a new package for data manipulation.
+
+\hypertarget{dplyr-package}{%
+\subsubsection{Dplyr package}\label{dplyr-package}}
+
+The \texttt{dplyr} package is useful for data manipulation. We install it by running \texttt{install.packages("dplyr")}. We only install a package once. To update the package, run \texttt{update.packages("dplyr")}. Loading multiple packages can cause clashes if packages include functions with similar names. In order to avoid such clashes, we will not load the package into the session with the \texttt{library()} function but instead call dplyr functions directly from the package like so: \texttt{dplyr::function\_name()}. We demonstrate this as we go along.
+
+\hypertarget{the-dplyrselect-function}{%
+\paragraph{\texorpdfstring{The \texttt{dplyr::select()} function}{The dplyr::select() function}}\label{the-dplyrselect-function}}
+
+Since our dataset has more columns (variables) than we need, let's select only a few and rename them using more meaningful names. An easy way to accomplish this is using \texttt{dplyr::select()}. The function allows us to select the columns we need and rename them at the same time.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{communities <-}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{select}\NormalTok{(}
+\NormalTok{  communities, }
+\NormalTok{  state, }
+  \DataTypeTok{community =}\NormalTok{ communityname, }
+  \DataTypeTok{UnemploymentRate =}\NormalTok{ PctUnemployed, }
+  \DataTypeTok{NoHighSchool =}\NormalTok{ PctNotHSGrad,}
+  \DataTypeTok{white =}\NormalTok{ racePctWhite)}
+\end{Highlighting}
+\end{Shaded}
+
+Note that the first argument in \texttt{dplyr::select} is the name of the dataset (\texttt{communities} in our case). The remaining arguments are the variables that we keep. The first variable \texttt{state} has a meaningful name and does not need to be renamed. The second variable \texttt{communityname} could be shorter and we rename it to \texttt{community}. Similarly, we rename \texttt{PctUnemployed}, \texttt{PctNotHSGrad} and \texttt{racePctWhite}.
+
+\hypertarget{visualising-a-relationship-bw-two-continuous-variables}{%
+\subsubsection{Visualising a relationship b/w two continuous variables}\label{visualising-a-relationship-bw-two-continuous-variables}}
+
+A good way gauge whether two variables that both contiunous are related is to draw a scatter plot. We do so for the unemployment rate and for the lack of high shool education. Both variables are measured in percent, where \texttt{NoHighSchool} is the percentage of adults without high school education in a community.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(}
+  \DataTypeTok{x =}\NormalTok{ communities}\OperatorTok{$}\NormalTok{NoHighSchool, }
+  \DataTypeTok{y =}\NormalTok{ communities}\OperatorTok{$}\NormalTok{UnemploymentRate,}
+  \DataTypeTok{xlab =} \StringTok{"Proportion of adults without high school education"}\NormalTok{,}
+  \DataTypeTok{ylab =} \StringTok{"Unemployment rate"}\NormalTok{,}
+  \DataTypeTok{bty =} \StringTok{"n"}\NormalTok{,}
+  \DataTypeTok{pch =} \DecValTok{16}\NormalTok{,}
+  \DataTypeTok{col =} \StringTok{"gray"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ml101_files/figure-latex/unnamed-chunk-6-1.pdf}
+
+Use \texttt{?plot()} or google \texttt{R\ plot} for a description of the arguments.
+
+It looks like communities with lower education levels suffer higher unemployment. To assess (1) whether that relationship is systematic (not a chance finding) and (2) what the magnitude of the relationship is, we estimate a linear model with the \texttt{lm()} function. The two arguments we need to provide to the function are described below.
+
+\begin{longtable}[]{@{}ll@{}}
+\toprule
+\begin{minipage}[b]{0.11\columnwidth}\raggedright
+Argument\strut
+\end{minipage} & \begin{minipage}[b]{0.83\columnwidth}\raggedright
+Description\strut
+\end{minipage}\tabularnewline
+\midrule
+\endhead
+\begin{minipage}[t]{0.11\columnwidth}\raggedright
+\texttt{formula}\strut
+\end{minipage} & \begin{minipage}[t]{0.83\columnwidth}\raggedright
+The \texttt{formula} describes the relationship between the dependent and independent variables, for example \texttt{dependent.variable\ \textasciitilde{}\ independent.variable} In our case, we'd like to model the relationship using the formula: \texttt{UnemploymentRate\ \textasciitilde{}\ NoHighSchool}\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.11\columnwidth}\raggedright
+\texttt{data}\strut
+\end{minipage} & \begin{minipage}[t]{0.83\columnwidth}\raggedright
+This is simply the name of the dataset that contains the variable of interest. In our case, this is the merged dataset called \texttt{communities}.\strut
+\end{minipage}\tabularnewline
+\bottomrule
+\end{longtable}
+
+For more information on the \texttt{lm()} function, run \texttt{?lm()}. Let's run the linear model.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{m1 <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(UnemploymentRate }\OperatorTok{~}\StringTok{ }\NormalTok{NoHighSchool, }\DataTypeTok{data =}\NormalTok{ communities)}
+\end{Highlighting}
+\end{Shaded}
+
+The \texttt{lm()} function modele the relationship between \texttt{UnemploymentRate} and \texttt{NoHighSchool} and we've assigned the estimated model to the object \texttt{m1}. We can use the \texttt{summary()} function on \texttt{m1} for the key results.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{summary}\NormalTok{(m1)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+
+Call:
+lm(formula = UnemploymentRate ~ NoHighSchool, data = communities)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.42347 -0.08499 -0.01189  0.07711  0.56470 
+
+Coefficients:
+             Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  0.078952   0.006483   12.18   <2e-16 ***
+NoHighSchool 0.742385   0.014955   49.64   <2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.1352 on 1992 degrees of freedom
+Multiple R-squared:  0.553, Adjusted R-squared:  0.5527 
+F-statistic:  2464 on 1 and 1992 DF,  p-value: < 2.2e-16
+\end{verbatim}
+
+The output from \texttt{lm()} might seem overwhelming at first so let's break it down one item at a time.
+
+\includegraphics{./img/lm.png}
+
+\begin{longtable}[]{@{}ll@{}}
+\toprule
+\begin{minipage}[b]{0.07\columnwidth}\raggedright
+\#\strut
+\end{minipage} & \begin{minipage}[b]{0.87\columnwidth}\raggedright
+Description\strut
+\end{minipage}\tabularnewline
+\midrule
+\endhead
+\begin{minipage}[t]{0.07\columnwidth}\raggedright
+\includegraphics[width=1\textwidth,height=\textheight]{./img/circle1.png}\strut
+\end{minipage} & \begin{minipage}[t]{0.87\columnwidth}\raggedright
+The \emph{dependent} variable, also sometimes called the outcome variable. We are trying to model the effects of \texttt{NoHighSchool} on \texttt{UnemploymentRate} so \texttt{UnemploymentRate} is the \emph{dependent} variable.\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.07\columnwidth}\raggedright
+\includegraphics[width=1\textwidth,height=\textheight]{./img/circle2.png}\strut
+\end{minipage} & \begin{minipage}[t]{0.87\columnwidth}\raggedright
+The \emph{independent} variable or the predictor variable. In our example, \texttt{NoHighSchool} is the \emph{independent} variable.\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.07\columnwidth}\raggedright
+\includegraphics[width=1\textwidth,height=\textheight]{./img/circle3.png}\strut
+\end{minipage} & \begin{minipage}[t]{0.87\columnwidth}\raggedright
+The differences between the observed values and the predicted values are called \emph{residuals}.\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.07\columnwidth}\raggedright
+\includegraphics[width=1\textwidth,height=\textheight]{./img/circle4.png}\strut
+\end{minipage} & \begin{minipage}[t]{0.87\columnwidth}\raggedright
+The \emph{coefficients} for the intercept and the \emph{independent} variables. Using the \emph{coefficients} we can write down the relationship between the \emph{dependent} and the \emph{independent} variables as: \texttt{UnemploymentRate} = 0.078952 + ( 0.7423853 * \texttt{NoHighSchool} ) This tells us that for each unit increase in the variable \texttt{NoHighSchool}, the \texttt{UnemploymentRate} increases by 0.7423853.\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.07\columnwidth}\raggedright
+\includegraphics[width=1\textwidth,height=\textheight]{./img/circle5.png}\strut
+\end{minipage} & \begin{minipage}[t]{0.87\columnwidth}\raggedright
+The \emph{p-value} of the model. Recall that according to the null hypotheses, the coefficient of interest is zero. The \emph{p-value} tells us whether can can reject the null hypotheses or not.\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.07\columnwidth}\raggedright
+\includegraphics[width=1\textwidth,height=\textheight]{./img/circle6.png}\strut
+\end{minipage} & \begin{minipage}[t]{0.87\columnwidth}\raggedright
+The \emph{standard error} estimates the standard deviation of the coefficients in our model. We can think of the \emph{standard error} as the measure of precision for the estimated coefficients.\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.07\columnwidth}\raggedright
+\includegraphics[width=1\textwidth,height=\textheight]{./img/circle7.png}\strut
+\end{minipage} & \begin{minipage}[t]{0.87\columnwidth}\raggedright
+The \emph{t statistic} is obtained by dividing the \emph{coefficients} by the \emph{standard error}.\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.07\columnwidth}\raggedright
+\includegraphics[width=1\textwidth,height=\textheight]{./img/circle8.png}\strut
+\end{minipage} & \begin{minipage}[t]{0.87\columnwidth}\raggedright
+The \emph{R-squared} and \emph{adjusted R-squared} tell us how much of the variance in our model is accounted for by the \emph{independent} variable. The \emph{adjusted R-squared} is always smaller than \emph{R-squared} as it takes into account the number of \emph{independent} variables and degrees of freedom.\strut
+\end{minipage}\tabularnewline
+\bottomrule
+\end{longtable}
+
+\hypertarget{predictions}{%
+\paragraph{Predictions}\label{predictions}}
+
+We are often interested in predicting values for the dependent variable based on a values for the independent variable. For instance, what is the predicted unemployment rate given 50 percent of the adults without high school education? We use the \texttt{predict()} function to assess this. Instead of making the forecaset for the case were 50 percent do not have high school education, we make a prediction for each level of low education.
+
+We create a sequence of values for low education using the sequence function first \texttt{seq()}. We create 100 values from 0 to 1.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{edu <-}\StringTok{ }\KeywordTok{seq}\NormalTok{(}\DataTypeTok{from =} \DecValTok{0}\NormalTok{, }\DataTypeTok{to =} \DecValTok{1}\NormalTok{, }\DataTypeTok{length.out =} \DecValTok{100}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+We now define a dataset where the variable names are called exactly the same as in our regression model \texttt{m1}. Let's check the name of the independent variable in \texttt{m1} by calling the object. We then copy and paste the variable name to make sure that we don't have a typo in our code.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{m1}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+
+Call:
+lm(formula = UnemploymentRate ~ NoHighSchool, data = communities)
+
+Coefficients:
+ (Intercept)  NoHighSchool  
+     0.07895       0.74239  
+\end{verbatim}
+
+We now use the \texttt{predict()} function to make a prediction for each of the 100 \texttt{edu} values.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{preds <-}\StringTok{ }\KeywordTok{predict}\NormalTok{(m1, }\DataTypeTok{newdata =} \KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{NoHighSchool =}\NormalTok{ edu), }\DataTypeTok{se.fit =} \OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+We create a new dataset including the education values from 0 to 1 and the predictions. In the \texttt{predict()} function, we set the argument \texttt{se.fit} to TRUE. This returns a standard error for our prediction and lets us quantify our uncertainty. IN the dataset, we will save the point estimates (the best quesses) as well as values for the upper and lower bound of our confidence intervals
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{out <-}\StringTok{ }\KeywordTok{data.frame}\NormalTok{( }\DataTypeTok{NoHighSchool =}\NormalTok{ edu, }
+                   \DataTypeTok{predicted_unemployment_rate =}\NormalTok{ preds}\OperatorTok{$}\NormalTok{fit, }
+                   \DataTypeTok{lb =}\NormalTok{ preds}\OperatorTok{$}\NormalTok{fit }\OperatorTok{-}\StringTok{ }\FloatTok{1.96} \OperatorTok{*}\StringTok{ }\NormalTok{preds}\OperatorTok{$}\NormalTok{se.fit,}
+                   \DataTypeTok{ub =}\NormalTok{ preds}\OperatorTok{$}\NormalTok{fit }\OperatorTok{+}\StringTok{ }\FloatTok{1.96} \OperatorTok{*}\StringTok{ }\NormalTok{preds}\OperatorTok{$}\NormalTok{se.fit)}
+\end{Highlighting}
+\end{Shaded}
+
+Let's inspect the first ten values of our data.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{head}\NormalTok{(out)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+  NoHighSchool predicted_unemployment_rate         lb         ub
+1   0.00000000                  0.07895202 0.06624469 0.09165936
+2   0.01010101                  0.08645087 0.07400458 0.09889715
+3   0.02020202                  0.09394971 0.08176286 0.10613655
+4   0.03030303                  0.10144855 0.08951944 0.11337766
+5   0.04040404                  0.10894739 0.09727420 0.12062058
+6   0.05050505                  0.11644623 0.10502702 0.12786544
+\end{verbatim}
+
+We now add our prediction to the scatter plot.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{lines}\NormalTok{( }\DataTypeTok{x =}\NormalTok{ edu, }\DataTypeTok{y =}\NormalTok{ out}\OperatorTok{$}\NormalTok{predicted_unemployment_rate, }\DataTypeTok{lwd =} \DecValTok{2}\NormalTok{)}
+\KeywordTok{lines}\NormalTok{( }\DataTypeTok{x =}\NormalTok{ edu, }\DataTypeTok{y =}\NormalTok{ out}\OperatorTok{$}\NormalTok{lb, }\DataTypeTok{lwd =} \DecValTok{2}\NormalTok{, }\DataTypeTok{lty =} \StringTok{"dashed"}\NormalTok{)}
+\KeywordTok{lines}\NormalTok{( }\DataTypeTok{x =}\NormalTok{ edu, }\DataTypeTok{y =}\NormalTok{ out}\OperatorTok{$}\NormalTok{ub, }\DataTypeTok{lwd =} \DecValTok{2}\NormalTok{, }\DataTypeTok{lty =} \StringTok{"dashed"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ml101_files/figure-latex/unnamed-chunk-15-1.pdf}
+
+As the plot shows, the precision of our estimates is quite good (the 95 percent confidence interval is narrow).
+
+Returning to our example, are there other variables that might explain unemployment rates in our communities dataset? For example, is unemployment rate higher or lower in communities with different levels of minority population?
+
+We first create a new variable called \texttt{Minority} by subtracting the percent of \texttt{White} population from 1. Alternatively, we could have added up the percent of Black, Hispanic and Asians to get the percentage of minority population since our census data also has those variables.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{communities}\OperatorTok{$}\NormalTok{Minority <-}\StringTok{ }\DecValTok{1} \OperatorTok{-}\StringTok{ }\NormalTok{communities}\OperatorTok{$}\NormalTok{white}
+\end{Highlighting}
+\end{Shaded}
+
+Next we fit a linear model using \texttt{Minority} as the independent variable.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{m2 <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(UnemploymentRate }\OperatorTok{~}\StringTok{ }\NormalTok{Minority, }\DataTypeTok{data =}\NormalTok{ communities)}
+\KeywordTok{summary}\NormalTok{(m2)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+
+Call:
+lm(formula = UnemploymentRate ~ Minority, data = communities)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.45521 -0.12189 -0.02369  0.10162  0.68203 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept) 0.257948   0.005506   46.85   <2e-16 ***
+Minority    0.428702   0.015883   26.99   <2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.173 on 1992 degrees of freedom
+Multiple R-squared:  0.2678,    Adjusted R-squared:  0.2674 
+F-statistic: 728.5 on 1 and 1992 DF,  p-value: < 2.2e-16
+\end{verbatim}
+
+Now let's see how this model compares to our first model. We can show regression line from \texttt{model2} just like we did with our first model.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# plot}
+\KeywordTok{plot}\NormalTok{(communities}\OperatorTok{$}\NormalTok{Minority, communities}\OperatorTok{$}\NormalTok{UnemploymentRate,}
+     \DataTypeTok{xlab =} \StringTok{"Minority population rate"}\NormalTok{,}
+     \DataTypeTok{ylab =} \StringTok{"Unemployment rate"}\NormalTok{,}
+     \DataTypeTok{bty =} \StringTok{"n"}\NormalTok{,}
+     \DataTypeTok{pch =} \DecValTok{16}\NormalTok{,}
+     \DataTypeTok{col =} \StringTok{"gray"}\NormalTok{)}
+
+\CommentTok{# predict outcomes}
+\NormalTok{minority.seq <-}\StringTok{ }\KeywordTok{seq}\NormalTok{(}\DataTypeTok{from =} \DecValTok{0}\NormalTok{, }\DataTypeTok{to =} \DecValTok{1}\NormalTok{, }\DataTypeTok{length.out =} \DecValTok{100}\NormalTok{)}
+\NormalTok{preds2 <-}\StringTok{ }\KeywordTok{predict}\NormalTok{(m2, }\DataTypeTok{newdata =} \KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{Minority =}\NormalTok{ minority.seq), }\DataTypeTok{se.fit =} \OtherTok{TRUE}\NormalTok{)}
+\NormalTok{out2 <-}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{Minority =}\NormalTok{ minority.seq, }
+                   \DataTypeTok{predicted_unemployment_rate =}\NormalTok{ preds2}\OperatorTok{$}\NormalTok{fit, }
+                   \DataTypeTok{lb =}\NormalTok{ preds2}\OperatorTok{$}\NormalTok{fit }\OperatorTok{-}\StringTok{ }\FloatTok{1.96} \OperatorTok{*}\StringTok{ }\NormalTok{preds2}\OperatorTok{$}\NormalTok{se.fit,}
+                   \DataTypeTok{ub =}\NormalTok{ preds2}\OperatorTok{$}\NormalTok{fit }\OperatorTok{+}\StringTok{ }\FloatTok{1.96} \OperatorTok{*}\StringTok{ }\NormalTok{preds2}\OperatorTok{$}\NormalTok{se.fit)}
+\KeywordTok{lines}\NormalTok{( }\DataTypeTok{x =}\NormalTok{ minority.seq, }\DataTypeTok{y =}\NormalTok{ out2}\OperatorTok{$}\NormalTok{predicted_unemployment_rate, }\DataTypeTok{lwd =} \DecValTok{2}\NormalTok{)}
+\KeywordTok{lines}\NormalTok{( }\DataTypeTok{x =}\NormalTok{ minority.seq, }\DataTypeTok{y =}\NormalTok{ out2}\OperatorTok{$}\NormalTok{lb, }\DataTypeTok{lwd =} \DecValTok{2}\NormalTok{, }\DataTypeTok{lty =} \StringTok{"dashed"}\NormalTok{)}
+\KeywordTok{lines}\NormalTok{( }\DataTypeTok{x =}\NormalTok{ minority.seq, }\DataTypeTok{y =}\NormalTok{ out2}\OperatorTok{$}\NormalTok{ub, }\DataTypeTok{lwd =} \DecValTok{2}\NormalTok{, }\DataTypeTok{lty =} \StringTok{"dashed"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ml101_files/figure-latex/unnamed-chunk-18-1.pdf}
+
+Does \texttt{m2} offer a better fit than \texttt{m1}? Maybe we can answer that question by looking at the regression tables instead. Let's print the two models side-by-side in a single table with the \texttt{screenreg()} function contained in the \texttt{texreg} package.
+
+Let's install \texttt{texreg} first like so:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{install.packages}\NormalTok{(}\StringTok{"texreg"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+We now compare the models using the \texttt{texreg()} function like so:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{texreg}\OperatorTok{::}\KeywordTok{screenreg}\NormalTok{(}\KeywordTok{list}\NormalTok{( m1, m2 ))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+
+======================================
+              Model 1      Model 2    
+--------------------------------------
+(Intercept)      0.08 ***     0.26 ***
+                (0.01)       (0.01)   
+NoHighSchool     0.74 ***             
+                (0.01)                
+Minority                      0.43 ***
+                             (0.02)   
+--------------------------------------
+R^2              0.55         0.27    
+Adj. R^2         0.55         0.27    
+Num. obs.     1994         1994       
+RMSE             0.14         0.17    
+======================================
+*** p < 0.001, ** p < 0.01, * p < 0.05
+\end{verbatim}
+
+Contemplate the output from the table for a moment. Slope coefficients (everything except the intercept) are always the effect of a 1-unit change of the indepedent variable on the dependent variable in the units of the dependent variable. Both our independent variables are proportions. Hence a 1-unit change covers the entire ranges of our independent variables (0 to 1). Model 1 suggests that the unemployment rate is 74 percent larger in a district where no one has a high school degree than in a district where everone has a high school degree. Similarly, model 2 suggests that in a district where everone has a minority background (making everyone is a minority an oxymoron), the unemployment rate 43 percent higher than in a community where no one is. Please note that these predictive models should not be mistaken to capture causal relationships.
+
+\includegraphics{ml101_files/figure-latex/unnamed-chunk-21-1.pdf}
+
+These are the two plots that we created earlier. In the model using \texttt{NoHighSchool} the points which are the actual unemployment rates are much closer to our prediction (the regression line) than in the model using \texttt{Minority}. This means that variation in \texttt{NoHighSchool} better explains variation in \texttt{UnemploymentRate} than variation in \texttt{Minority}. This is captured in the \texttt{R\^{}2} and \texttt{Adj.\ R\^{}2}. Both \texttt{R\^{}2} and \texttt{Adj.\ R\^{}2} are measues of model fit. The difference between them is that \texttt{Adj.\ R\^{}2} is a measure that penalises model complexity (more variables). In models with more than one independent variable, we rely on \texttt{Adj.\ R\^{}2} and in models with one independent variable, we use \texttt{R\^{}2}, i.e.~here we would use \texttt{R\^{}2}.
 
 \hypertarget{classification}{%
 \section{Classification}\label{classification}}
@@ -149,7 +557,568 @@ Placeholder
 \hypertarget{seminar}{%
 \subsection{Seminar}\label{seminar}}
 
-Placeholder
+\hypertarget{the-non-western-foreigners-data-set}{%
+\subsubsection{The Non-Western Foreigners Data Set}\label{the-non-western-foreigners-data-set}}
+
+We start by clearing our workspace.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# clear workspace}
+\KeywordTok{rm}\NormalTok{(}\DataTypeTok{list =} \KeywordTok{ls}\NormalTok{())}
+\end{Highlighting}
+\end{Shaded}
+
+Let's check the codebook of our data.
+
+\begin{longtable}[]{@{}ll@{}}
+\toprule
+\begin{minipage}[b]{0.11\columnwidth}\raggedright
+Variable Name\strut
+\end{minipage} & \begin{minipage}[b]{0.83\columnwidth}\raggedright
+Description\strut
+\end{minipage}\tabularnewline
+\midrule
+\endhead
+\begin{minipage}[t]{0.11\columnwidth}\raggedright
+IMMBRIT\strut
+\end{minipage} & \begin{minipage}[t]{0.83\columnwidth}\raggedright
+Out of every 100 people in Britain, how many do you think are immigrants from Non-western countries?\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.11\columnwidth}\raggedright
+over.estimate\strut
+\end{minipage} & \begin{minipage}[t]{0.83\columnwidth}\raggedright
+1 if estimate is higher than 10.7\%.\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.11\columnwidth}\raggedright
+RSex\strut
+\end{minipage} & \begin{minipage}[t]{0.83\columnwidth}\raggedright
+1 = male, 2 = female\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.11\columnwidth}\raggedright
+RAge\strut
+\end{minipage} & \begin{minipage}[t]{0.83\columnwidth}\raggedright
+Age of respondent\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.11\columnwidth}\raggedright
+Househld\strut
+\end{minipage} & \begin{minipage}[t]{0.83\columnwidth}\raggedright
+Number of people living in respondent's household\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.11\columnwidth}\raggedright
+party\_self\strut
+\end{minipage} & \begin{minipage}[t]{0.83\columnwidth}\raggedright
+1 = Conservatives; 2 = Labour; 3 = SNP; 4 = Ukip; 5 = BNP; 6 = GP; 7 = party.other\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.11\columnwidth}\raggedright
+paper\strut
+\end{minipage} & \begin{minipage}[t]{0.83\columnwidth}\raggedright
+Do you normally read any daily morning newspaper 3+ times/week?\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.11\columnwidth}\raggedright
+WWWhourspW\strut
+\end{minipage} & \begin{minipage}[t]{0.83\columnwidth}\raggedright
+How many hours WWW per week?\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.11\columnwidth}\raggedright
+religious\strut
+\end{minipage} & \begin{minipage}[t]{0.83\columnwidth}\raggedright
+Do you regard yourself as belonging to any particular religion?\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.11\columnwidth}\raggedright
+employMonths\strut
+\end{minipage} & \begin{minipage}[t]{0.83\columnwidth}\raggedright
+How many mnths w. present employer?\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.11\columnwidth}\raggedright
+urban\strut
+\end{minipage} & \begin{minipage}[t]{0.83\columnwidth}\raggedright
+Population density, 4 categories (highest density is 4, lowest is 1)\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.11\columnwidth}\raggedright
+health.good\strut
+\end{minipage} & \begin{minipage}[t]{0.83\columnwidth}\raggedright
+How is your health in general for someone of your age? (0: bad, 1: fair, 2: fairly good, 3: good)\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.11\columnwidth}\raggedright
+HHInc\strut
+\end{minipage} & \begin{minipage}[t]{0.83\columnwidth}\raggedright
+Income bands for household, high number = high HH income\strut
+\end{minipage}\tabularnewline
+\bottomrule
+\end{longtable}
+
+The dataset is on your memory sticks and also available for download \href{http://philippbroniecki.github.io/ML2017.io/data/BSAS_manip.RData}{here}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# load non-western foreigners data set}
+\KeywordTok{load}\NormalTok{(}\StringTok{"non_western_immigrants.RData"}\NormalTok{)}
+
+\CommentTok{# data manipulation}
+\NormalTok{fdata}\OperatorTok{$}\NormalTok{RSex <-}\StringTok{ }\KeywordTok{factor}\NormalTok{(fdata}\OperatorTok{$}\NormalTok{RSex, }\DataTypeTok{labels =} \KeywordTok{c}\NormalTok{(}\StringTok{"Male"}\NormalTok{, }\StringTok{"Female"}\NormalTok{))}
+\NormalTok{fdata}\OperatorTok{$}\NormalTok{health.good <-}\StringTok{ }\KeywordTok{factor}\NormalTok{(fdata}\OperatorTok{$}\NormalTok{health.good, }\DataTypeTok{labels =} \KeywordTok{c}\NormalTok{(}\StringTok{"bad"}\NormalTok{, }\StringTok{"fair"}\NormalTok{, }\StringTok{"fairly good"}\NormalTok{, }\StringTok{"good"}\NormalTok{) )}
+\NormalTok{fdata}\OperatorTok{$}\NormalTok{party_self <-}\StringTok{ }\KeywordTok{factor}\NormalTok{(fdata}\OperatorTok{$}\NormalTok{party_self, }\DataTypeTok{labels =} \KeywordTok{c}\NormalTok{(}\StringTok{"Conservatives"}\NormalTok{, }\StringTok{"Labour"}\NormalTok{, }\StringTok{"SNP"}\NormalTok{, }
+                                                         \StringTok{"Ukip"}\NormalTok{, }\StringTok{"BNP"}\NormalTok{, }\StringTok{"Greens"}\NormalTok{, }\StringTok{"Other"}\NormalTok{))}
+
+\CommentTok{# urban to dummies (for knn later)}
+\KeywordTok{table}\NormalTok{(fdata}\OperatorTok{$}\NormalTok{urban) }\CommentTok{# 3 is the modal category (keep as baseline) but we create all categories}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+
+  1   2   3   4 
+214 281 298 256 
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fdata}\OperatorTok{$}\NormalTok{rural <-}\StringTok{ }\KeywordTok{ifelse}\NormalTok{( fdata}\OperatorTok{$}\NormalTok{urban }\OperatorTok{==}\StringTok{ }\DecValTok{1}\NormalTok{, }\DataTypeTok{yes =} \DecValTok{1}\NormalTok{, }\DataTypeTok{no =} \DecValTok{0}\NormalTok{)}
+\NormalTok{fdata}\OperatorTok{$}\NormalTok{partly.rural <-}\StringTok{ }\KeywordTok{ifelse}\NormalTok{( fdata}\OperatorTok{$}\NormalTok{urban }\OperatorTok{==}\StringTok{ }\DecValTok{2}\NormalTok{, }\DataTypeTok{yes =} \DecValTok{1}\NormalTok{, }\DataTypeTok{no =} \DecValTok{0}\NormalTok{)}
+\NormalTok{fdata}\OperatorTok{$}\NormalTok{partly.urban <-}\StringTok{ }\KeywordTok{ifelse}\NormalTok{( fdata}\OperatorTok{$}\NormalTok{urban }\OperatorTok{==}\StringTok{ }\DecValTok{3}\NormalTok{, }\DataTypeTok{yes =} \DecValTok{1}\NormalTok{, }\DataTypeTok{no =} \DecValTok{0}\NormalTok{)}
+\NormalTok{fdata}\OperatorTok{$}\NormalTok{urban <-}\StringTok{ }\KeywordTok{ifelse}\NormalTok{( fdata}\OperatorTok{$}\NormalTok{urban }\OperatorTok{==}\StringTok{ }\DecValTok{4}\NormalTok{, }\DataTypeTok{yes =} \DecValTok{1}\NormalTok{, }\DataTypeTok{no =} \DecValTok{0}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+In our data manipulation, we first turned \texttt{RSex} into a factor variable. Factor is a variable type in R, that is handy because we declare that a variable is categorical. When we run models with a factor variable, R will handle them correctly, i.e.~break them up into binary variables internaly.
+
+Alternatively, with \texttt{urban}, we show how to break up such a variable into binary variables manually. We use the \texttt{ifelse()} function were the first argument is a logical condition such as \texttt{fdata\$urban\ ==\ 1} meaning "if the variable \texttt{urban} in \texttt{fdata} takes on the value 1. This condition is evaluated for every observation in the dataset and if it is met we asign a 1 (\texttt{yes\ =\ 1}) and if not we assign a 0 (\texttt{no\ =\ 0}).
+
+\hypertarget{logistic-regression}{%
+\subsubsection{Logistic Regression}\label{logistic-regression}}
+
+We want to predict whether respondents over-estimate immigration from non-western contexts. We begin by normalizing our variables (we make them comparable). Then we look at the distribution of the dependent variable. We check how well we could predict misperception of immigration in our sample without a statistical model.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# create a copy of the original IMMBRIT variable (needed for classification with lm)}
+\NormalTok{fdata}\OperatorTok{$}\NormalTok{IMMBRIT_original_scale <-}\StringTok{ }\NormalTok{fdata}\OperatorTok{$}\NormalTok{IMMBRIT}
+
+\CommentTok{# our function for normalization}
+\NormalTok{our.norm <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(x)\{}
+  \KeywordTok{return}\NormalTok{((x }\OperatorTok{-}\StringTok{ }\KeywordTok{mean}\NormalTok{(x)) }\OperatorTok{/}\StringTok{ }\KeywordTok{sd}\NormalTok{(x))}
+\NormalTok{\}}
+
+\CommentTok{# continuous variables}
+\NormalTok{c.vars <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"IMMBRIT"}\NormalTok{, }\StringTok{"RAge"}\NormalTok{, }\StringTok{"Househld"}\NormalTok{, }\StringTok{"HHInc"}\NormalTok{, }\StringTok{"employMonths"}\NormalTok{, }\StringTok{"WWWhourspW"}\NormalTok{)}
+
+\CommentTok{# normalize}
+\NormalTok{fdata[, c.vars] <-}\StringTok{ }\KeywordTok{apply}\NormalTok{( }\DataTypeTok{X =}\NormalTok{ fdata[, c.vars], }\DataTypeTok{MARGIN =} \DecValTok{2}\NormalTok{, }\DataTypeTok{FUN =}\NormalTok{ our.norm )}
+\end{Highlighting}
+\end{Shaded}
+
+First, we copied the variable IMMBRIT before normalising it. Don't worry about this now, it will become clear why we did this further down in the code.
+
+We then define our own function. A function takes some input which we called \texttt{x} and does something with that input. In case, x is a numeric variable. For every value of x, we substract the mean of x. Therefore, we centre the variable on 0, i.e.~the new mean will be 0. We then divide by the standard deviation of the variable. This is necessary to make the variables comparable. The units of all variables are then represented in average deviations from their means.
+
+In the next step, we create a characer vector with the variable names of all variables that are continuous and lastly we normalise. We do this by subsetting our data with square brackets. So \texttt{fdata{[}\ ,\ c.vars{]}} is the part of our dataset that includes the continuous variables. The function \texttt{apply()} lets us carry out the same operation repeadetly for all the variables. The argument \texttt{X} is the data. The argument \texttt{MARGIN} says we want to apply our normalisation column-wise. The argument \texttt{FUN} means function. Here, we input our normlisation function.
+
+We now have a look at our dependent variable of interest. The variable \texttt{over.estimate} measures whether a respondent over estimates the number of non-western immigrants or not (yes = 1; no = 0). The actual percentage of non-western immigrants was 10.7 percent at the time of the survey.
+
+\hypertarget{the-naive-guess}{%
+\paragraph{The naive guess}\label{the-naive-guess}}
+
+The naive guess is the best prediction without a model. Or put differently, the best prediction we could make without having any context information. Have a look at the variable \texttt{over.estimate} and decide on your own what you would do to maximise your predictive accuracy\ldots{}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# proportion of people who over-estimate}
+\KeywordTok{mean}\NormalTok{(fdata}\OperatorTok{$}\NormalTok{over.estimate)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 0.7235462
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# naive guess}
+\KeywordTok{ifelse}\NormalTok{( }\KeywordTok{mean}\NormalTok{(fdata}\OperatorTok{$}\NormalTok{over.estimate) }\OperatorTok{>=}\StringTok{ }\FloatTok{0.5}\NormalTok{, }\DataTypeTok{yes =} \DecValTok{1}\NormalTok{, }\DataTypeTok{no =} \DecValTok{0}\NormalTok{ )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 1
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# So, to maximise prediction accuracy without a model, we must simply always predict the more common category. If more people over estimate than under estimate, we predict over estimation every time.}
+\end{Highlighting}
+\end{Shaded}
+
+Alright, now that we have figured out what to predict, what would be our predictive power based on that prediction? Try to figure this out on your own\ldots{}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# predicitive power based on the naive guess}
+
+\KeywordTok{ifelse}\NormalTok{( }\KeywordTok{mean}\NormalTok{(fdata}\OperatorTok{$}\NormalTok{over.estimate) }\OperatorTok{>=}\StringTok{ }\FloatTok{0.5}\NormalTok{,}
+        \DataTypeTok{yes =} \KeywordTok{mean}\NormalTok{(fdata}\OperatorTok{$}\NormalTok{over.estimate),}
+        \DataTypeTok{no =} \DecValTok{1} \OperatorTok{-}\StringTok{ }\KeywordTok{mean}\NormalTok{(fdata}\OperatorTok{$}\NormalTok{over.estimate))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 0.7235462
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# So our predicitive accuracy depends on the proportion of people who over estimate. If the proportion is more than 0.5, the mean is the percent of correct predictions. Otherwise, 1 - mean is the percentage of correct predictions.}
+\end{Highlighting}
+\end{Shaded}
+
+A predictive model must always beat the predictive power of the naive guess.
+
+\hypertarget{the-logit-model}{%
+\subsubsection{The logit model}\label{the-logit-model}}
+
+We use the generalized linear model function \texttt{glm()} to estimate a logistic regression. The syntax is very similar to the \texttt{lm} regression function that we are already familiar with, but there is an additional argument that we need to specify (the \texttt{family} argument) in order to tell R that we would like to estimate a logistic regression model.
+
+\begin{longtable}[]{@{}ll@{}}
+\toprule
+\begin{minipage}[b]{0.11\columnwidth}\raggedright
+Argument\strut
+\end{minipage} & \begin{minipage}[b]{0.83\columnwidth}\raggedright
+Description\strut
+\end{minipage}\tabularnewline
+\midrule
+\endhead
+\begin{minipage}[t]{0.11\columnwidth}\raggedright
+\texttt{formula}\strut
+\end{minipage} & \begin{minipage}[t]{0.83\columnwidth}\raggedright
+As before, the \texttt{formula} describes the relationship between the dependent and independent variables, for example \texttt{dependent.variable\ \textasciitilde{}\ independent.variable} In our case, we will use the formula: \texttt{vote\ \textasciitilde{}\ wifecoethnic\ +\ distance}\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.11\columnwidth}\raggedright
+\texttt{data}\strut
+\end{minipage} & \begin{minipage}[t]{0.83\columnwidth}\raggedright
+Again as before, this is simply the name of the dataset that contains the variable of interest. In our case, this is the dataset called \texttt{afb}.\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.11\columnwidth}\raggedright
+\texttt{family}\strut
+\end{minipage} & \begin{minipage}[t]{0.83\columnwidth}\raggedright
+The \texttt{family} argument provides a description of the error distribution and link function to be used in the model. For our purposes, we would like to estimate a binary logistic regression model and so we set \texttt{family\ =\ binomial(link\ =\ "logit")}\strut
+\end{minipage}\tabularnewline
+\bottomrule
+\end{longtable}
+
+We tell \texttt{glm()} that we have a binary dependent variable and we want to use the logistic link function using the \texttt{family\ =\ binomial(link\ =\ "logit")} argument:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{m.logit <-}\StringTok{ }\KeywordTok{glm}\NormalTok{( over.estimate }\OperatorTok{~}\StringTok{ }\NormalTok{RSex }\OperatorTok{+}\StringTok{ }\NormalTok{RAge }\OperatorTok{+}\StringTok{ }\NormalTok{Househld }\OperatorTok{+}\StringTok{ }\NormalTok{party_self }\OperatorTok{+}\StringTok{ }\NormalTok{paper }\OperatorTok{+}\StringTok{ }\NormalTok{WWWhourspW }\OperatorTok{+}\StringTok{  }
+\StringTok{                  }\NormalTok{religious }\OperatorTok{+}\StringTok{  }\NormalTok{employMonths }\OperatorTok{+}\StringTok{ }\NormalTok{rural }\OperatorTok{+}\StringTok{ }\NormalTok{partly.rural }\OperatorTok{+}\StringTok{ }\NormalTok{urban }\OperatorTok{+}\StringTok{ }\NormalTok{health.good }\OperatorTok{+}\StringTok{ }
+\StringTok{                  }\NormalTok{HHInc, }\DataTypeTok{data =}\NormalTok{ fdata, }\DataTypeTok{family =} \KeywordTok{binomial}\NormalTok{(}\DataTypeTok{link =} \StringTok{"logit"}\NormalTok{))}
+\KeywordTok{summary}\NormalTok{(m.logit)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+
+Call:
+glm(formula = over.estimate ~ RSex + RAge + Househld + party_self + 
+    paper + WWWhourspW + religious + employMonths + rural + partly.rural + 
+    urban + health.good + HHInc, family = binomial(link = "logit"), 
+    data = fdata)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-2.2342  -1.1328   0.6142   0.8262   1.3815  
+
+Coefficients:
+                       Estimate Std. Error z value Pr(>|z|)    
+(Intercept)             0.72437    0.36094   2.007   0.0448 *  
+RSexFemale              0.64030    0.15057   4.253 2.11e-05 ***
+RAge                    0.01031    0.09073   0.114   0.9095    
+Househld                0.02794    0.08121   0.344   0.7308    
+party_selfLabour       -0.31577    0.19964  -1.582   0.1137    
+party_selfSNP           1.85513    1.05603   1.757   0.0790 .  
+party_selfUkip         -0.51315    0.46574  -1.102   0.2706    
+party_selfBNP           0.05604    0.44846   0.125   0.9005    
+party_selfGreens        0.92131    0.57305   1.608   0.1079    
+party_selfOther         0.12542    0.18760   0.669   0.5038    
+paper                   0.14855    0.15210   0.977   0.3287    
+WWWhourspW             -0.02598    0.08008  -0.324   0.7457    
+religious               0.05139    0.15274   0.336   0.7365    
+employMonths            0.01899    0.07122   0.267   0.7897    
+rural                  -0.35097    0.21007  -1.671   0.0948 .  
+partly.rural           -0.37978    0.19413  -1.956   0.0504 .  
+urban                   0.12732    0.21202   0.601   0.5482    
+health.goodfair        -0.09534    0.33856  -0.282   0.7782    
+health.goodfairly good  0.11669    0.31240   0.374   0.7087    
+health.goodgood         0.02744    0.31895   0.086   0.9314    
+HHInc                  -0.48513    0.08447  -5.743 9.30e-09 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 1236.9  on 1048  degrees of freedom
+Residual deviance: 1143.3  on 1028  degrees of freedom
+AIC: 1185.3
+
+Number of Fisher Scoring iterations: 5
+\end{verbatim}
+
+\hypertarget{predict-outcomes-from-logit}{%
+\subsubsection{Predict Outcomes from logit}\label{predict-outcomes-from-logit}}
+
+We can use the \texttt{predict()} function to calculate fitted values for the logistic regression model, just as we did for the linear model. Here, however, we need to take into account the fact that we model the \emph{log-odds} that \(Y = 1\), rather than the \emph{probability} that \(Y=1\). The \texttt{predict()} function will therefore, by default, give us predictions for Y on the log-odds scale. To get predictions on the probability scale, we need to add an additional argument to \texttt{predict()}: we set the \texttt{type} argument to \texttt{type\ =\ "response"}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# predict probabilities}
+\NormalTok{preds.logit <-}\StringTok{ }\KeywordTok{predict}\NormalTok{( m.logit, }\DataTypeTok{type =} \StringTok{"response"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+To see how good our classification model is we need to compare the classification with the actual outcomes. We first create an object \texttt{exp.logit} which will be either \texttt{0} or \texttt{1}. In a second step, we cross-tab it with the true outcomes and this allows us to see how well the classification model is doing.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# predict whether respondent over-estimates or not}
+\NormalTok{exp.logit <-}\StringTok{ }\KeywordTok{ifelse}\NormalTok{( preds.logit }\OperatorTok{>}\StringTok{ }\FloatTok{0.5}\NormalTok{, }\DataTypeTok{yes =} \DecValTok{1}\NormalTok{, }\DataTypeTok{no =} \DecValTok{0}\NormalTok{)}
+
+\CommentTok{# confusion matrix (table of predictions and true outcomes)}
+\KeywordTok{table}\NormalTok{(}\DataTypeTok{prediction =}\NormalTok{ exp.logit, }\DataTypeTok{truth =}\NormalTok{ fdata}\OperatorTok{$}\NormalTok{over.estimate)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+          truth
+prediction   0   1
+         0  41  40
+         1 249 719
+\end{verbatim}
+
+The diagonal elements are the correct classifications and the off-diagonal ones are wrong. We can compute the share of correct classified observations as a ratio.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# percent correctly classified}
+\NormalTok{(}\DecValTok{35} \OperatorTok{+}\StringTok{ }\DecValTok{728}\NormalTok{) }\OperatorTok{/}\StringTok{ }\DecValTok{1049}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 0.7273594
+\end{verbatim}
+
+We can also write code that will estimate the percentage correctly classified for different values.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# more generally}
+\KeywordTok{mean}\NormalTok{( exp.logit }\OperatorTok{==}\StringTok{ }\NormalTok{fdata}\OperatorTok{$}\NormalTok{over.estimate)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 0.7244995
+\end{verbatim}
+
+This is the performance on the training data and we expect the test error to be higher than this. To get at a better indication of the model's classification error we can split the dataset into a training set and a test set.
+
+This is the performance on the training data and we expect the test error to be higher than this. To get at a better indication of the model's classification error we can split the dataset into a training set and a test set.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# set the random number generator}
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{123}\NormalTok{)}
+
+\CommentTok{# random draw of 80% of the observations (row numbers) to train the model}
+\NormalTok{train.ids <-}\StringTok{ }\KeywordTok{sample}\NormalTok{(}\KeywordTok{nrow}\NormalTok{(fdata), }\DataTypeTok{size =} \KeywordTok{as.integer}\NormalTok{( (}\KeywordTok{nrow}\NormalTok{(fdata)}\OperatorTok{*}\NormalTok{.}\DecValTok{80}\NormalTok{) ), }\DataTypeTok{replace =} \OtherTok{FALSE}\NormalTok{)}
+
+\CommentTok{# the validation data }
+\NormalTok{fdata.test <-}\StringTok{ }\NormalTok{fdata[ }\OperatorTok{-}\NormalTok{train.ids, ]}
+\KeywordTok{dim}\NormalTok{(fdata.test)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 210  17
+\end{verbatim}
+
+So, we first set the random number generator with \texttt{set.seed()}. It does not matter which number we use to set the RNG but the point is that re-running our script will always lead to the same result (Disclaimer: In April 2019, it was changed how the RNG works. To replicate anything that was created prior to that data or anything that was created on an old R version, the options have to be adjusted like so: \texttt{RNGkind(sample.kind\ =\ "Rounding")})
+
+We then take a random sample with \texttt{sample()} function. The first argument is what we draw from. Here, we use \texttt{nrow()} which returns the number of rows in the data set. We therefore, draw numbers between 1 and the number of observations in our dataset. We draw 80 percent of the observations, so we multiply the number of observations with 0.8. Since that number might not be whole, we cut off decimal places with the \texttt{as.integer()} function. Finally, the argument \texttt{replace\ =\ FALSE} ensures that we can draw an observation only once.
+
+Now we fit the model using the training data only and then test its performance on the test data.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# re-fit the model on the raining data}
+\NormalTok{m.logit <-}\StringTok{ }\KeywordTok{glm}\NormalTok{(over.estimate }\OperatorTok{~}\StringTok{ }\NormalTok{RSex }\OperatorTok{+}\StringTok{ }\NormalTok{RAge }\OperatorTok{+}\StringTok{ }\NormalTok{Househld }\OperatorTok{+}\StringTok{ }\NormalTok{party_self }\OperatorTok{+}\StringTok{ }\NormalTok{paper }\OperatorTok{+}\StringTok{ }\NormalTok{WWWhourspW }\OperatorTok{+}\StringTok{  }\NormalTok{religious }\OperatorTok{+}\StringTok{ }
+\StringTok{               }\NormalTok{employMonths }\OperatorTok{+}\StringTok{ }\NormalTok{rural }\OperatorTok{+}\StringTok{ }\NormalTok{partly.rural }\OperatorTok{+}\StringTok{ }\NormalTok{urban }\OperatorTok{+}\StringTok{ }\NormalTok{health.good }\OperatorTok{+}\StringTok{ }\NormalTok{HHInc, }\DataTypeTok{data =}\NormalTok{ fdata, }
+               \DataTypeTok{subset =}\NormalTok{ train.ids, }
+               \DataTypeTok{family =} \KeywordTok{binomial}\NormalTok{(}\DataTypeTok{link =} \StringTok{"logit"}\NormalTok{))}
+
+\CommentTok{# predict probabilities of over-estimating but for the unseen data}
+\NormalTok{preds.logit <-}\StringTok{ }\KeywordTok{predict}\NormalTok{(m.logit, }\DataTypeTok{newdata =}\NormalTok{ fdata.test, }\DataTypeTok{type =} \StringTok{"response"}\NormalTok{)}
+
+\CommentTok{# classify predictions as over-estimating or not}
+\NormalTok{exp.logit <-}\StringTok{ }\KeywordTok{ifelse}\NormalTok{( preds.logit }\OperatorTok{>}\StringTok{ }\FloatTok{0.5}\NormalTok{, }\DataTypeTok{yes =} \DecValTok{1}\NormalTok{, }\DataTypeTok{no =} \DecValTok{0}\NormalTok{)}
+
+\CommentTok{# confusion matrix of predictions against truth}
+\KeywordTok{table}\NormalTok{( }\DataTypeTok{prediction =}\NormalTok{ exp.logit, }\DataTypeTok{truth =}\NormalTok{ fdata.test}\OperatorTok{$}\NormalTok{over.estimate)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+          truth
+prediction   0   1
+         0   6   9
+         1  49 146
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# percent correctly classified}
+\KeywordTok{mean}\NormalTok{( exp.logit }\OperatorTok{==}\StringTok{ }\NormalTok{fdata.test}\OperatorTok{$}\NormalTok{over.estimate )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 0.7238095
+\end{verbatim}
+
+The accuarcy of the model is slightly lower in the test dataset than in the training data. The difference is not big here but in practice it can be quite large.
+
+Let's try to improve the classification model by relying on the best predictors.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# try to improve the prediction model by relying on "good" predictors}
+\NormalTok{m.logit <-}\StringTok{ }\KeywordTok{glm}\NormalTok{(over.estimate }\OperatorTok{~}\StringTok{ }\NormalTok{RSex }\OperatorTok{+}\StringTok{ }\NormalTok{rural }\OperatorTok{+}\StringTok{ }\NormalTok{partly.rural }\OperatorTok{+}\StringTok{ }\NormalTok{urban }\OperatorTok{+}\StringTok{ }\NormalTok{HHInc, }
+             \DataTypeTok{data =}\NormalTok{ fdata, }\DataTypeTok{subset =}\NormalTok{ train.ids, }\DataTypeTok{family =} \KeywordTok{binomial}\NormalTok{(}\DataTypeTok{link =} \StringTok{"logit"}\NormalTok{))}
+\NormalTok{preds.logit <-}\StringTok{ }\KeywordTok{predict}\NormalTok{(m.logit, }\DataTypeTok{newdata =}\NormalTok{ fdata.test, }\DataTypeTok{type =} \StringTok{"response"}\NormalTok{)}
+\NormalTok{exp.logit <-}\StringTok{ }\KeywordTok{ifelse}\NormalTok{( preds.logit }\OperatorTok{>}\StringTok{ }\FloatTok{0.5}\NormalTok{, }\DataTypeTok{yes =} \DecValTok{1}\NormalTok{, }\DataTypeTok{no =} \DecValTok{0}\NormalTok{)}
+\KeywordTok{table}\NormalTok{( }\DataTypeTok{prediction =}\NormalTok{ exp.logit, }\DataTypeTok{truth =}\NormalTok{ fdata.test}\OperatorTok{$}\NormalTok{over.estimate )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+          truth
+prediction   0   1
+         0   7   2
+         1  48 153
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{mean}\NormalTok{( exp.logit }\OperatorTok{==}\StringTok{ }\NormalTok{fdata.test}\OperatorTok{$}\NormalTok{over.estimate )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 0.7619048
+\end{verbatim}
+
+We improved our model by removing variables. This will never be the case if we apply the same data for training a model and testing it. But this illustrates that a model that is not parsimonious starts fitting noise and will do poorly with new data.
+
+\hypertarget{k-nearest-neighbors}{%
+\subsubsection{K-Nearest Neighbors}\label{k-nearest-neighbors}}
+
+Thera are many models for classification. One of the more simple ones is KNN. For it, we need to provide the data in a slightly different format and we need to install the \texttt{class} package.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# training & test data set of predictor variables only}
+\NormalTok{train.X <-}\StringTok{ }\KeywordTok{cbind}\NormalTok{( fdata}\OperatorTok{$}\NormalTok{RSex, fdata}\OperatorTok{$}\NormalTok{rural, fdata}\OperatorTok{$}\NormalTok{partly.rural, fdata}\OperatorTok{$}\NormalTok{urban, fdata}\OperatorTok{$}\NormalTok{HHInc )[train.ids, ]}
+\NormalTok{test.X <-}\StringTok{ }\KeywordTok{cbind}\NormalTok{( fdata}\OperatorTok{$}\NormalTok{RSex, fdata}\OperatorTok{$}\NormalTok{rural, fdata}\OperatorTok{$}\NormalTok{partly.rural, fdata}\OperatorTok{$}\NormalTok{urban, fdata}\OperatorTok{$}\NormalTok{HHInc )[}\OperatorTok{-}\NormalTok{train.ids, ]}
+
+\CommentTok{# response variable for training observations}
+\NormalTok{train.Y <-}\StringTok{ }\NormalTok{fdata}\OperatorTok{$}\NormalTok{over.estimate[ train.ids ]}
+
+\CommentTok{# re-setting the random number generator}
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{123}\NormalTok{)}
+
+\CommentTok{# run knn}
+\NormalTok{knn.out <-}\StringTok{ }\NormalTok{class}\OperatorTok{::}\KeywordTok{knn}\NormalTok{(train.X, test.X, train.Y, }\DataTypeTok{k =} \DecValTok{1}\NormalTok{)}
+
+\CommentTok{# confusion matrix}
+\KeywordTok{table}\NormalTok{( }\DataTypeTok{prediction =}\NormalTok{ knn.out, }\DataTypeTok{truth =}\NormalTok{ fdata.test}\OperatorTok{$}\NormalTok{over.estimate )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+          truth
+prediction   0   1
+         0  11  15
+         1  44 140
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# percent correctly classified}
+\KeywordTok{mean}\NormalTok{( knn.out }\OperatorTok{==}\StringTok{ }\NormalTok{fdata.test}\OperatorTok{$}\NormalTok{over.estimate )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 0.7190476
+\end{verbatim}
+
+We can try and increase the accuracy by changing the number of nearest neighbors we are using:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# try to increae accuracy by varying k}
+\NormalTok{knn.out <-}\StringTok{ }\NormalTok{class}\OperatorTok{::}\KeywordTok{knn}\NormalTok{(train.X, test.X, train.Y, }\DataTypeTok{k =} \DecValTok{7}\NormalTok{)}
+\KeywordTok{mean}\NormalTok{( knn.out }\OperatorTok{==}\StringTok{ }\NormalTok{fdata.test}\OperatorTok{$}\NormalTok{over.estimate )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 0.752381
+\end{verbatim}
+
+\hypertarget{model-the-underlying-continuous-process}{%
+\subsubsection{Model the Underlying Continuous Process}\label{model-the-underlying-continuous-process}}
+
+We can try to model the underlying process and classify afterwards. By doing that, the depdendent variable provides more information. In effect we turn our classification problem into a regression problem.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# fit the linear model on the numer of immigrants per 100 Brits}
+\NormalTok{m.lm <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(IMMBRIT }\OperatorTok{~}\StringTok{ }\NormalTok{RSex }\OperatorTok{+}\StringTok{ }\NormalTok{rural }\OperatorTok{+}\StringTok{ }\NormalTok{partly.rural }\OperatorTok{+}\StringTok{ }\NormalTok{urban }\OperatorTok{+}\StringTok{ }\NormalTok{HHInc, }
+           \DataTypeTok{data =}\NormalTok{ fdata, }\DataTypeTok{subset =}\NormalTok{ train.ids)}
+
+\CommentTok{# preditions}
+\NormalTok{preds.lm <-}\StringTok{ }\KeywordTok{predict}\NormalTok{(m.lm, }\DataTypeTok{newdata =}\NormalTok{ fdata.test)}
+
+\CommentTok{# threshold for classfication}
+\NormalTok{threshold <-}\StringTok{ }\NormalTok{(}\FloatTok{10.7} \OperatorTok{-}\StringTok{ }\KeywordTok{mean}\NormalTok{(fdata}\OperatorTok{$}\NormalTok{IMMBRIT_original_scale)) }\OperatorTok{/}\StringTok{ }\KeywordTok{sd}\NormalTok{(fdata}\OperatorTok{$}\NormalTok{IMMBRIT_original_scale)}
+
+\CommentTok{# now we do the classfication }
+\NormalTok{exp.lm <-}\StringTok{ }\KeywordTok{ifelse}\NormalTok{( preds.lm }\OperatorTok{>}\StringTok{ }\NormalTok{threshold, }\DataTypeTok{yes =} \DecValTok{1}\NormalTok{, }\DataTypeTok{no =} \DecValTok{0}\NormalTok{)}
+
+\CommentTok{# confusion matrix}
+\KeywordTok{table}\NormalTok{( }\DataTypeTok{prediction =}\NormalTok{ exp.lm, }\DataTypeTok{truth =}\NormalTok{ fdata.test}\OperatorTok{$}\NormalTok{over.estimate)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+          truth
+prediction   0   1
+         1  55 155
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# percent correctly classified}
+\KeywordTok{mean}\NormalTok{( exp.lm }\OperatorTok{==}\StringTok{ }\NormalTok{fdata.test}\OperatorTok{$}\NormalTok{over.estimate)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 0.7380952
+\end{verbatim}
+
+We do worse by treating this as a regression problem rather than a classification problem - often, however, this would be the other way around.
 
 \hypertarget{cross-validation}{%
 \section{Cross-Validation}\label{cross-validation}}
