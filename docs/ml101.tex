@@ -168,12 +168,12 @@ Participants are expected to have a solid understanding of linear regression mod
 \item
   Tree based models
 \item
-  Simulation and Monte Carlo Simulation
+  Simulation and Monte Carlo simulation
 \end{enumerate}
 
 \textbf{\emph{Acknowledgements}}
 
-The material in this course is based on the text book: \href{http://faculty.marshall.usc.edu/gareth-james/ISL/ISLR\%20Seventh\%20Printing.pdf}{James Gareth, Daniela Witten, Trevor Hastie and Robert Tibshirani. 2013. An introduction to statistical learning. Springer}. In addition, the material is based on a machine learning class at the Essex Summer School with \href{https://lucasleemann.ch}{Lucas Leeman}.
+The material in this course is based on the textbook: \href{http://faculty.marshall.usc.edu/gareth-james/ISL/ISLR\%20Seventh\%20Printing.pdf}{James Gareth, Daniela Witten, Trevor Hastie and Robert Tibshirani. 2013. An introduction to statistical learning. Springer}. In addition, the material is based on a machine learning class at the Essex Summer School with \href{https://lucasleemann.ch}{Lucas Leemann} and \href{https://philippbroniecki.com}{Philipp Broniecki}. The infrastracture for this website is in large parts adopted from work by UCL's \href{https://iris.ucl.ac.uk/iris/browse/profile?upi=ALIAX58}{Altaf Ali}, \href{https://www.jackblumenau.com/}{Jack Blumenau}, and \href{https://www.philippbroniecki.com/}{Philipp Broniecki}.
 
 \begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
 
@@ -1130,7 +1130,409 @@ We do worse by treating this as a regression problem rather than a classificatio
 \hypertarget{seminar-1}{%
 \subsection{Seminar}\label{seminar-1}}
 
-Placeholder
+We start by clearing our workspace.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# clear workspace}
+\KeywordTok{rm}\NormalTok{( }\DataTypeTok{list =} \KeywordTok{ls}\NormalTok{() )}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{the-validation-set-approach}{%
+\subsubsection{The Validation Set Approach}\label{the-validation-set-approach}}
+
+We use a subset of last weeks non-western immigrants data set (the version for this week includes men only). We can use the \texttt{head()} function to have a quick glance at the data. Download the data \href{http://philippbroniecki.github.io/ML2017.io/data/BSAS_manip_men.RData}{here}
+
+The codebook is:
+
+\begin{longtable}[]{@{}ll@{}}
+\toprule
+\begin{minipage}[b]{0.11\columnwidth}\raggedright
+Variable Name\strut
+\end{minipage} & \begin{minipage}[b]{0.83\columnwidth}\raggedright
+Description\strut
+\end{minipage}\tabularnewline
+\midrule
+\endhead
+\begin{minipage}[t]{0.11\columnwidth}\raggedright
+IMMBRIT\strut
+\end{minipage} & \begin{minipage}[t]{0.83\columnwidth}\raggedright
+Out of every 100 people in Britain, how many do you think are immigrants from Non-western countries?\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.11\columnwidth}\raggedright
+over.estimate\strut
+\end{minipage} & \begin{minipage}[t]{0.83\columnwidth}\raggedright
+1 if estimate is higher than 10.7\%.\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.11\columnwidth}\raggedright
+RAge\strut
+\end{minipage} & \begin{minipage}[t]{0.83\columnwidth}\raggedright
+Age of respondent\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.11\columnwidth}\raggedright
+Househld\strut
+\end{minipage} & \begin{minipage}[t]{0.83\columnwidth}\raggedright
+Number of people living in respondent's household\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.11\columnwidth}\raggedright
+Cons, Lab, SNP, Ukip, BNP, GP, party.other\strut
+\end{minipage} & \begin{minipage}[t]{0.83\columnwidth}\raggedright
+Party self-identification\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.11\columnwidth}\raggedright
+paper\strut
+\end{minipage} & \begin{minipage}[t]{0.83\columnwidth}\raggedright
+Do you normally read any daily morning newspaper 3+ times/week?\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.11\columnwidth}\raggedright
+WWWhourspW\strut
+\end{minipage} & \begin{minipage}[t]{0.83\columnwidth}\raggedright
+How many hours WWW per week?\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.11\columnwidth}\raggedright
+religious\strut
+\end{minipage} & \begin{minipage}[t]{0.83\columnwidth}\raggedright
+Do you regard yourself as belonging to any particular religion?\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.11\columnwidth}\raggedright
+employMonths\strut
+\end{minipage} & \begin{minipage}[t]{0.83\columnwidth}\raggedright
+How many mnths w. present employer?\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.11\columnwidth}\raggedright
+urban\strut
+\end{minipage} & \begin{minipage}[t]{0.83\columnwidth}\raggedright
+Population density, 4 categories (highest density is 4, lowest is 1)\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.11\columnwidth}\raggedright
+health.good\strut
+\end{minipage} & \begin{minipage}[t]{0.83\columnwidth}\raggedright
+How is your health in general for someone of your age? (0: bad, 1: fair, 2: fairly good, 3: good)\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.11\columnwidth}\raggedright
+HHInc\strut
+\end{minipage} & \begin{minipage}[t]{0.83\columnwidth}\raggedright
+Income bands for household, high number = high HH income\strut
+\end{minipage}\tabularnewline
+\bottomrule
+\end{longtable}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# load non-western foreigners data}
+\KeywordTok{load}\NormalTok{(}\StringTok{"BSAS_manip_men.RData"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+We first select a random sample of 239 out of 478 observations (check that that's half the observations in our dataset using \texttt{nrow(data2)}). We initialize the random number generator with a seed using \texttt{set.seed()} to ensure that repeated runs produce consistent results.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# initialize random number generator}
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{1}\NormalTok{)}
+
+\CommentTok{# pick 239 numbers out of 1 to 478}
+\NormalTok{train <-}\StringTok{ }\KeywordTok{sample}\NormalTok{(}\DecValTok{478}\NormalTok{, }\DecValTok{239}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+We then estimate the effects of age on the perceived number of immigrants per 100 Brits with \texttt{lm()} on the selected subset.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# linear regression}
+\NormalTok{m.lm <-}\StringTok{ }\KeywordTok{lm}\NormalTok{( IMMBRIT }\OperatorTok{~}\StringTok{ }\NormalTok{RAge, }\DataTypeTok{data =}\NormalTok{ data2, }\DataTypeTok{subset =}\NormalTok{ train)}
+\end{Highlighting}
+\end{Shaded}
+
+Next, we use our model that we trained on the training set to predict outcomes in the test set - the test set contains unseen data. We subset the dataset using square brackets such that it excludes the training observations. The \texttt{-} operator means except in this case. So \texttt{data2{[}-tain,\ {]}} is the dataset excluding training observations.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# predict on test set}
+\NormalTok{preds.lm <-}\StringTok{ }\KeywordTok{predict}\NormalTok{( m.lm, data2[}\OperatorTok{-}\NormalTok{train,] )}
+\end{Highlighting}
+\end{Shaded}
+
+Next, we compare our predictions on the test set to the real outcomes. Our loss function (evaluation metric) is the mean squared error (MSE):
+
+\[ \frac{1}{n}\sum_{i=1}^{n}(y_i - \hat{y}_i)^2 \]
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# mse in the validation (test) set}
+\NormalTok{mse <-}\StringTok{ }\KeywordTok{mean}\NormalTok{((data2}\OperatorTok{$}\NormalTok{IMMBRIT[}\OperatorTok{-}\NormalTok{train] }\OperatorTok{-}\StringTok{ }\NormalTok{preds.lm)}\OperatorTok{^}\DecValTok{2}\NormalTok{)}
+ \CommentTok{# error rate}
+\NormalTok{mse}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 435.4077
+\end{verbatim}
+
+The error rate for a linear model is 435.41. We can also fit higher degree polynomials with the \texttt{poly()} function. First, let's try a quadratic model.
+
+So far, we have modelled the relationship between \texttt{RAge} and \texttt{IMMBRIT} as linear. It is possible that the relationship is non-linear. We can model this using polynomials, i.e.~raising \texttt{RAge} to some power. We start with the square. We could use the \texttt{\^{}2} operator to raise \texttt{RAge} to the second power like so: \texttt{data2\$RAge\^{}2}. However, it's generally not a good idea to do this because polynomials are correlated introducing collinearity into the model. We can avoid this using the \texttt{poly()} function which decorrelates the variable and its powers.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# polynomials (quadratic)}
+\NormalTok{m.lm2 <-}\StringTok{ }\KeywordTok{lm}\NormalTok{( IMMBRIT }\OperatorTok{~}\StringTok{ }\KeywordTok{poly}\NormalTok{(RAge, }\DecValTok{2}\NormalTok{), }\DataTypeTok{data =}\NormalTok{ data2, }\DataTypeTok{subset =}\NormalTok{ train)}
+\end{Highlighting}
+\end{Shaded}
+
+Let's have a quick look at the regression table using the \texttt{texreg} package.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(texreg)}
+\NormalTok{texreg}\OperatorTok{::}\KeywordTok{screenreg}\NormalTok{(m.lm2)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+
+==========================
+                Model 1   
+--------------------------
+(Intercept)      24.69 ***
+                 (1.17)   
+poly(RAge, 2)1   25.21    
+                (26.59)   
+poly(RAge, 2)2   59.89 *  
+                (25.07)   
+--------------------------
+R^2               0.03    
+Adj. R^2          0.02    
+Num. obs.       239       
+RMSE             17.92    
+==========================
+*** p < 0.001, ** p < 0.01, * p < 0.05
+\end{verbatim}
+
+Interpreting polynomials is not straightforward because the effect is not linear, i.e.~it is not constant. Here, \texttt{poly(RAge,\ 2)1} is \texttt{RAge} and \texttt{poly(RAge,\ 2)1} is the square of \texttt{RAge}. The effect is significant. However, to interpret the effect we would need to plot it. Instead, we will proceed by making predictions on the validation set (test set) again and calcuate the MSE.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{preds.lm2 <-}\StringTok{ }\KeywordTok{predict}\NormalTok{(m.lm2, data2[}\OperatorTok{-}\NormalTok{train,])}
+\NormalTok{mse2 <-}\StringTok{ }\KeywordTok{mean}\NormalTok{((data2}\OperatorTok{$}\NormalTok{IMMBRIT }\OperatorTok{-}\StringTok{ }\NormalTok{preds.lm2)}\OperatorTok{^}\DecValTok{2}\NormalTok{)}
+\NormalTok{mse2}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 391.8855
+\end{verbatim}
+
+Quadratic regression performs better than a linear model because it reduces the error (MSE) from 435.41 to 391.89 (10\%). We move on to a cubic model.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# cubic model}
+\NormalTok{m.lm3 <-}\StringTok{ }\KeywordTok{lm}\NormalTok{( IMMBRIT }\OperatorTok{~}\StringTok{ }\KeywordTok{poly}\NormalTok{(RAge, }\DecValTok{3}\NormalTok{), }\DataTypeTok{data =}\NormalTok{ data2, }\DataTypeTok{subset =}\NormalTok{ train)}
+\NormalTok{mse3  <-}\StringTok{ }\KeywordTok{mean}\NormalTok{( (data2}\OperatorTok{$}\NormalTok{IMMBRIT[}\OperatorTok{-}\NormalTok{train] }\OperatorTok{-}\StringTok{  }\KeywordTok{predict}\NormalTok{(m.lm3, data2[}\OperatorTok{-}\NormalTok{train,]))}\OperatorTok{^}\DecValTok{2}\NormalTok{ )}
+\NormalTok{mse3}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 412.7887
+\end{verbatim}
+
+According to our approach, the quadratic model is the best out of the three we tested. However, this might be due to the training/test split that we made. We will try again using a different split of the data.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# fit the models on a different training/test split}
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{2}\NormalTok{)}
+\NormalTok{train <-}\StringTok{ }\KeywordTok{sample}\NormalTok{(}\DecValTok{478}\NormalTok{, }\DecValTok{239}\NormalTok{)}
+\NormalTok{m.lm <-}\StringTok{ }\KeywordTok{lm}\NormalTok{( IMMBRIT }\OperatorTok{~}\StringTok{ }\NormalTok{RAge, }\DataTypeTok{data =}\NormalTok{ data2, }\DataTypeTok{subset =}\NormalTok{ train)}
+\NormalTok{mse <-}\StringTok{ }\KeywordTok{mean}\NormalTok{( (data2}\OperatorTok{$}\NormalTok{IMMBRIT[}\OperatorTok{-}\NormalTok{train] }\OperatorTok{-}\StringTok{  }\KeywordTok{predict}\NormalTok{(m.lm, data2[}\OperatorTok{-}\NormalTok{train,]) )}\OperatorTok{^}\DecValTok{2}\NormalTok{ )}
+
+\CommentTok{# quadratic}
+\NormalTok{m.lm2 <-}\StringTok{ }\KeywordTok{lm}\NormalTok{( IMMBRIT }\OperatorTok{~}\StringTok{ }\KeywordTok{poly}\NormalTok{(RAge, }\DecValTok{2}\NormalTok{), }\DataTypeTok{data =}\NormalTok{ data2, }\DataTypeTok{subset =}\NormalTok{ train)}
+\NormalTok{mse2 <-}\StringTok{ }\KeywordTok{mean}\NormalTok{( (data2}\OperatorTok{$}\NormalTok{IMMBRIT[}\OperatorTok{-}\NormalTok{train] }\OperatorTok{-}\StringTok{  }\KeywordTok{predict}\NormalTok{(m.lm2, data2[}\OperatorTok{-}\NormalTok{train,]))}\OperatorTok{^}\DecValTok{2}\NormalTok{ )}
+
+\CommentTok{# cubic}
+\NormalTok{m.lm3 <-}\StringTok{ }\KeywordTok{lm}\NormalTok{( IMMBRIT }\OperatorTok{~}\StringTok{ }\KeywordTok{poly}\NormalTok{(RAge, }\DecValTok{3}\NormalTok{), }\DataTypeTok{data =}\NormalTok{ data2, }\DataTypeTok{subset =}\NormalTok{ train)}
+\NormalTok{mse3 <-}\StringTok{ }\KeywordTok{mean}\NormalTok{( (data2}\OperatorTok{$}\NormalTok{IMMBRIT[}\OperatorTok{-}\NormalTok{train] }\OperatorTok{-}\StringTok{  }\KeywordTok{predict}\NormalTok{(m.lm3, data2[}\OperatorTok{-}\NormalTok{train,]))}\OperatorTok{^}\DecValTok{2}\NormalTok{ )}
+
+\CommentTok{# outut}
+\NormalTok{output <-}\StringTok{ }\KeywordTok{cbind}\NormalTok{( mse, mse2, mse3 )}
+\KeywordTok{colnames}\NormalTok{(output) <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"linear"}\NormalTok{, }\StringTok{"quadratic"}\NormalTok{, }\StringTok{"cubic"}\NormalTok{)}
+\NormalTok{output}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+       linear quadratic    cubic
+[1,] 413.6691  399.0577 394.3029
+\end{verbatim}
+
+Clearly, the results are different from our initial run. Not only, are the error rates different but in addition, the order of the models changes. In this trial, the cubic model performs best. It appears that we need to split data more often to determine which is the best model overall. We will move on to leave-one-out cross-validation which does exactly that.
+
+\hypertarget{leave-one-out-cross-validation-loocv}{%
+\subsubsection{Leave-One-Out Cross-Validation (LOOCV)}\label{leave-one-out-cross-validation-loocv}}
+
+In LOOCV, we train our model on all but the first observation and subsequently predict the first observation using our model. Next, we train our model on all but the second observation and predict the second observation with that model and so forth for every observation in the dataset. That means, we must estimate as many models as we have observations in the dataset. While there are some tricks to make the computation faster for linear models, LOOCV can take a long time to run.
+
+Before we get into it, we quickly introduce a new function. The \texttt{glm()} function offers a generalization of the linear model while allowing for different link functions and error distributions other than gaussian. By default, \texttt{glm()} simply fits a linear model identical to the one estimated with \texttt{lm()}. Let's confirm this quickly.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{glm.fit <-}\StringTok{ }\KeywordTok{glm}\NormalTok{( IMMBRIT }\OperatorTok{~}\StringTok{ }\NormalTok{RAge, }\DataTypeTok{data =}\NormalTok{ data2)}
+\NormalTok{lm.fit <-}\StringTok{ }\KeywordTok{lm}\NormalTok{( IMMBRIT }\OperatorTok{~}\StringTok{ }\NormalTok{RAge, }\DataTypeTok{data =}\NormalTok{ data2)}
+\NormalTok{texreg}\OperatorTok{::}\KeywordTok{screenreg}\NormalTok{( }\KeywordTok{list}\NormalTok{(glm.fit, lm.fit), }\DataTypeTok{custom.model.names =} \KeywordTok{c}\NormalTok{(}\StringTok{"GLM"}\NormalTok{, }\StringTok{"LM"}\NormalTok{) )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+
+=========================================
+                GLM            LM        
+-----------------------------------------
+(Intercept)         25.83 ***   25.83 ***
+                    (2.88)      (2.88)   
+RAge                -0.03       -0.03    
+                    (0.05)      (0.05)   
+-----------------------------------------
+AIC               4197.88                
+BIC               4210.39                
+Log Likelihood   -2095.94                
+Deviance        180117.97                
+Num. obs.          478         478       
+R^2                              0.00    
+Adj. R^2                        -0.00    
+RMSE                            19.45    
+=========================================
+*** p < 0.001, ** p < 0.01, * p < 0.05
+\end{verbatim}
+
+The coefficient estimates are similar but the fit statistics that are reported differ. Generally a GLM maximises the likelihood whereas LM minimises the sum of squared deviations from the regression line. Maximum likelihood estimation is more general and used in most statistical models.
+
+We will use the \texttt{glm()} function from here on because it can be used with \texttt{cv.glm()} which allows us to estimate the k-fold cross-validation prediction error. We also need to install a new package called \texttt{boot} using \texttt{install.packages("boot")}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(boot)}
+
+\CommentTok{# use cv.glm() for k-fold corss-validation on glm}
+\NormalTok{cv.err <-}\StringTok{ }\KeywordTok{cv.glm}\NormalTok{(data2, glm.fit)}
+
+\CommentTok{# cross-validation error}
+\NormalTok{cv.err}\OperatorTok{$}\NormalTok{delta}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 380.2451 380.2415
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# the number of folds}
+\NormalTok{cv.err}\OperatorTok{$}\NormalTok{K}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 478
+\end{verbatim}
+
+The returned value from \texttt{cv.glm()} contains a delta vector of components - the raw cross-validation estimate and the adjusted cross-validation estimate respectively. We are interested in the raw cross-validation error.
+
+NOTE: if we do not provide the option \textbf{K} in \texttt{cv.glm()} we automatically perfrom leave-one-out cross-validation (LOOCV).
+
+We repeat this process in a \texttt{for()} loop to compare the cross-validation error of higher-order polynomials. The following example estimates the polynomial fit of the order 1 through 7 and stores the result in a cv.error vector.
+
+We will also record the in-sample prediction error to illustrate that we do need to test our models using new data rather than improving them in-sample due to the bias-variance tradeoff.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# container for cv errors}
+\NormalTok{cv.error <-}\StringTok{ }\OtherTok{NA}
+
+\CommentTok{# container for in-sample MSE}
+\NormalTok{in.sample.error <-}\StringTok{ }\OtherTok{NA}
+
+\CommentTok{# loop over age raised to the power 1...7}
+\ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{7}\NormalTok{)\{}
+  
+\NormalTok{  glm.fit <-}\StringTok{ }\KeywordTok{glm}\NormalTok{( IMMBRIT }\OperatorTok{~}\StringTok{ }\KeywordTok{poly}\NormalTok{(RAge, i), }\DataTypeTok{data =}\NormalTok{ data2 )}
+  
+  \CommentTok{# cv error}
+\NormalTok{  cv.error[i] <-}\StringTok{ }\KeywordTok{cv.glm}\NormalTok{(data2, glm.fit)}\OperatorTok{$}\NormalTok{delta[}\DecValTok{1}\NormalTok{]}
+  \CommentTok{# in-sample mse}
+\NormalTok{  in.sample.error[i] <-}\StringTok{ }\KeywordTok{mean}\NormalTok{( (data2}\OperatorTok{$}\NormalTok{IMMBRIT }\OperatorTok{-}\StringTok{ }\KeywordTok{predict}\NormalTok{(glm.fit, data2) )}\OperatorTok{^}\DecValTok{2}\NormalTok{)}
+
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+Next, we plot the effect of increasing the complexity of the model. We also plot the in-sample error
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# plot of error rates}
+\KeywordTok{plot}\NormalTok{( cv.error }\OperatorTok{~}\StringTok{ }\KeywordTok{seq}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{7}\NormalTok{), }\DataTypeTok{bty =} \StringTok{"n"}\NormalTok{, }\DataTypeTok{pch =} \DecValTok{20}\NormalTok{,}
+      \DataTypeTok{xlab =} \StringTok{"complexity"}\NormalTok{, }\DataTypeTok{ylab =} \StringTok{"cross-validation error"}\NormalTok{,}
+      \DataTypeTok{ylim =} \KeywordTok{c}\NormalTok{(}\DecValTok{355}\NormalTok{, }\DecValTok{385}\NormalTok{))}
+\CommentTok{# cv error}
+\KeywordTok{lines}\NormalTok{( }\DataTypeTok{y =}\NormalTok{ cv.error, }\DataTypeTok{x =} \KeywordTok{seq}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{7}\NormalTok{), }\DataTypeTok{lwd =} \DecValTok{2}\NormalTok{, }\DataTypeTok{col =} \DecValTok{1}\NormalTok{)}
+\CommentTok{# in-sample error}
+\KeywordTok{lines}\NormalTok{( }\DataTypeTok{y =}\NormalTok{ in.sample.error, }\DataTypeTok{x =} \KeywordTok{seq}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{7}\NormalTok{), }\DataTypeTok{lwd =} \DecValTok{2}\NormalTok{, }\DataTypeTok{col =} \DecValTok{2}\NormalTok{ )}
+\CommentTok{# legend}
+\KeywordTok{legend}\NormalTok{(}\StringTok{"topright"}\NormalTok{, }\KeywordTok{c}\NormalTok{(}\StringTok{"Out of sample MSE"}\NormalTok{, }\StringTok{"In sample MSE"}\NormalTok{), }\DataTypeTok{col =} \KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{), }\DataTypeTok{lwd=} \DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ml101_files/figure-latex/non.finished.plotting-1.pdf}
+
+Apparently, the cubic model performs best. We would have missed this using the initial split of the data into one training set and one test set. Futhermore, the in-sample MSE keeps decreasing the more complex we make our model (although with diminishing marginal returns). However, the more complex models start fitting ideosyncratic aspects of the sample (noise) and perform badly with new data.
+
+\hypertarget{k-fold-cross-validation}{%
+\subsubsection{k-Fold Cross-Validation}\label{k-fold-cross-validation}}
+
+K-fold cross-validation splits the datset into k datasets. Common choices for k are 5 and 10. Using 5, we would split the data into five folds. We would then train our model on the first fold and predict on the remaining folds. Next, we would train our model on the second fold and predict on the four remaining ones and so on until we train on the fith fold and predict on the remaining folds. Each time we will get an error (e.g.~MSE). We would then average over the five MSEs to obtain the overall k-fold cross-validation MSE.
+
+In addition to LOOCV, \texttt{cv.glm()} can also be used to run k-fold cross-validation. In the following example, we estimate the cross-validation error of polynomials of the order \(1\) through \(7\) using \(10\)-fold cross-validation.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# re-initialize random number generator}
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{17}\NormalTok{)}
+
+\CommentTok{# container for 10-fold cross-validation errors}
+\NormalTok{cv.error}\FloatTok{.10}\NormalTok{ <-}\StringTok{ }\OtherTok{NA}
+
+\CommentTok{# loop over 7 different powers of age}
+\ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{7}\NormalTok{)\{}
+\NormalTok{  glm.fit <-}\StringTok{ }\KeywordTok{glm}\NormalTok{( IMMBRIT }\OperatorTok{~}\StringTok{ }\KeywordTok{poly}\NormalTok{(RAge, i), }\DataTypeTok{data =}\NormalTok{ data2)}
+\NormalTok{  cv.error}\FloatTok{.10}\NormalTok{[i] <-}\StringTok{ }\KeywordTok{cv.glm}\NormalTok{( data2, glm.fit, }\DataTypeTok{K =} \DecValTok{10}\NormalTok{)}\OperatorTok{$}\NormalTok{delta[}\DecValTok{1}\NormalTok{]}
+\NormalTok{\}}
+\NormalTok{cv.error}\FloatTok{.10}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 380.5447 365.6740 367.5397 365.5214 369.5038 385.1270 373.3029
+\end{verbatim}
+
+We add the results to the plot:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# add to plot}
+\KeywordTok{points}\NormalTok{(}\DataTypeTok{x =} \KeywordTok{seq}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{7}\NormalTok{), }\DataTypeTok{y =}\NormalTok{ cv.error}\FloatTok{.10}\NormalTok{, }\DataTypeTok{col =} \DecValTok{3}\NormalTok{, }\DataTypeTok{pch =} \DecValTok{20}\NormalTok{)}
+\KeywordTok{lines}\NormalTok{( }\DataTypeTok{x =} \KeywordTok{seq}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{7}\NormalTok{), }\DataTypeTok{y =}\NormalTok{ cv.error}\FloatTok{.10}\NormalTok{, }\DataTypeTok{col =} \DecValTok{3}\NormalTok{, }\DataTypeTok{lwd =} \DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ml101_files/figure-latex/unnamed-chunk-59-1.pdf}
+
+The 10-fold cross-validation error is more wiggly. In this expample, it estimates the best performance with a square model of age wehreas the LOOCV errror finds a minimum at the cube of age. Eyeballing the results, we suggest that there are no substantial improvements beyond the squared term. However, using the cubic model would be an alternative.
 
 \hypertarget{subset-selection}{%
 \section{Subset Selection}\label{subset-selection}}
@@ -1138,7 +1540,894 @@ Placeholder
 \hypertarget{seminar-2}{%
 \subsection{Seminar}\label{seminar-2}}
 
-Placeholder
+In this exercise, we learn how to select the best predictors out of a set of variables. This is sometimes referred to as a variable selection model (the Lasso which we introduce later falls into the same category).
+
+We start by clearing our workspace.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# clear workspace}
+\KeywordTok{rm}\NormalTok{( }\DataTypeTok{list =} \KeywordTok{ls}\NormalTok{() )}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{subset-selection-methods}{%
+\subsubsection{Subset Selection Methods}\label{subset-selection-methods}}
+
+We use a modified data set on non-western immigrants (we inserted some missings). Download the data \href{http://philippbroniecki.github.io/ML2017.io/data/BSAS_manip_missings.RData}{here}.
+
+The codebook is:
+
+\begin{longtable}[]{@{}ll@{}}
+\toprule
+\begin{minipage}[b]{0.11\columnwidth}\raggedright
+Variable Name\strut
+\end{minipage} & \begin{minipage}[b]{0.83\columnwidth}\raggedright
+Description\strut
+\end{minipage}\tabularnewline
+\midrule
+\endhead
+\begin{minipage}[t]{0.11\columnwidth}\raggedright
+IMMBRIT\strut
+\end{minipage} & \begin{minipage}[t]{0.83\columnwidth}\raggedright
+Out of every 100 people in Britain, how many do you think are immigrants from Non-western countries?\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.11\columnwidth}\raggedright
+over.estimate\strut
+\end{minipage} & \begin{minipage}[t]{0.83\columnwidth}\raggedright
+1 if estimate is higher than 10.7\%.\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.11\columnwidth}\raggedright
+RSex\strut
+\end{minipage} & \begin{minipage}[t]{0.83\columnwidth}\raggedright
+1 = male, 2 = female\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.11\columnwidth}\raggedright
+RAge\strut
+\end{minipage} & \begin{minipage}[t]{0.83\columnwidth}\raggedright
+Age of respondent\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.11\columnwidth}\raggedright
+Househld\strut
+\end{minipage} & \begin{minipage}[t]{0.83\columnwidth}\raggedright
+Number of people living in respondent's household\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.11\columnwidth}\raggedright
+Cons, Lab, SNP, Ukip, BNP, GP, party.other\strut
+\end{minipage} & \begin{minipage}[t]{0.83\columnwidth}\raggedright
+Party self-identification\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.11\columnwidth}\raggedright
+paper\strut
+\end{minipage} & \begin{minipage}[t]{0.83\columnwidth}\raggedright
+Do you normally read any daily morning newspaper 3+ times/week?\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.11\columnwidth}\raggedright
+WWWhourspW\strut
+\end{minipage} & \begin{minipage}[t]{0.83\columnwidth}\raggedright
+How many hours WWW per week?\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.11\columnwidth}\raggedright
+religious\strut
+\end{minipage} & \begin{minipage}[t]{0.83\columnwidth}\raggedright
+Do you regard yourself as belonging to any particular religion?\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.11\columnwidth}\raggedright
+employMonths\strut
+\end{minipage} & \begin{minipage}[t]{0.83\columnwidth}\raggedright
+How many mnths w. present employer?\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.11\columnwidth}\raggedright
+urban\strut
+\end{minipage} & \begin{minipage}[t]{0.83\columnwidth}\raggedright
+Population density, 4 categories (highest density is 4, lowest is 1)\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.11\columnwidth}\raggedright
+health.good\strut
+\end{minipage} & \begin{minipage}[t]{0.83\columnwidth}\raggedright
+How is your health in general for someone of your age? (0: bad, 1: fair, 2: fairly good, 3: good)\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.11\columnwidth}\raggedright
+HHInc\strut
+\end{minipage} & \begin{minipage}[t]{0.83\columnwidth}\raggedright
+Income bands for household, high number = high HH income\strut
+\end{minipage}\tabularnewline
+\bottomrule
+\end{longtable}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# load foreigners data}
+\KeywordTok{load}\NormalTok{(}\StringTok{"your directory/BSAS_manip_missings.RData"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+We check our dataset for missing values variable by variable using \texttt{apply()}, \texttt{is.na()}, and \texttt{table()}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# check for missing values}
+\KeywordTok{apply}\NormalTok{(df, }\DecValTok{2}\NormalTok{, }\ControlFlowTok{function}\NormalTok{(x) }\KeywordTok{table}\NormalTok{(}\KeywordTok{is.na}\NormalTok{(x))[}\StringTok{"TRUE"}\NormalTok{] )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+      IMMBRIT over.estimate          RSex          RAge      Househld 
+            8            NA            NA            NA            NA 
+         Cons           Lab           SNP          Ukip           BNP 
+           NA            NA            NA            NA            NA 
+           GP   party.other         paper    WWWhourspW     religious 
+           NA            NA            NA            NA            NA 
+ employMonths         urban   health.good         HHInc 
+           NA            NA            NA            NA 
+\end{verbatim}
+
+We next drop variables from the dataset.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# we drop missings in IMMBRIT}
+\NormalTok{df <-}\StringTok{ }\NormalTok{df[ }\OperatorTok{!}\KeywordTok{is.na}\NormalTok{(df}\OperatorTok{$}\NormalTok{IMMBRIT), ]}
+\end{Highlighting}
+\end{Shaded}
+
+If you ever want to drop variables on an entire dataset you can run \texttt{df\ \textless{}-\ na.omit(df)}. If you want to use the same method for dropping a few variables, you can run \texttt{df{[},\ c("some\ var",\ "some\ other\ var"){]}\ \textless{}-\ na.omit(df{[},\ c("some\ var",\ "some\ other\ var"){]})}.
+
+We now declare the categorical variables to be factors and create a copy of the main data set that excludes \texttt{over.estimate}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# declare factor variables}
+\NormalTok{df}\OperatorTok{$}\NormalTok{urban <-}\StringTok{ }\KeywordTok{factor}\NormalTok{(df}\OperatorTok{$}\NormalTok{urban, }\DataTypeTok{labels =} \KeywordTok{c}\NormalTok{(}\StringTok{"rural"}\NormalTok{, }\StringTok{"more rural"}\NormalTok{, }\StringTok{"more urban"}\NormalTok{, }\StringTok{"urban"}\NormalTok{))}
+\NormalTok{df}\OperatorTok{$}\NormalTok{RSex <-}\StringTok{ }\KeywordTok{factor}\NormalTok{(df}\OperatorTok{$}\NormalTok{RSex, }\DataTypeTok{labels =} \KeywordTok{c}\NormalTok{(}\StringTok{"Male"}\NormalTok{, }\StringTok{"Female"}\NormalTok{))}
+\NormalTok{df}\OperatorTok{$}\NormalTok{health.good <-}\StringTok{ }\KeywordTok{factor}\NormalTok{(df}\OperatorTok{$}\NormalTok{health.good, }\DataTypeTok{labels =} \KeywordTok{c}\NormalTok{(}\StringTok{"bad"}\NormalTok{, }\StringTok{"fair"}\NormalTok{, }\StringTok{"fairly good"}\NormalTok{, }\StringTok{"good"}\NormalTok{) )}
+
+\CommentTok{# drop the binary response coded 1 if IMMBRIT > 10.7 }
+\NormalTok{df}\OperatorTok{$}\NormalTok{over.estimate <-}\StringTok{ }\OtherTok{NULL}
+\NormalTok{df}\OperatorTok{$}\NormalTok{Cons <-}\StringTok{ }\OtherTok{NULL}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{best-subset-selection}{%
+\subsubsection{Best Subset Selection}\label{best-subset-selection}}
+
+We use the \texttt{regsubsets()} function to identify the best model based on subset selection quantified by the residual sum of squares (RSS) for each model. The function is included in the \texttt{leaps} package which we need to install if it is not already like so: \texttt{install.packages("leaps")}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(leaps)}
+
+\CommentTok{# run best subset selection}
+\NormalTok{regfit.full <-}\StringTok{ }\KeywordTok{regsubsets}\NormalTok{(IMMBRIT }\OperatorTok{~}\StringTok{ }\NormalTok{., }\DataTypeTok{data =}\NormalTok{ df)}
+\KeywordTok{summary}\NormalTok{(regfit.full)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Subset selection object
+Call: regsubsets.formula(IMMBRIT ~ ., data = df)
+20 Variables  (and intercept)
+                       Forced in Forced out
+RSexFemale                 FALSE      FALSE
+RAge                       FALSE      FALSE
+Househld                   FALSE      FALSE
+Lab                        FALSE      FALSE
+SNP                        FALSE      FALSE
+Ukip                       FALSE      FALSE
+BNP                        FALSE      FALSE
+GP                         FALSE      FALSE
+party.other                FALSE      FALSE
+paper                      FALSE      FALSE
+WWWhourspW                 FALSE      FALSE
+religious                  FALSE      FALSE
+employMonths               FALSE      FALSE
+urbanmore rural            FALSE      FALSE
+urbanmore urban            FALSE      FALSE
+urbanurban                 FALSE      FALSE
+health.goodfair            FALSE      FALSE
+health.goodfairly good     FALSE      FALSE
+health.goodgood            FALSE      FALSE
+HHInc                      FALSE      FALSE
+1 subsets of each size up to 8
+Selection Algorithm: exhaustive
+         RSexFemale RAge Househld Lab SNP Ukip BNP GP  party.other paper
+1  ( 1 ) " "        " "  " "      " " " " " "  " " " " " "         " "  
+2  ( 1 ) "*"        " "  " "      " " " " " "  " " " " " "         " "  
+3  ( 1 ) "*"        " "  "*"      " " " " " "  " " " " " "         " "  
+4  ( 1 ) "*"        " "  "*"      " " " " " "  "*" " " " "         " "  
+5  ( 1 ) "*"        " "  "*"      "*" " " " "  "*" " " " "         " "  
+6  ( 1 ) "*"        "*"  "*"      "*" " " " "  "*" " " " "         " "  
+7  ( 1 ) "*"        "*"  "*"      "*" " " " "  "*" " " " "         "*"  
+8  ( 1 ) "*"        "*"  "*"      "*" " " "*"  "*" " " " "         "*"  
+         WWWhourspW religious employMonths urbanmore rural urbanmore urban
+1  ( 1 ) " "        " "       " "          " "             " "            
+2  ( 1 ) " "        " "       " "          " "             " "            
+3  ( 1 ) " "        " "       " "          " "             " "            
+4  ( 1 ) " "        " "       " "          " "             " "            
+5  ( 1 ) " "        " "       " "          " "             " "            
+6  ( 1 ) " "        " "       " "          " "             " "            
+7  ( 1 ) " "        " "       " "          " "             " "            
+8  ( 1 ) " "        " "       " "          " "             " "            
+         urbanurban health.goodfair health.goodfairly good health.goodgood
+1  ( 1 ) " "        " "             " "                    " "            
+2  ( 1 ) " "        " "             " "                    " "            
+3  ( 1 ) " "        " "             " "                    " "            
+4  ( 1 ) " "        " "             " "                    " "            
+5  ( 1 ) " "        " "             " "                    " "            
+6  ( 1 ) " "        " "             " "                    " "            
+7  ( 1 ) " "        " "             " "                    " "            
+8  ( 1 ) " "        " "             " "                    " "            
+         HHInc
+1  ( 1 ) "*"  
+2  ( 1 ) "*"  
+3  ( 1 ) "*"  
+4  ( 1 ) "*"  
+5  ( 1 ) "*"  
+6  ( 1 ) "*"  
+7  ( 1 ) "*"  
+8  ( 1 ) "*"  
+\end{verbatim}
+
+In the regression output, variables with a star were selected for the model. Here, we see 8 different models from 1 to 8 variables. With the \texttt{nvmax} parameter we control the number of variables in the model. The default used by \texttt{regsubsets()} is 8.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# increase the max number of variables}
+\NormalTok{regfit.full <-}\StringTok{ }\KeywordTok{regsubsets}\NormalTok{(IMMBRIT }\OperatorTok{~}\StringTok{ }\NormalTok{., }\DataTypeTok{data =}\NormalTok{ df, }\DataTypeTok{nvmax =} \DecValTok{16}\NormalTok{)}
+\NormalTok{reg.summary <-}\StringTok{ }\KeywordTok{summary}\NormalTok{(regfit.full)}
+\end{Highlighting}
+\end{Shaded}
+
+We can look at the components of the \texttt{reg.summary} object using the \texttt{names()} function and examine the \(R^2\) statistic stored in \texttt{rsq}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{names}\NormalTok{(reg.summary)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] "which"  "rsq"    "rss"    "adjr2"  "cp"     "bic"    "outmat" "obj"   
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{reg.summary}\OperatorTok{$}\NormalTok{rsq}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+ [1] 0.1040145 0.1316228 0.1469748 0.1546376 0.1595363 0.1621379 0.1650727
+ [8] 0.1672137 0.1689371 0.1699393 0.1708328 0.1717100 0.1721041 0.1723151
+[15] 0.1725153 0.1726176
+\end{verbatim}
+
+Next, we plot the \(RSS\) and adjusted \(R^2\) and add a point where \(R^2\) is at its maximum using the \texttt{which.max()} function.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{par}\NormalTok{( }\DataTypeTok{mfrow =}  \KeywordTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{) ) }\CommentTok{# 2 row, 2 columns in plot window}
+\KeywordTok{plot}\NormalTok{(reg.summary}\OperatorTok{$}\NormalTok{rss, }\DataTypeTok{xlab =} \StringTok{"Number of Variables"}\NormalTok{, }\DataTypeTok{ylab =} \StringTok{"Residual Sum of Squares"}\NormalTok{, }\DataTypeTok{type =} \StringTok{"l"}\NormalTok{)}
+\KeywordTok{plot}\NormalTok{(reg.summary}\OperatorTok{$}\NormalTok{adjr2, }\DataTypeTok{xlab =} \StringTok{"Number of Variables"}\NormalTok{, }\DataTypeTok{ylab =} \StringTok{"Adjusted R^2"}\NormalTok{, }\DataTypeTok{type =} \StringTok{"l"}\NormalTok{)}
+
+\CommentTok{# find the peak of adj. R^2}
+\NormalTok{adjr2.max <-}\StringTok{ }\KeywordTok{which.max}\NormalTok{( reg.summary}\OperatorTok{$}\NormalTok{adjr2 )}
+\KeywordTok{points}\NormalTok{(adjr2.max, reg.summary}\OperatorTok{$}\NormalTok{adjr2[adjr2.max], }\DataTypeTok{col =} \StringTok{"red"}\NormalTok{, }\DataTypeTok{pch =} \DecValTok{20}\NormalTok{, }\DataTypeTok{cex =} \DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ml101_files/figure-latex/unnamed-chunk-72-1.pdf}
+
+We can also plot the \(C_{p}\) statistic and \(BIC\) and identify the minimum points for each statistic using the \(which.min()\) function.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# cp}
+\KeywordTok{plot}\NormalTok{(reg.summary}\OperatorTok{$}\NormalTok{cp, }\DataTypeTok{xlab =} \StringTok{"Number of Variables"}\NormalTok{, }\DataTypeTok{ylab =} \StringTok{"Cp"}\NormalTok{, }\DataTypeTok{type =} \StringTok{"l"}\NormalTok{)}
+\NormalTok{cp.min <-}\StringTok{ }\KeywordTok{which.min}\NormalTok{(reg.summary}\OperatorTok{$}\NormalTok{cp)}
+\KeywordTok{points}\NormalTok{(cp.min, reg.summary}\OperatorTok{$}\NormalTok{cp[cp.min], }\DataTypeTok{col =} \StringTok{"red"}\NormalTok{, }\DataTypeTok{cex =} \DecValTok{2}\NormalTok{, }\DataTypeTok{pch =} \DecValTok{20}\NormalTok{)}
+
+\CommentTok{# bic}
+\NormalTok{bic.min <-}\StringTok{ }\KeywordTok{which.min}\NormalTok{(reg.summary}\OperatorTok{$}\NormalTok{bic)}
+\KeywordTok{plot}\NormalTok{(reg.summary}\OperatorTok{$}\NormalTok{bic, }\DataTypeTok{xlab =} \StringTok{"Number of Variables"}\NormalTok{, }\DataTypeTok{ylab =} \StringTok{"BIC"}\NormalTok{, }\DataTypeTok{type =} \StringTok{"l"}\NormalTok{)}
+\KeywordTok{points}\NormalTok{(bic.min, reg.summary}\OperatorTok{$}\NormalTok{bic[bic.min], }\DataTypeTok{col =} \StringTok{"red"}\NormalTok{, }\DataTypeTok{cex =} \DecValTok{2}\NormalTok{, }\DataTypeTok{pch =} \DecValTok{20}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ml101_files/figure-latex/unnamed-chunk-74-1.pdf}
+
+The estimated models from \texttt{regsubsets()} can be directly plotted to compare the differences based on the values of \(R^2\), adjusted \(R^2\), \(C_{p}\) and \(BIC\) statistics.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{par}\NormalTok{( }\DataTypeTok{mfrow =} \KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{), }\DataTypeTok{oma =} \KeywordTok{c}\NormalTok{(}\DecValTok{3}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{))}
+
+\CommentTok{# plot model comparison based on R^2}
+\KeywordTok{plot}\NormalTok{(regfit.full, }\DataTypeTok{scale =} \StringTok{"r2"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ml101_files/figure-latex/unnamed-chunk-75-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# plot model comparison based on adjusted R^2}
+\KeywordTok{plot}\NormalTok{(regfit.full, }\DataTypeTok{scale =} \StringTok{"adjr2"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ml101_files/figure-latex/unnamed-chunk-75-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# plot model comparison based on adjusted CP}
+\KeywordTok{plot}\NormalTok{(regfit.full, }\DataTypeTok{scale =} \StringTok{"Cp"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ml101_files/figure-latex/unnamed-chunk-75-3.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# plot model comparison based on adjusted BIC}
+\KeywordTok{plot}\NormalTok{(regfit.full, }\DataTypeTok{scale =} \StringTok{"bic"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ml101_files/figure-latex/unnamed-chunk-75-4.pdf}
+
+To show the coefficients associated with the model with the lowest \(BIC\), we use the \texttt{coef()} function.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{coef}\NormalTok{(regfit.full, bic.min)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+(Intercept)  RSexFemale    Househld         BNP       HHInc 
+  34.576036    6.970692    2.000771   10.830195   -1.511176 
+\end{verbatim}
+
+\hypertarget{forward-and-backward-stepwise-selection}{%
+\subsubsection{Forward and Backward Stepwise Selection}\label{forward-and-backward-stepwise-selection}}
+
+The default method used by \texttt{regsubsets()} is exhaustive but we can change it to forward or backward and compare the results. Best subset selection will take very long with many variables because the number of models to estimate grows exponentially. In thse cases, we will want to use forward and backward selection instead.
+
+Let's carry out forward selection.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# run forward selection}
+\NormalTok{regfit.fwd <-}\StringTok{ }\KeywordTok{regsubsets}\NormalTok{(IMMBRIT }\OperatorTok{~}\StringTok{ }\NormalTok{., }\DataTypeTok{data =}\NormalTok{ df, }\DataTypeTok{nvmax =} \DecValTok{16}\NormalTok{, }\DataTypeTok{method =} \StringTok{"forward"}\NormalTok{)}
+\KeywordTok{summary}\NormalTok{(regfit.fwd)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Subset selection object
+Call: regsubsets.formula(IMMBRIT ~ ., data = df, nvmax = 16, method = "forward")
+20 Variables  (and intercept)
+                       Forced in Forced out
+RSexFemale                 FALSE      FALSE
+RAge                       FALSE      FALSE
+Househld                   FALSE      FALSE
+Lab                        FALSE      FALSE
+SNP                        FALSE      FALSE
+Ukip                       FALSE      FALSE
+BNP                        FALSE      FALSE
+GP                         FALSE      FALSE
+party.other                FALSE      FALSE
+paper                      FALSE      FALSE
+WWWhourspW                 FALSE      FALSE
+religious                  FALSE      FALSE
+employMonths               FALSE      FALSE
+urbanmore rural            FALSE      FALSE
+urbanmore urban            FALSE      FALSE
+urbanurban                 FALSE      FALSE
+health.goodfair            FALSE      FALSE
+health.goodfairly good     FALSE      FALSE
+health.goodgood            FALSE      FALSE
+HHInc                      FALSE      FALSE
+1 subsets of each size up to 16
+Selection Algorithm: forward
+          RSexFemale RAge Househld Lab SNP Ukip BNP GP  party.other paper
+1  ( 1 )  " "        " "  " "      " " " " " "  " " " " " "         " "  
+2  ( 1 )  "*"        " "  " "      " " " " " "  " " " " " "         " "  
+3  ( 1 )  "*"        " "  "*"      " " " " " "  " " " " " "         " "  
+4  ( 1 )  "*"        " "  "*"      " " " " " "  "*" " " " "         " "  
+5  ( 1 )  "*"        " "  "*"      "*" " " " "  "*" " " " "         " "  
+6  ( 1 )  "*"        "*"  "*"      "*" " " " "  "*" " " " "         " "  
+7  ( 1 )  "*"        "*"  "*"      "*" " " " "  "*" " " " "         "*"  
+8  ( 1 )  "*"        "*"  "*"      "*" " " "*"  "*" " " " "         "*"  
+9  ( 1 )  "*"        "*"  "*"      "*" " " "*"  "*" " " " "         "*"  
+10  ( 1 ) "*"        "*"  "*"      "*" " " "*"  "*" "*" " "         "*"  
+11  ( 1 ) "*"        "*"  "*"      "*" " " "*"  "*" "*" " "         "*"  
+12  ( 1 ) "*"        "*"  "*"      "*" " " "*"  "*" "*" " "         "*"  
+13  ( 1 ) "*"        "*"  "*"      "*" "*" "*"  "*" "*" " "         "*"  
+14  ( 1 ) "*"        "*"  "*"      "*" "*" "*"  "*" "*" " "         "*"  
+15  ( 1 ) "*"        "*"  "*"      "*" "*" "*"  "*" "*" " "         "*"  
+16  ( 1 ) "*"        "*"  "*"      "*" "*" "*"  "*" "*" " "         "*"  
+          WWWhourspW religious employMonths urbanmore rural
+1  ( 1 )  " "        " "       " "          " "            
+2  ( 1 )  " "        " "       " "          " "            
+3  ( 1 )  " "        " "       " "          " "            
+4  ( 1 )  " "        " "       " "          " "            
+5  ( 1 )  " "        " "       " "          " "            
+6  ( 1 )  " "        " "       " "          " "            
+7  ( 1 )  " "        " "       " "          " "            
+8  ( 1 )  " "        " "       " "          " "            
+9  ( 1 )  " "        " "       " "          " "            
+10  ( 1 ) " "        " "       " "          " "            
+11  ( 1 ) " "        " "       " "          " "            
+12  ( 1 ) " "        " "       " "          " "            
+13  ( 1 ) " "        " "       " "          " "            
+14  ( 1 ) "*"        " "       " "          " "            
+15  ( 1 ) "*"        " "       " "          " "            
+16  ( 1 ) "*"        " "       "*"          " "            
+          urbanmore urban urbanurban health.goodfair
+1  ( 1 )  " "             " "        " "            
+2  ( 1 )  " "             " "        " "            
+3  ( 1 )  " "             " "        " "            
+4  ( 1 )  " "             " "        " "            
+5  ( 1 )  " "             " "        " "            
+6  ( 1 )  " "             " "        " "            
+7  ( 1 )  " "             " "        " "            
+8  ( 1 )  " "             " "        " "            
+9  ( 1 )  " "             "*"        " "            
+10  ( 1 ) " "             "*"        " "            
+11  ( 1 ) " "             "*"        "*"            
+12  ( 1 ) "*"             "*"        "*"            
+13  ( 1 ) "*"             "*"        "*"            
+14  ( 1 ) "*"             "*"        "*"            
+15  ( 1 ) "*"             "*"        "*"            
+16  ( 1 ) "*"             "*"        "*"            
+          health.goodfairly good health.goodgood HHInc
+1  ( 1 )  " "                    " "             "*"  
+2  ( 1 )  " "                    " "             "*"  
+3  ( 1 )  " "                    " "             "*"  
+4  ( 1 )  " "                    " "             "*"  
+5  ( 1 )  " "                    " "             "*"  
+6  ( 1 )  " "                    " "             "*"  
+7  ( 1 )  " "                    " "             "*"  
+8  ( 1 )  " "                    " "             "*"  
+9  ( 1 )  " "                    " "             "*"  
+10  ( 1 ) " "                    " "             "*"  
+11  ( 1 ) " "                    " "             "*"  
+12  ( 1 ) " "                    " "             "*"  
+13  ( 1 ) " "                    " "             "*"  
+14  ( 1 ) " "                    " "             "*"  
+15  ( 1 ) " "                    "*"             "*"  
+16  ( 1 ) " "                    "*"             "*"  
+\end{verbatim}
+
+Let's carry out backwards selection next.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# run backward selection}
+\NormalTok{regfit.bwd <-}\StringTok{ }\KeywordTok{regsubsets}\NormalTok{(IMMBRIT }\OperatorTok{~}\StringTok{ }\NormalTok{., }\DataTypeTok{data =}\NormalTok{ df, }\DataTypeTok{nvmax =} \DecValTok{16}\NormalTok{, }\DataTypeTok{method =} \StringTok{"backward"}\NormalTok{)}
+\KeywordTok{summary}\NormalTok{(regfit.bwd)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Subset selection object
+Call: regsubsets.formula(IMMBRIT ~ ., data = df, nvmax = 16, method = "backward")
+20 Variables  (and intercept)
+                       Forced in Forced out
+RSexFemale                 FALSE      FALSE
+RAge                       FALSE      FALSE
+Househld                   FALSE      FALSE
+Lab                        FALSE      FALSE
+SNP                        FALSE      FALSE
+Ukip                       FALSE      FALSE
+BNP                        FALSE      FALSE
+GP                         FALSE      FALSE
+party.other                FALSE      FALSE
+paper                      FALSE      FALSE
+WWWhourspW                 FALSE      FALSE
+religious                  FALSE      FALSE
+employMonths               FALSE      FALSE
+urbanmore rural            FALSE      FALSE
+urbanmore urban            FALSE      FALSE
+urbanurban                 FALSE      FALSE
+health.goodfair            FALSE      FALSE
+health.goodfairly good     FALSE      FALSE
+health.goodgood            FALSE      FALSE
+HHInc                      FALSE      FALSE
+1 subsets of each size up to 16
+Selection Algorithm: backward
+          RSexFemale RAge Househld Lab SNP Ukip BNP GP  party.other paper
+1  ( 1 )  " "        " "  " "      " " " " " "  " " " " " "         " "  
+2  ( 1 )  "*"        " "  " "      " " " " " "  " " " " " "         " "  
+3  ( 1 )  "*"        " "  "*"      " " " " " "  " " " " " "         " "  
+4  ( 1 )  "*"        " "  "*"      " " " " " "  "*" " " " "         " "  
+5  ( 1 )  "*"        " "  "*"      "*" " " " "  "*" " " " "         " "  
+6  ( 1 )  "*"        "*"  "*"      "*" " " " "  "*" " " " "         " "  
+7  ( 1 )  "*"        "*"  "*"      "*" " " " "  "*" " " " "         "*"  
+8  ( 1 )  "*"        "*"  "*"      "*" " " "*"  "*" " " " "         "*"  
+9  ( 1 )  "*"        "*"  "*"      "*" " " "*"  "*" " " " "         "*"  
+10  ( 1 ) "*"        "*"  "*"      "*" " " "*"  "*" "*" " "         "*"  
+11  ( 1 ) "*"        "*"  "*"      "*" " " "*"  "*" "*" " "         "*"  
+12  ( 1 ) "*"        "*"  "*"      "*" " " "*"  "*" "*" " "         "*"  
+13  ( 1 ) "*"        "*"  "*"      "*" "*" "*"  "*" "*" " "         "*"  
+14  ( 1 ) "*"        "*"  "*"      "*" "*" "*"  "*" "*" " "         "*"  
+15  ( 1 ) "*"        "*"  "*"      "*" "*" "*"  "*" "*" " "         "*"  
+16  ( 1 ) "*"        "*"  "*"      "*" "*" "*"  "*" "*" " "         "*"  
+          WWWhourspW religious employMonths urbanmore rural
+1  ( 1 )  " "        " "       " "          " "            
+2  ( 1 )  " "        " "       " "          " "            
+3  ( 1 )  " "        " "       " "          " "            
+4  ( 1 )  " "        " "       " "          " "            
+5  ( 1 )  " "        " "       " "          " "            
+6  ( 1 )  " "        " "       " "          " "            
+7  ( 1 )  " "        " "       " "          " "            
+8  ( 1 )  " "        " "       " "          " "            
+9  ( 1 )  " "        " "       " "          " "            
+10  ( 1 ) " "        " "       " "          " "            
+11  ( 1 ) " "        " "       " "          " "            
+12  ( 1 ) " "        " "       " "          " "            
+13  ( 1 ) " "        " "       " "          " "            
+14  ( 1 ) "*"        " "       " "          " "            
+15  ( 1 ) "*"        " "       " "          " "            
+16  ( 1 ) "*"        " "       "*"          " "            
+          urbanmore urban urbanurban health.goodfair
+1  ( 1 )  " "             " "        " "            
+2  ( 1 )  " "             " "        " "            
+3  ( 1 )  " "             " "        " "            
+4  ( 1 )  " "             " "        " "            
+5  ( 1 )  " "             " "        " "            
+6  ( 1 )  " "             " "        " "            
+7  ( 1 )  " "             " "        " "            
+8  ( 1 )  " "             " "        " "            
+9  ( 1 )  " "             "*"        " "            
+10  ( 1 ) " "             "*"        " "            
+11  ( 1 ) " "             "*"        "*"            
+12  ( 1 ) "*"             "*"        "*"            
+13  ( 1 ) "*"             "*"        "*"            
+14  ( 1 ) "*"             "*"        "*"            
+15  ( 1 ) "*"             "*"        "*"            
+16  ( 1 ) "*"             "*"        "*"            
+          health.goodfairly good health.goodgood HHInc
+1  ( 1 )  " "                    " "             "*"  
+2  ( 1 )  " "                    " "             "*"  
+3  ( 1 )  " "                    " "             "*"  
+4  ( 1 )  " "                    " "             "*"  
+5  ( 1 )  " "                    " "             "*"  
+6  ( 1 )  " "                    " "             "*"  
+7  ( 1 )  " "                    " "             "*"  
+8  ( 1 )  " "                    " "             "*"  
+9  ( 1 )  " "                    " "             "*"  
+10  ( 1 ) " "                    " "             "*"  
+11  ( 1 ) " "                    " "             "*"  
+12  ( 1 ) " "                    " "             "*"  
+13  ( 1 ) " "                    " "             "*"  
+14  ( 1 ) " "                    " "             "*"  
+15  ( 1 ) " "                    "*"             "*"  
+16  ( 1 ) " "                    "*"             "*"  
+\end{verbatim}
+
+Then we compare the models.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# model coefficients of best 7-variable models}
+\KeywordTok{coef}\NormalTok{(regfit.full, }\DecValTok{7}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+(Intercept)  RSexFemale        RAge    Househld         Lab         BNP 
+40.02553709  7.14423868 -0.08205116  1.70838328 -3.34664442  9.11326764 
+      paper       HHInc 
+ 2.37633989 -1.60436490 
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{coef}\NormalTok{(regfit.fwd, }\DecValTok{7}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+(Intercept)  RSexFemale        RAge    Househld         Lab         BNP 
+40.02553709  7.14423868 -0.08205116  1.70838328 -3.34664442  9.11326764 
+      paper       HHInc 
+ 2.37633989 -1.60436490 
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{coef}\NormalTok{(regfit.bwd, }\DecValTok{7}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+(Intercept)  RSexFemale        RAge    Househld         Lab         BNP 
+40.02553709  7.14423868 -0.08205116  1.70838328 -3.34664442  9.11326764 
+      paper       HHInc 
+ 2.37633989 -1.60436490 
+\end{verbatim}
+
+In this case, all methods arrived at the same conclusion. This will not always be the case. We can arrive at very different conclusions.
+
+\hypertarget{choosing-among-models-using-the-validation-set-approach-and-cross-validation}{%
+\paragraph{Choosing Among Models Using the Validation Set Approach and Cross-Validation}\label{choosing-among-models-using-the-validation-set-approach-and-cross-validation}}
+
+For validation set approach, we split the dataset into a training subset and a test subset. In order to ensure that the results are consistent over multiple iterations, we set the random seed with \texttt{set.seed()} before calling \texttt{sample()}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{1}\NormalTok{)}
+
+\CommentTok{# sample true or false for each observation}
+\NormalTok{train <-}\StringTok{ }\KeywordTok{sample}\NormalTok{( }\KeywordTok{c}\NormalTok{(}\OtherTok{TRUE}\NormalTok{, }\OtherTok{FALSE}\NormalTok{), }\DataTypeTok{size =} \KeywordTok{nrow}\NormalTok{(df), }\DataTypeTok{replace =} \OtherTok{TRUE}\NormalTok{ )}
+\CommentTok{# the complement}
+\NormalTok{test <-}\StringTok{ }\NormalTok{(}\OperatorTok{!}\NormalTok{train)}
+\end{Highlighting}
+\end{Shaded}
+
+We use \texttt{regsubsets()} as we did in the last section, but limit the estimation to the training subset.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{regfit.best <-}\StringTok{ }\KeywordTok{regsubsets}\NormalTok{(IMMBRIT }\OperatorTok{~}\StringTok{ }\NormalTok{., }\DataTypeTok{data =}\NormalTok{ df[train, ], }\DataTypeTok{nvmax =} \DecValTok{16}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+We create a matrix from the test subset using \texttt{model.matrix()}. Model matrix takes the dependent variable out of the data and adds an intercept to it.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# test data}
+\NormalTok{test.mat <-}\StringTok{ }\KeywordTok{model.matrix}\NormalTok{(IMMBRIT }\OperatorTok{~}\NormalTok{., }\DataTypeTok{data =}\NormalTok{ df[test, ])}
+\end{Highlighting}
+\end{Shaded}
+
+Next, we compute the validation error for each model.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# validation error for each model}
+\NormalTok{val.errors <-}\StringTok{ }\OtherTok{NA}
+\ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{16}\NormalTok{ )\{}
+  
+\NormalTok{  coefi <-}\StringTok{ }\KeywordTok{coef}\NormalTok{(regfit.best, }\DataTypeTok{id =}\NormalTok{ i)}
+  \CommentTok{# this prediction without the predict function for a linear model}
+  \CommentTok{# here we use linear algebra operations were we multiply the data matrix}
+  \CommentTok{# with the coefficient vector}
+\NormalTok{  y_hat <-}\StringTok{ }\NormalTok{test.mat[, }\KeywordTok{names}\NormalTok{(coefi)] }\OperatorTok{%*%}\StringTok{ }\NormalTok{coefi}
+  
+  \CommentTok{# we compute the test set MSE for each model}
+\NormalTok{  val.errors[i] <-}\StringTok{ }\KeywordTok{mean}\NormalTok{(  (df}\OperatorTok{$}\NormalTok{IMMBRIT[test] }\OperatorTok{-}\StringTok{ }\NormalTok{y_hat)}\OperatorTok{^}\DecValTok{2}\NormalTok{   )}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+We examine the validation error for each model and identify the best model with the lowest error.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{val.errors}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+ [1] 422.6788 433.3656 422.1876 423.2052 419.1279 428.0234 425.6056
+ [8] 424.7795 425.5773 427.3771 428.2082 427.7471 426.4746 427.7618
+[15] 426.7668 426.3854
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# which model has smallest error}
+\NormalTok{min.val.errors <-}\StringTok{ }\KeywordTok{which.min}\NormalTok{(val.errors)}
+
+\CommentTok{# coefficients of that model}
+\KeywordTok{coef}\NormalTok{( regfit.best, min.val.errors )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+(Intercept)  RSexFemale        RAge    Househld         Lab       HHInc 
+ 47.9382527   6.2858758  -0.1880005   1.5486251  -5.1619813  -1.7403107 
+\end{verbatim}
+
+We can combine these steps into a function that can be called repeatedly when running k-fold cross-validation.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# predict function for repeatedly choosing model with lowest test error}
+\NormalTok{predict.regsubsets <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{( object, newdata, id, ... )\{}
+  \CommentTok{# get the formula from the model}
+\NormalTok{  m.formula <-}\StringTok{ }\KeywordTok{as.formula}\NormalTok{( object}\OperatorTok{$}\NormalTok{call[[}\DecValTok{2}\NormalTok{]] )}
+  \CommentTok{# use that formula to create the model matrix for some new data}
+\NormalTok{  mat <-}\StringTok{ }\KeywordTok{model.matrix}\NormalTok{( m.formula, newdata )}
+  \CommentTok{# get coeffiecients where id is the number of variables}
+\NormalTok{  coefi <-}\StringTok{ }\KeywordTok{coef}\NormalTok{( object, }\DataTypeTok{id =}\NormalTok{ id )}
+  \CommentTok{# get the variable names of current model}
+\NormalTok{  xvars <-}\StringTok{ }\KeywordTok{names}\NormalTok{( coefi )}
+  \CommentTok{# multiply data with coefficients}
+\NormalTok{  mat[ , xvars ] }\OperatorTok{%*%}\StringTok{ }\NormalTok{coefi}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+We run \texttt{regsubsets()} on the full dataset and examine the coefficients associated with the model that has the lower validation error.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# best subset on full data set}
+\NormalTok{regfit.best <-}\StringTok{ }\KeywordTok{regsubsets}\NormalTok{( IMMBRIT }\OperatorTok{~}\StringTok{ }\NormalTok{., }\DataTypeTok{data =}\NormalTok{ df, }\DataTypeTok{nvmax =} \DecValTok{16}\NormalTok{ )}
+
+\CommentTok{# examine coefficients of the model that had the lowest validation error}
+\KeywordTok{coef}\NormalTok{( regfit.best, min.val.errors )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+(Intercept)  RSexFemale    Househld         Lab         BNP       HHInc 
+  35.920518    6.886259    2.062351   -3.394188    9.708402   -1.563859 
+\end{verbatim}
+
+\hypertarget{k-fold-cross-validation-1}{%
+\paragraph{k-fold cross-validation}\label{k-fold-cross-validation-1}}
+
+For cross-validation, we create the number of folds needed (10, in this case) and allocate a matrix for storing the results.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# number of folds}
+\NormalTok{k <-}\StringTok{ }\DecValTok{10}
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{1}\NormalTok{)}
+
+\CommentTok{# fold assignment for each observation}
+\NormalTok{folds <-}\StringTok{ }\KeywordTok{sample}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\NormalTok{k, }\KeywordTok{nrow}\NormalTok{(df), }\DataTypeTok{replace =} \OtherTok{TRUE}\NormalTok{)}
+
+\CommentTok{# frequency table of fold assignment (should be relatively balanced)}
+\KeywordTok{table}\NormalTok{(folds)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+folds
+  1   2   3   4   5   6   7   8   9  10 
+ 99  83 104 106 110 101 112 100 114 112 
+\end{verbatim}
+
+Let's create an object that will store errors for cross-validation and we then look at that.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# container for cross-validation errors}
+\NormalTok{cv.errors <-}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\OtherTok{NA}\NormalTok{, }\DataTypeTok{nrow =}\NormalTok{ k, }\DataTypeTok{ncol =} \DecValTok{16}\NormalTok{, }\DataTypeTok{dimnames =} \KeywordTok{list}\NormalTok{(}\OtherTok{NULL}\NormalTok{, }\KeywordTok{paste}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\DecValTok{16}\NormalTok{)))}
+\CommentTok{# have a look at the matrix}
+\NormalTok{cv.errors}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+       1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16
+ [1,] NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA
+ [2,] NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA
+ [3,] NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA
+ [4,] NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA
+ [5,] NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA
+ [6,] NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA
+ [7,] NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA
+ [8,] NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA
+ [9,] NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA
+[10,] NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA
+\end{verbatim}
+
+We then run through each fold in a \texttt{for()} loop and predict the salary using our predict function. We then calculate the validation error for each fold and save them in the matrix created above.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# loop over folds}
+\ControlFlowTok{for}\NormalTok{ (a }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\NormalTok{k)\{}
+  
+  \CommentTok{# best subset selection on training data}
+\NormalTok{  best.fit <-}\StringTok{ }\KeywordTok{regsubsets}\NormalTok{(IMMBRIT }\OperatorTok{~}\StringTok{ }\NormalTok{., }\DataTypeTok{data =}\NormalTok{ df[ folds }\OperatorTok{!=}\StringTok{ }\NormalTok{a, ], }\DataTypeTok{nvmax =} \DecValTok{16}\NormalTok{)}
+  
+  \CommentTok{# loop over the 16 subsets}
+  \ControlFlowTok{for}\NormalTok{ (b }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{16}\NormalTok{)\{}
+    
+    \CommentTok{# predict response for test set for current subset}
+\NormalTok{    pred <-}\StringTok{ }\KeywordTok{predict}\NormalTok{(best.fit, df[ folds }\OperatorTok{==}\StringTok{ }\NormalTok{a ,], }\DataTypeTok{id =}\NormalTok{ b )}
+    
+    \CommentTok{# MSE into container; rows are folds; columns are subsets}
+\NormalTok{    cv.errors[a, b] <-}\StringTok{ }\KeywordTok{mean}\NormalTok{( (df}\OperatorTok{$}\NormalTok{IMMBRIT[folds}\OperatorTok{==}\NormalTok{a] }\OperatorTok{-}\StringTok{ }\NormalTok{pred)}\OperatorTok{^}\DecValTok{2}\NormalTok{ )}
+    
+\NormalTok{  \} }\CommentTok{# end of loop over the 16 subsets}
+\NormalTok{\} }\CommentTok{# end of loop over folds}
+\CommentTok{# the cross-validation error matrix}
+\NormalTok{cv.errors}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+             1        2        3        4        5        6        7
+ [1,] 340.6348 360.4143 354.1625 361.5282 354.2123 357.4392 352.4973
+ [2,] 452.1263 416.6181 421.1696 423.3392 412.5419 416.3733 415.5115
+ [3,] 347.7890 332.3682 325.9761 326.3122 306.9565 310.4999 303.0287
+ [4,] 313.2735 337.9460 334.7280 333.0075 325.7449 329.7096 326.7136
+ [5,] 386.3464 367.9026 375.7936 384.1864 380.3926 384.2020 380.7137
+ [6,] 491.0775 484.0378 480.4096 487.4987 480.6689 478.1541 474.7581
+ [7,] 490.9417 479.0285 475.3201 473.5372 481.2985 473.6737 482.0662
+ [8,] 457.2409 426.8484 407.9413 407.6739 404.1949 412.6668 415.4127
+ [9,] 381.4168 370.7018 358.7797 366.7294 362.5290 363.9266 361.1322
+[10,] 343.8041 317.2183 324.9596 325.2615 333.3371 342.0212 347.9536
+             8        9       10       11       12       13       14
+ [1,] 351.4881 349.5941 350.7354 350.9006 349.8262 348.9046 348.9941
+ [2,] 420.6110 427.7911 431.2058 426.3387 419.2075 419.2498 420.0484
+ [3,] 305.4976 306.6941 309.1712 310.9844 311.0525 313.8237 314.9565
+ [4,] 325.9687 326.9600 328.4326 327.0528 325.3324 326.4723 325.8034
+ [5,] 382.5723 388.3581 388.0053 387.1782 388.6989 383.5634 383.1115
+ [6,] 474.7654 474.0053 475.5215 471.2198 473.1165 473.3898 472.3392
+ [7,] 473.5635 470.9286 466.7013 465.5243 469.4845 467.6969 469.9937
+ [8,] 414.4015 407.5812 408.8584 409.2999 410.0517 407.8849 410.3678
+ [9,] 353.5598 357.7010 351.5392 352.7202 353.8711 354.3456 352.3022
+[10,] 337.8455 337.9669 341.7642 343.5873 348.0795 350.2935 348.9332
+            15       16
+ [1,] 348.8001 348.3123
+ [2,] 421.0930 419.7895
+ [3,] 314.5607 314.9318
+ [4,] 325.5250 325.1381
+ [5,] 381.1764 381.5495
+ [6,] 473.5295 473.1426
+ [7,] 469.6818 469.2276
+ [8,] 410.8454 410.9011
+ [9,] 352.7259 354.9532
+[10,] 351.3258 351.4992
+\end{verbatim}
+
+We calculate the mean error for all subsets by applying mean to each column using the \texttt{apply()} function.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# average cross-validation errors over the folds}
+\NormalTok{mean.cv.errors <-}\StringTok{ }\KeywordTok{apply}\NormalTok{(cv.errors, }\DecValTok{2}\NormalTok{, mean)}
+\NormalTok{mean.cv.errors}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+       1        2        3        4        5        6        7        8 
+400.4651 389.3084 385.9240 388.9074 384.1876 386.8666 385.9788 384.0273 
+       9       10       11       12       13       14       15       16 
+384.7580 385.1935 384.4806 384.8721 384.5624 384.6850 384.9264 384.9445 
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# visualize}
+\KeywordTok{par}\NormalTok{( }\DataTypeTok{mfrow =} \KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{) , }\DataTypeTok{oma =} \KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{))}
+\KeywordTok{plot}\NormalTok{( mean.cv.errors, }\DataTypeTok{type =} \StringTok{"b"}\NormalTok{ )}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ml101_files/figure-latex/unnamed-chunk-90-1.pdf}
+
+Finally, we run \texttt{regsubsets()} on the full dataset and show the coefficients for the best performing model which we picked using 10-fold cross-validation.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# run regsubsets on full data set}
+\NormalTok{reg.best <-}\StringTok{ }\KeywordTok{regsubsets}\NormalTok{(IMMBRIT }\OperatorTok{~}\StringTok{ }\NormalTok{., }\DataTypeTok{data =}\NormalTok{ df, }\DataTypeTok{nvmax =} \DecValTok{16}\NormalTok{)}
+
+\CommentTok{# coefficients of subset which minimized test error}
+\KeywordTok{coef}\NormalTok{(reg.best, }\KeywordTok{which.min}\NormalTok{(mean.cv.errors))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+(Intercept)  RSexFemale        RAge    Househld         Lab        Ukip 
+40.45488881  7.04808104 -0.08129894  1.67265081 -3.60995595 -5.90702725 
+        BNP       paper       HHInc 
+ 8.81702077  2.46964179 -1.61703898 
+\end{verbatim}
 
 \hypertarget{regularisation}{%
 \section{Regularisation}\label{regularisation}}
@@ -1146,15 +2435,679 @@ Placeholder
 \hypertarget{seminar-3}{%
 \subsection{Seminar}\label{seminar-3}}
 
-Placholder
+\hypertarget{ridge-regression-and-the-lasso}{%
+\subsubsection{Ridge Regression and the Lasso}\label{ridge-regression-and-the-lasso}}
 
-\hypertarget{polynomials}{%
-\section{Polynomials}\label{polynomials}}
+We start by clearing our workspace, loading the foreigners data, and doing the necessary variable manipulations. The data is available \href{http://philippbroniecki.github.io/ML2017.io/data/BSAS_manip.RData}{here}.
+
+We then need to normalize all numeric variables to put them on the same scale. Regularization requires that variables are comparable.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# clear workspace}
+\KeywordTok{rm}\NormalTok{(}\DataTypeTok{list=}\KeywordTok{ls}\NormalTok{())}
+
+\CommentTok{# load foreigners data}
+\KeywordTok{load}\NormalTok{(}\StringTok{"your directory/BSAS_manip.RData"}\NormalTok{)}
+\KeywordTok{head}\NormalTok{(data2)}
+
+\CommentTok{# we declare the factor variables}
+\NormalTok{data2}\OperatorTok{$}\NormalTok{urban <-}\StringTok{ }\KeywordTok{factor}\NormalTok{(data2}\OperatorTok{$}\NormalTok{urban, }\DataTypeTok{labels =} \KeywordTok{c}\NormalTok{(}\StringTok{"rural"}\NormalTok{, }\StringTok{"more rural"}\NormalTok{, }\StringTok{"more urban"}\NormalTok{, }\StringTok{"urban"}\NormalTok{))}
+\NormalTok{data2}\OperatorTok{$}\NormalTok{RSex <-}\StringTok{ }\KeywordTok{factor}\NormalTok{(data2}\OperatorTok{$}\NormalTok{RSex, }\DataTypeTok{labels =} \KeywordTok{c}\NormalTok{(}\StringTok{"Male"}\NormalTok{, }\StringTok{"Female"}\NormalTok{))}
+\NormalTok{data2}\OperatorTok{$}\NormalTok{health.good <-}\StringTok{ }\KeywordTok{factor}\NormalTok{(data2}\OperatorTok{$}\NormalTok{health.good, }\DataTypeTok{labels =} \KeywordTok{c}\NormalTok{(}\StringTok{"bad"}\NormalTok{, }\StringTok{"fair"}\NormalTok{, }\StringTok{"fairly good"}\NormalTok{, }\StringTok{"good"}\NormalTok{) )}
+
+\CommentTok{# categorical variables}
+\NormalTok{cat.vars <-}\StringTok{ }\KeywordTok{unlist}\NormalTok{(}\KeywordTok{lapply}\NormalTok{(data2, }\ControlFlowTok{function}\NormalTok{(x) }\KeywordTok{is.factor}\NormalTok{(x) }\OperatorTok{|}\StringTok{ }\KeywordTok{all}\NormalTok{(x }\OperatorTok{==}\StringTok{ }\DecValTok{0} \OperatorTok{|}\StringTok{ }\NormalTok{x}\OperatorTok{==}\DecValTok{1}\NormalTok{) }\OperatorTok{|}\StringTok{ }\KeywordTok{all}\NormalTok{( x}\OperatorTok{==}\DecValTok{1} \OperatorTok{|}\StringTok{ }\NormalTok{x}\OperatorTok{==}\DecValTok{2}\NormalTok{) ))}
+\CommentTok{# normalize numeric variables}
+\NormalTok{data2[, }\OperatorTok{!}\NormalTok{cat.vars] <-}\StringTok{ }\KeywordTok{apply}\NormalTok{(data2[, }\OperatorTok{!}\NormalTok{cat.vars], }\DecValTok{2}\NormalTok{, scale)}
+\end{Highlighting}
+\end{Shaded}
+
+In order to run ridge regression, we create a matrix from our dataset using the \texttt{model.matrix()} function. We also need to remove the intercept from the resulting matrix because the function to run ridge regression automatically includes one. Furthermore, we will use the subjective rate of immigrants as response. Consequently, we have to remove \texttt{over.estimate} as it measures the same thing. Lastly, the party affiliation dummies are mutually exclusive, se we have to exclude the model category \texttt{Cons}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# covariates in matrix form but remove the intercept, over.estimate, and Cons}
+\NormalTok{x <-}\StringTok{ }\KeywordTok{model.matrix}\NormalTok{(IMMBRIT }\OperatorTok{~}\StringTok{ }\NormalTok{. }\DecValTok{-1} \OperatorTok{-}\NormalTok{over.estimate }\OperatorTok{-}\NormalTok{Cons, data2)}
+\CommentTok{# check if it looks fine}
+\KeywordTok{head}\NormalTok{(x)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+  RSexMale RSexFemale       RAge   Househld Lab SNP Ukip BNP GP
+1        1          0  0.0144845 -0.2925308   1   0    0   0  0
+2        0          1 -1.8065476  0.4540989   0   0    0   0  0
+3        0          1  0.5835570 -1.0391604   0   0    0   0  0
+4        0          1  1.5509804 -0.2925308   0   0    0   0  0
+5        0          1  0.9819078 -1.0391604   0   0    0   0  0
+6        1          0 -1.1236606  1.2007285   0   0    0   0  0
+  party.other paper WWWhourspW religious employMonths urbanmore rural
+1           0     0 -0.5324636         0    -0.203378               0
+2           1     0 -0.1566702         0    -0.203378               0
+3           1     0 -0.5324636         0     5.158836               0
+4           1     1 -0.4071991         1    -0.203378               0
+5           1     0 -0.5324636         1    -0.203378               0
+6           1     1  1.0959747         0    -0.203378               0
+  urbanmore urban urbanurban health.goodfair health.goodfairly good
+1               0          1               1                      0
+2               0          1               0                      1
+3               1          0               0                      0
+4               0          0               0                      0
+5               1          0               0                      0
+6               0          0               0                      1
+  health.goodgood      HHInc
+1               0  0.7357918
+2               0 -1.4195993
+3               1 -0.1263647
+4               1 -0.3419038
+5               1 -0.1263647
+6               0 -0.1263647
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# response vector}
+\NormalTok{y <-}\StringTok{ }\NormalTok{data2}\OperatorTok{$}\NormalTok{IMMBRIT}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{ridge-regression}{%
+\paragraph{Ridge Regression}\label{ridge-regression}}
+
+The \texttt{glmnet} package provides functionality to fit ridge regression and lasso models. We load the package and call \texttt{glmnet()} to perform ridge regression. Before being able to run this, we have to install the package like so: \texttt{install.packages("glmnet")}.
+
+The performance of ridge depends on the right choice of lambda. A tuning parameter is a parameter that we need to set and we need to set correctly. We do this by trying different values. All different values are what we refer to as our grid.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(glmnet)}
+
+\CommentTok{# tuning parameter}
+\NormalTok{grid <-}\StringTok{ }\DecValTok{10}\OperatorTok{^}\KeywordTok{seq}\NormalTok{(}\DecValTok{4}\NormalTok{, }\DecValTok{-2}\NormalTok{, }\DataTypeTok{length =} \DecValTok{100}\NormalTok{)}
+
+\KeywordTok{plot}\NormalTok{(grid, }\DataTypeTok{bty =} \StringTok{"n"}\NormalTok{, }\DataTypeTok{pch =} \DecValTok{19}\NormalTok{,}
+     \DataTypeTok{main =} \KeywordTok{expression}\NormalTok{(}\KeywordTok{paste}\NormalTok{(}\StringTok{"Grid of Tuning Parameters "}\NormalTok{, lambda)))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ml101_files/figure-latex/unnamed-chunk-97-1.pdf}
+
+We now run ridge regression. We tune \texttt{lambda} and set \texttt{alpha} to 0 which means we carry out ridge regression (instead as for instance the Lasso or the Elastic Net).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# run ridge; alpha = 0 means do ridge}
+\NormalTok{ridge.mod <-}\StringTok{ }\KeywordTok{glmnet}\NormalTok{(x, y, }\DataTypeTok{alpha =} \DecValTok{0}\NormalTok{, }\DataTypeTok{lambda =}\NormalTok{ grid)}
+
+\CommentTok{# coefficient shrinkage visualized}
+\KeywordTok{plot}\NormalTok{(ridge.mod, }\DataTypeTok{xvar =} \StringTok{"lambda"}\NormalTok{, }\DataTypeTok{label =} \OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ml101_files/figure-latex/unnamed-chunk-98-1.pdf}
+
+the object \texttt{ridge.mod} contains a set of coefficients for each of the lambdas which we can access by runing the \texttt{coef()} functio on the object \texttt{ridge.mod}. We tried 100 lambda values and therefore we get 100 coefficient sets. The object is a matrix where rows are variables and columns are the coefficients based on the chosen lambda values.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# a set of coefficients for each lambda}
+\KeywordTok{dim}\NormalTok{(}\KeywordTok{coef}\NormalTok{(ridge.mod))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1]  22 100
+\end{verbatim}
+
+We can look at the coefficients at different values for \(\lambda\). Here, we randomly choose two different values and notice that smaller values of \(\lambda\) result in larger coefficient estimates and vice-versa.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Lambda and Betas}
+\NormalTok{ridge.mod}\OperatorTok{$}\NormalTok{lambda[}\DecValTok{80}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 0.1629751
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{coef}\NormalTok{(ridge.mod)[, }\DecValTok{80}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+           (Intercept)               RSexMale             RSexFemale 
+          -0.061607390           -0.160606935            0.159900421 
+                  RAge               Househld                    Lab 
+          -0.051728204            0.082363992           -0.138922683 
+                   SNP                   Ukip                    BNP 
+           0.172199820           -0.206749980            0.425986910 
+                    GP            party.other                  paper 
+          -0.176955926            0.008250000            0.088331267 
+            WWWhourspW              religious           employMonths 
+          -0.012922053            0.010790919           -0.001149770 
+       urbanmore rural        urbanmore urban             urbanurban 
+          -0.009100653            0.049660346            0.119249438 
+       health.goodfair health.goodfairly good        health.goodgood 
+          -0.051779228           -0.006372962            0.002867504 
+                 HHInc 
+          -0.291172989 
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{sqrt}\NormalTok{( }\KeywordTok{sum}\NormalTok{(}\KeywordTok{coef}\NormalTok{(ridge.mod)[}\OperatorTok{-}\DecValTok{1}\NormalTok{, }\DecValTok{80}\NormalTok{]}\OperatorTok{^}\DecValTok{2}\NormalTok{) )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 0.6911836
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{ridge.mod}\OperatorTok{$}\NormalTok{lambda[}\DecValTok{40}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 43.28761
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{coef}\NormalTok{(ridge.mod)[, }\DecValTok{40}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+           (Intercept)               RSexMale             RSexFemale 
+         -0.0024035442          -0.0086089993           0.0086089995 
+                  RAge               Househld                    Lab 
+         -0.0009024882           0.0009302020          -0.0016851561 
+                   SNP                   Ukip                    BNP 
+          0.0051999098          -0.0051751362           0.0145257558 
+                    GP            party.other                  paper 
+         -0.0045065860           0.0018619440           0.0002790212 
+            WWWhourspW              religious           employMonths 
+         -0.0005069474           0.0015920318          -0.0017699007 
+       urbanmore rural        urbanmore urban             urbanurban 
+         -0.0014946533           0.0006218758           0.0040369054 
+       health.goodfair health.goodfairly good        health.goodgood 
+          0.0002138639           0.0003043203          -0.0019519248 
+                 HHInc 
+         -0.0072791705 
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{sqrt}\NormalTok{(}\KeywordTok{sum}\NormalTok{(}\KeywordTok{coef}\NormalTok{(ridge.mod)[}\OperatorTok{-}\DecValTok{1}\NormalTok{, }\DecValTok{40}\NormalTok{]}\OperatorTok{^}\DecValTok{2}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 0.02287352
+\end{verbatim}
+
+We can get ridge regression coefficients for any value of \(\lambda\) using predict.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# compute coefficients at lambda = s}
+\KeywordTok{predict}\NormalTok{(ridge.mod, }\DataTypeTok{s =} \DecValTok{50}\NormalTok{, }\DataTypeTok{type =} \StringTok{"coefficients"}\NormalTok{)[}\DecValTok{1}\OperatorTok{:}\KeywordTok{nrow}\NormalTok{(}\KeywordTok{coef}\NormalTok{(ridge.mod)), ]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+           (Intercept)               RSexMale             RSexFemale 
+         -0.0020916615          -0.0075062040           0.0075062041 
+                  RAge               Househld                    Lab 
+         -0.0007828438           0.0008050887          -0.0014604733 
+                   SNP                   Ukip                    BNP 
+          0.0045109868          -0.0045029585           0.0126229971 
+                    GP            party.other                  paper 
+         -0.0039161618           0.0016221081           0.0002331180 
+            WWWhourspW              religious           employMonths 
+         -0.0004418724           0.0013894830          -0.0015446673 
+       urbanmore rural        urbanmore urban             urbanurban 
+         -0.0013036526           0.0005397837           0.0035149833 
+       health.goodfair health.goodfairly good        health.goodgood 
+          0.0001920935           0.0002676711          -0.0017039940 
+                 HHInc 
+         -0.0063276702 
+\end{verbatim}
+
+We would like to know which value of lambda gives us the model with the best predictive power. We use cross-validation on ridge regression by first splitting the dataset into training and test subsets.
+
+We can choose different values for \(\lambda\) by running cross-validation on ridge regression using \texttt{cv.glmnet()}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{1}\NormalTok{)}
+
+\CommentTok{# training data for CV to find optimal lambda, but then test data to estimate test error}
+\NormalTok{cv.out <-}\StringTok{ }\KeywordTok{cv.glmnet}\NormalTok{(x, y, }\DataTypeTok{alpha =} \DecValTok{0}\NormalTok{, }\DataTypeTok{nfolds =} \DecValTok{5}\NormalTok{)}
+
+\CommentTok{# illustrate test MSE based on size of lambda}
+\KeywordTok{plot}\NormalTok{(cv.out)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ml101_files/figure-latex/unnamed-chunk-102-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# best performing model's lambda value}
+\NormalTok{bestlam <-}\StringTok{ }\NormalTok{cv.out}\OperatorTok{$}\NormalTok{lambda.min}
+\NormalTok{bestlam}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 0.1726934
+\end{verbatim}
+
+The best performing model is the one with \(\lambda =\) 0.1726934. We can also extract the mean cross-validated error of the best model.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{cv.out}\OperatorTok{$}\NormalTok{cvm[ }\KeywordTok{which}\NormalTok{(cv.out}\OperatorTok{$}\NormalTok{lambda }\OperatorTok{==}\StringTok{ }\NormalTok{bestlam) ]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 0.8663222
+\end{verbatim}
+
+\hypertarget{the-lasso}{%
+\paragraph{The Lasso}\label{the-lasso}}
+
+The lasso model can be estimated in the same way as ridge regression. The \texttt{alpha\ =\ 1} parameter tells \texttt{glmnet()} to run lasso regression instead of ridge regression. Lasso is often used more as a variable selection model because a large shrinkage parameter \(\lambda\) can cause coefficients of some variables to be exactly zero which means that those variables are excluded from the model.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{lasso.mod <-}\StringTok{ }\KeywordTok{glmnet}\NormalTok{(x, y, }\DataTypeTok{alpha =} \DecValTok{1}\NormalTok{, }\DataTypeTok{lambda =}\NormalTok{ grid)}
+\KeywordTok{plot}\NormalTok{(lasso.mod)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+unique 'x' values
+\end{verbatim}
+
+\includegraphics{ml101_files/figure-latex/unnamed-chunk-104-1.pdf}
+
+Similarly, we can perform cross-validation using identical step as we did on ridge regression.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# cross-validation to pick lambda}
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{1}\NormalTok{)}
+\NormalTok{cv.out <-}\StringTok{ }\KeywordTok{cv.glmnet}\NormalTok{(x, y, }\DataTypeTok{alpha =} \DecValTok{1}\NormalTok{, }\DataTypeTok{nfolds =} \DecValTok{5}\NormalTok{)}
+\KeywordTok{plot}\NormalTok{(cv.out)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ml101_files/figure-latex/unnamed-chunk-105-1.pdf}
+
+We select the best Lambda value and the cross-validation error.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{bestlam <-}\StringTok{ }\NormalTok{cv.out}\OperatorTok{$}\NormalTok{lambda.min}
+\NormalTok{cv.out}\OperatorTok{$}\NormalTok{cvm[ }\KeywordTok{which}\NormalTok{(cv.out}\OperatorTok{$}\NormalTok{lambda }\OperatorTok{==}\StringTok{ }\NormalTok{bestlam) ]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 0.8598552
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# compare to ridge regression}
+\NormalTok{out <-}\StringTok{ }\KeywordTok{glmnet}\NormalTok{(x, y, }\DataTypeTok{alpha =} \DecValTok{1}\NormalTok{, }\DataTypeTok{lambda =}\NormalTok{ grid)}
+\NormalTok{lasso.coef <-}\StringTok{ }\KeywordTok{predict}\NormalTok{(out, }\DataTypeTok{type =} \StringTok{"coefficients"}\NormalTok{, }\DataTypeTok{s =}\NormalTok{ bestlam)[}\DecValTok{1}\OperatorTok{:}\DecValTok{16}\NormalTok{, ]}
+\NormalTok{lasso.coef[lasso.coef }\OperatorTok{!=}\StringTok{ }\DecValTok{0}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+    (Intercept)        RSexMale            RAge        Househld 
+    0.123666790    -0.290927784    -0.040834908     0.080195229 
+            Lab             SNP            Ukip             BNP 
+   -0.109775668     0.001382463    -0.115410323     0.321492204 
+             GP           paper urbanmore rural 
+   -0.033150926     0.044601323    -0.001227853 
+\end{verbatim}
+
+\hypertarget{all-non-linear-polynomials-to-splines}{%
+\section{All non-linear (polynomials to splines)}\label{all-non-linear-polynomials-to-splines}}
 
 \hypertarget{seminar-4}{%
 \subsection{Seminar}\label{seminar-4}}
 
-Placeholder
+In this exercise, we will learn how to model non-linearities in generalised linear models. This exercise is based on based on James et al.~2013. We begin by loading that \texttt{ISLR} package and attaching to the Wage dataset that we will be using throughout this exercise. When we attach a dataset, we do not need to write \texttt{dataset.name\$variable.name} to access a variable but we can instead just write \texttt{variable.name} to access it.
+
+Note: We need to install the \texttt{ISLR} package if it is not installed alread like so: \texttt{install.packages("ISLR")}
+Note2: The \texttt{Wage} dataset is spelled with a capital W.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# clear workspace, load ISLR, attach wage data set}
+\KeywordTok{rm}\NormalTok{(}\DataTypeTok{list=}\KeywordTok{ls}\NormalTok{())}
+\KeywordTok{library}\NormalTok{(ISLR)}
+\KeywordTok{attach}\NormalTok{(Wage)}
+\NormalTok{?Wage }\CommentTok{# codebook}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{polynomial-regression}{%
+\subsubsection{Polynomial Regression}\label{polynomial-regression}}
+
+Let's fit a linear model to predict \texttt{wage} with a forth-degree polynomial using the \texttt{poly()} function.
+
+Note: The dependent variable \texttt{wage} is spelled with a lower case w.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# linear regression on wage, with age up to a 4th degree polynomial}
+\NormalTok{fit <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(wage }\OperatorTok{~}\StringTok{ }\KeywordTok{poly}\NormalTok{(age, }\DecValTok{4}\NormalTok{), }\DataTypeTok{data =}\NormalTok{ Wage)}
+\KeywordTok{coef}\NormalTok{(}\KeywordTok{summary}\NormalTok{(fit))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+                Estimate Std. Error    t value     Pr(>|t|)
+(Intercept)    111.70361  0.7287409 153.283015 0.000000e+00
+poly(age, 4)1  447.06785 39.9147851  11.200558 1.484604e-28
+poly(age, 4)2 -478.31581 39.9147851 -11.983424 2.355831e-32
+poly(age, 4)3  125.52169 39.9147851   3.144742 1.678622e-03
+poly(age, 4)4  -77.91118 39.9147851  -1.951938 5.103865e-02
+\end{verbatim}
+
+We can also obtain raw instead of orthogonal polynomials by passing the \texttt{raw\ =\ TRUE} argument to \texttt{poly()}. The coefficients will change the fit should be largely unaffected. It is not advisable to use the raw argument because it introduces unnecessary multicollinearity into the model.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fit2 <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(wage }\OperatorTok{~}\StringTok{ }\KeywordTok{poly}\NormalTok{(age, }\DecValTok{4}\NormalTok{, }\DataTypeTok{raw =} \OtherTok{TRUE}\NormalTok{), }\DataTypeTok{data =}\NormalTok{ Wage)}
+\KeywordTok{coef}\NormalTok{(}\KeywordTok{summary}\NormalTok{(fit2))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+                               Estimate   Std. Error   t value
+(Intercept)               -1.841542e+02 6.004038e+01 -3.067172
+poly(age, 4, raw = TRUE)1  2.124552e+01 5.886748e+00  3.609042
+poly(age, 4, raw = TRUE)2 -5.638593e-01 2.061083e-01 -2.735743
+poly(age, 4, raw = TRUE)3  6.810688e-03 3.065931e-03  2.221409
+poly(age, 4, raw = TRUE)4 -3.203830e-05 1.641359e-05 -1.951938
+                              Pr(>|t|)
+(Intercept)               0.0021802539
+poly(age, 4, raw = TRUE)1 0.0003123618
+poly(age, 4, raw = TRUE)2 0.0062606446
+poly(age, 4, raw = TRUE)3 0.0263977518
+poly(age, 4, raw = TRUE)4 0.0510386498
+\end{verbatim}
+
+There are several ways to specify polynomials. These are, however a little less convenient.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fit2a <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(wage }\OperatorTok{~}\StringTok{ }\NormalTok{age }\OperatorTok{+}\StringTok{ }\KeywordTok{I}\NormalTok{(age}\OperatorTok{^}\DecValTok{2}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{I}\NormalTok{(age}\OperatorTok{^}\DecValTok{3}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{I}\NormalTok{(age}\OperatorTok{^}\DecValTok{4}\NormalTok{), }\DataTypeTok{data =}\NormalTok{ Wage)}
+\KeywordTok{coef}\NormalTok{(fit2a)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+  (Intercept)           age      I(age^2)      I(age^3)      I(age^4) 
+-1.841542e+02  2.124552e+01 -5.638593e-01  6.810688e-03 -3.203830e-05 
+\end{verbatim}
+
+A more compact version of the same example uses \texttt{cbind()} and eliminates the need to wrap each term in \texttt{I()}. The output is less readable though.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fit2b <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(wage }\OperatorTok{~}\StringTok{ }\KeywordTok{cbind}\NormalTok{(age, age}\OperatorTok{^}\DecValTok{2}\NormalTok{, age}\OperatorTok{^}\DecValTok{3}\NormalTok{, age}\OperatorTok{^}\DecValTok{4}\NormalTok{), }\DataTypeTok{data =}\NormalTok{ Wage)}
+\KeywordTok{coef}\NormalTok{(fit2b)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+                       (Intercept) cbind(age, age^2, age^3, age^4)age 
+                     -1.841542e+02                       2.124552e+01 
+   cbind(age, age^2, age^3, age^4)    cbind(age, age^2, age^3, age^4) 
+                     -5.638593e-01                       6.810688e-03 
+   cbind(age, age^2, age^3, age^4) 
+                     -3.203830e-05 
+\end{verbatim}
+
+We can create an age grid (minimum age to maximum age) and pass the grid to \texttt{predict()}. We can set the argument \texttt{se=TRUE} in the \texttt{predict()} function which will return a list that includes standard errors of the outcome. We can use these to an upper and lower bound of our estimate of \(y\).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# minimum and maximum values of age variable}
+\NormalTok{agelims <-}\StringTok{ }\KeywordTok{range}\NormalTok{(age) }
+\NormalTok{age.grid <-}\StringTok{ }\KeywordTok{seq}\NormalTok{(}\DataTypeTok{from =}\NormalTok{ agelims[}\DecValTok{1}\NormalTok{], }\DataTypeTok{to =}\NormalTok{ agelims[}\DecValTok{2}\NormalTok{])}
+
+\CommentTok{# se=TRUE returns standard errors}
+\NormalTok{preds <-}\StringTok{ }\KeywordTok{predict}\NormalTok{(fit, }\DataTypeTok{newdata =} \KeywordTok{list}\NormalTok{(}\DataTypeTok{age =}\NormalTok{ age.grid), }\DataTypeTok{se =} \OtherTok{TRUE}\NormalTok{)}
+
+\CommentTok{# confidence intervals as estimate + and - 2 standard deviations}
+\NormalTok{se.bands <-}\StringTok{ }\KeywordTok{cbind}\NormalTok{(preds}\OperatorTok{$}\NormalTok{fit }\OperatorTok{+}\StringTok{ }\DecValTok{2} \OperatorTok{*}\StringTok{ }\NormalTok{preds}\OperatorTok{$}\NormalTok{se.fit, preds}\OperatorTok{$}\NormalTok{fit }\OperatorTok{-}\StringTok{ }\DecValTok{2} \OperatorTok{*}\StringTok{ }\NormalTok{preds}\OperatorTok{$}\NormalTok{se.fit)}
+\end{Highlighting}
+\end{Shaded}
+
+We can plot the data and add the fit from the degree-4 polynomial. We set the margins and outer margins in our plot the later plot a title that will be the overall title for two plots that we plot next to each other. The function \texttt{matlines()} lets us draw the lines fo the uncertainty bounds in one go.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# set margins to plot title in margins}
+\KeywordTok{par}\NormalTok{(}\DataTypeTok{mfrow =} \KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{2}\NormalTok{), }\DataTypeTok{mar =} \KeywordTok{c}\NormalTok{(}\FloatTok{4.5}\NormalTok{, }\FloatTok{4.5}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{1}\NormalTok{), }\DataTypeTok{oma =} \KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{4}\NormalTok{, }\DecValTok{0}\NormalTok{))}
+
+\KeywordTok{plot}\NormalTok{(wage }\OperatorTok{~}\StringTok{ }\KeywordTok{jitter}\NormalTok{(age,}\DecValTok{2}\NormalTok{), }\DataTypeTok{xlim =}\NormalTok{ agelims, }\DataTypeTok{cex =} \FloatTok{0.5}\NormalTok{, }\DataTypeTok{col =} \StringTok{"darkgrey"}\NormalTok{, }\DataTypeTok{bty =} \StringTok{"n"}\NormalTok{,}
+     \DataTypeTok{xlab =} \StringTok{"age"}\NormalTok{)}
+
+\CommentTok{# overall plot window title}
+\KeywordTok{title}\NormalTok{(}\StringTok{"Degree -4 Polynomial "}\NormalTok{, }\DataTypeTok{outer =} \OtherTok{TRUE}\NormalTok{)}
+
+\CommentTok{# line for mean estimate}
+\KeywordTok{lines}\NormalTok{(age.grid, preds}\OperatorTok{$}\NormalTok{fit, }\DataTypeTok{lwd =} \DecValTok{2}\NormalTok{, }\DataTypeTok{col =} \StringTok{"blue"}\NormalTok{)}
+
+\CommentTok{# ~95% ci's}
+\KeywordTok{matlines}\NormalTok{(age.grid, se.bands, }\DataTypeTok{lwd =} \DecValTok{2}\NormalTok{, }\DataTypeTok{col =} \StringTok{"blue"}\NormalTok{, }\DataTypeTok{lty =} \DecValTok{3}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ml101_files/figure-latex/unnamed-chunk-118-1.pdf}
+
+We compare the orthogonolized polynomials that we saved in the object called \texttt{fit} with the polynomials that plain polynomials sved in \texttt{fit2}. The difference will be close to \(0\). We predict the outcome from the fit with the raw polynomials and take the diffence to the fit with the independent linear combinations of the powers of age.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{preds2 <-}\StringTok{ }\KeywordTok{predict}\NormalTok{(fit2, }\DataTypeTok{newdata =} \KeywordTok{list}\NormalTok{(}\DataTypeTok{age =}\NormalTok{ age.grid), }\DataTypeTok{se =} \OtherTok{TRUE}\NormalTok{)}
+
+\CommentTok{# average difference}
+\KeywordTok{mean}\NormalTok{(preds}\OperatorTok{$}\NormalTok{fit }\OperatorTok{-}\StringTok{ }\NormalTok{preds2}\OperatorTok{$}\NormalTok{fit)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] -1.752311e-11
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# maximum difference}
+\KeywordTok{max}\NormalTok{(}\KeywordTok{abs}\NormalTok{(preds}\OperatorTok{$}\NormalTok{fit }\OperatorTok{-}\StringTok{ }\NormalTok{preds2}\OperatorTok{$}\NormalTok{fit))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 7.81597e-11
+\end{verbatim}
+
+When we have only predictor variable and and its powers we use the \texttt{coef()} function to see whether the powers of the variable improve in-sample model fit.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fit}\FloatTok{.5}\NormalTok{ <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(wage }\OperatorTok{~}\StringTok{ }\KeywordTok{poly}\NormalTok{(age, }\DecValTok{5}\NormalTok{), }\DataTypeTok{data =}\NormalTok{ Wage)}
+\KeywordTok{coef}\NormalTok{(}\KeywordTok{summary}\NormalTok{(fit}\FloatTok{.5}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+                Estimate Std. Error     t value     Pr(>|t|)
+(Intercept)    111.70361  0.7287647 153.2780243 0.000000e+00
+poly(age, 5)1  447.06785 39.9160847  11.2001930 1.491111e-28
+poly(age, 5)2 -478.31581 39.9160847 -11.9830341 2.367734e-32
+poly(age, 5)3  125.52169 39.9160847   3.1446392 1.679213e-03
+poly(age, 5)4  -77.91118 39.9160847  -1.9518743 5.104623e-02
+poly(age, 5)5  -35.81289 39.9160847  -0.8972045 3.696820e-01
+\end{verbatim}
+
+With more variables, we use the \texttt{anova()} function and look at the F-test to decide whether in-sample fit improves by including powers of a variable.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fit}\FloatTok{.1}\NormalTok{ <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(wage }\OperatorTok{~}\StringTok{ }\NormalTok{age, }\DataTypeTok{data =}\NormalTok{ Wage)}
+\NormalTok{fit}\FloatTok{.2}\NormalTok{ <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(wage }\OperatorTok{~}\StringTok{ }\KeywordTok{poly}\NormalTok{(age, }\DecValTok{2}\NormalTok{), }\DataTypeTok{data =}\NormalTok{ Wage)}
+\NormalTok{fit}\FloatTok{.3}\NormalTok{ <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(wage }\OperatorTok{~}\StringTok{ }\KeywordTok{poly}\NormalTok{(age, }\DecValTok{3}\NormalTok{), }\DataTypeTok{data =}\NormalTok{ Wage)}
+\NormalTok{fit}\FloatTok{.4}\NormalTok{ <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(wage }\OperatorTok{~}\StringTok{ }\KeywordTok{poly}\NormalTok{(age, }\DecValTok{4}\NormalTok{), }\DataTypeTok{data =}\NormalTok{ Wage)}
+\KeywordTok{anova}\NormalTok{(fit}\FloatTok{.1}\NormalTok{, fit}\FloatTok{.2}\NormalTok{, fit}\FloatTok{.3}\NormalTok{, fit}\FloatTok{.4}\NormalTok{, fit}\FloatTok{.5}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Analysis of Variance Table
+
+Model 1: wage ~ age
+Model 2: wage ~ poly(age, 2)
+Model 3: wage ~ poly(age, 3)
+Model 4: wage ~ poly(age, 4)
+Model 5: wage ~ poly(age, 5)
+  Res.Df     RSS Df Sum of Sq        F    Pr(>F)    
+1   2998 5022216                                    
+2   2997 4793430  1    228786 143.5931 < 2.2e-16 ***
+3   2996 4777674  1     15756   9.8888  0.001679 ** 
+4   2995 4771604  1      6070   3.8098  0.051046 .  
+5   2994 4770322  1      1283   0.8050  0.369682    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+
+With \texttt{glm()} we can also fit a polynomial logistic regression. Here, we create a binary variable that is 1 if wage \textgreater{} 250 and 0 otherwise.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fit <-}\StringTok{ }\KeywordTok{glm}\NormalTok{(}\KeywordTok{I}\NormalTok{(wage }\OperatorTok{>}\StringTok{ }\DecValTok{250}\NormalTok{) }\OperatorTok{~}\StringTok{ }\KeywordTok{poly}\NormalTok{(age, }\DecValTok{4}\NormalTok{), }\DataTypeTok{data =}\NormalTok{ Wage, }\DataTypeTok{family =}\NormalTok{ binomial)}
+\end{Highlighting}
+\end{Shaded}
+
+Similar to \texttt{lm()} we use the \texttt{predict()} function again and also obtain standard errors by setting \texttt{se=TRUE}.
+
+Note: If we do \textbf{not} set \texttt{type="response"} in the \texttt{predict()} function, we get the latent \(y\) as \(X\beta\). We have to send those values through the link function to get predicted probabilities. We do this, so that we can estimate the standard errors on the latent \(y\). We then send these through the link function as well. This ensures that our confidence intervals will never be outside the logical \([0, 1]\) interval for probabilities. If we would not do this, we could get standard errors outside the \([0, 1]\) interval.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# predict latent y}
+\NormalTok{preds <-}\StringTok{ }\KeywordTok{predict}\NormalTok{(fit, }\DataTypeTok{newdata =} \KeywordTok{list}\NormalTok{(}\DataTypeTok{age =}\NormalTok{ age.grid), }\DataTypeTok{se =} \OtherTok{TRUE}\NormalTok{)}
+
+\CommentTok{# send latent y through the link function}
+\NormalTok{pfit <-}\StringTok{ }\DecValTok{1} \OperatorTok{/}\StringTok{ }\NormalTok{(}\DecValTok{1} \OperatorTok{+}\StringTok{ }\KeywordTok{exp}\NormalTok{(}\OperatorTok{-}\NormalTok{preds}\OperatorTok{$}\NormalTok{fit))}
+
+\CommentTok{# error bands calculate on the latent y}
+\NormalTok{se.bands.logit <-}\StringTok{ }\KeywordTok{cbind}\NormalTok{(preds}\OperatorTok{$}\NormalTok{fit }\OperatorTok{+}\StringTok{ }\DecValTok{2} \OperatorTok{*}\StringTok{ }\NormalTok{preds}\OperatorTok{$}\NormalTok{se.fit, preds}\OperatorTok{$}\NormalTok{fit }\OperatorTok{-}\StringTok{ }\DecValTok{2} \OperatorTok{*}\StringTok{ }\NormalTok{preds}\OperatorTok{$}\NormalTok{se.fit)}
+\NormalTok{se.bands <-}\StringTok{ }\DecValTok{1} \OperatorTok{/}\StringTok{ }\NormalTok{(}\DecValTok{1} \OperatorTok{+}\StringTok{ }\KeywordTok{exp}\NormalTok{(}\OperatorTok{-}\NormalTok{se.bands.logit))}
+\end{Highlighting}
+\end{Shaded}
+
+We add the results next to the plot where wage is continuous. With the \texttt{points()} function we add the actual data to the plot. The argument \texttt{pch="\textbar{}"} draws a bar as the symbol for each point. Also notice the y-coordinate of each point. In the \texttt{plot()} function we set the range of the y-axis with \texttt{ylim\ =\ c(0,\ 0.2)} to range from \(0\) to \(0.2\). If the true outcome is \(1\) we want to draw the \textbar{} at \(y=0.2\) and otherwhise at \(y=0\). We achieve this with \texttt{I((wage\ \textgreater{}\ 250)/5)}. Play around to see why.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(}\KeywordTok{I}\NormalTok{(wage }\OperatorTok{>}\StringTok{ }\DecValTok{250}\NormalTok{) }\OperatorTok{~}\StringTok{ }\NormalTok{age, }\DataTypeTok{xlim =}\NormalTok{ agelims, }\DataTypeTok{type =} \StringTok{"n"}\NormalTok{, }\DataTypeTok{ylim =} \KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\FloatTok{0.2}\NormalTok{))}
+\CommentTok{# add data to the plot}
+\KeywordTok{points}\NormalTok{(}\KeywordTok{jitter}\NormalTok{(age), }\KeywordTok{I}\NormalTok{((wage }\OperatorTok{>}\StringTok{ }\DecValTok{250}\NormalTok{)}\OperatorTok{/}\DecValTok{5}\NormalTok{) , }\DataTypeTok{cex =} \DecValTok{1}\NormalTok{, }\DataTypeTok{pch =} \StringTok{"|"}\NormalTok{, }\DataTypeTok{col =} \StringTok{" darkgrey "}\NormalTok{)}
+\CommentTok{# mean estimate}
+\KeywordTok{lines}\NormalTok{(age.grid, pfit, }\DataTypeTok{lwd =} \DecValTok{2}\NormalTok{, }\DataTypeTok{col =} \StringTok{"blue"}\NormalTok{)}
+\CommentTok{# 95 ci}
+\KeywordTok{matlines}\NormalTok{(age.grid, se.bands, }\DataTypeTok{lwd =} \DecValTok{2}\NormalTok{, }\DataTypeTok{col =} \StringTok{"blue"}\NormalTok{, }\DataTypeTok{lty =} \DecValTok{3}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ml101_files/figure-latex/unnamed-chunk-125-1.pdf}
+
+Notice, that the confidence interval becomes very large in the range of the data where we have few data and no \(1\)'s.
+
+\hypertarget{step-functions}{%
+\subsubsection{Step Functions}\label{step-functions}}
+
+Instead of using polynomials to create a non-linear prediction, we could also use step functions. With step functions we fit different lines for different data ranges.
+
+We use the \texttt{cut()} function to create equally spaced cutpoints in our data. We use the now categorical variable age as predictor in our linear model.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# four equally spaced intervals of age}
+\KeywordTok{table}\NormalTok{(}\KeywordTok{cut}\NormalTok{(age, }\DecValTok{4}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+
+(17.9,33.5]   (33.5,49]   (49,64.5] (64.5,80.1] 
+        750        1399         779          72 
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# fit the linear regression with the factor variable age that has four categories}
+\NormalTok{fit <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(wage }\OperatorTok{~}\StringTok{ }\KeywordTok{cut}\NormalTok{(age, }\DecValTok{4}\NormalTok{), }\DataTypeTok{data =}\NormalTok{ Wage)}
+\CommentTok{# the first category is the baseline.}
+\KeywordTok{coef}\NormalTok{(}\KeywordTok{summary}\NormalTok{(fit))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+                        Estimate Std. Error   t value     Pr(>|t|)
+(Intercept)            94.158392   1.476069 63.789970 0.000000e+00
+cut(age, 4)(33.5,49]   24.053491   1.829431 13.148074 1.982315e-38
+cut(age, 4)(49,64.5]   23.664559   2.067958 11.443444 1.040750e-29
+cut(age, 4)(64.5,80.1]  7.640592   4.987424  1.531972 1.256350e-01
+\end{verbatim}
+
+\hypertarget{splines}{%
+\subsubsection{Splines}\label{splines}}
+
+We use the \texttt{splines} package to fit splines.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(splines)}
+\end{Highlighting}
+\end{Shaded}
+
+We first use \texttt{bs()} to generate a basis matrix for a polynomial spline and fit a model with knots at age 25, 40 and 60. \texttt{bs} will by default fit a cubic spline with the specified number of knots. To deviate from a cubic spline, change the argument \texttt{degree} to some other value.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fit <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(wage }\OperatorTok{~}\StringTok{ }\KeywordTok{bs}\NormalTok{(age, }\DataTypeTok{knots =} \KeywordTok{c}\NormalTok{(}\DecValTok{25}\NormalTok{, }\DecValTok{40}\NormalTok{, }\DecValTok{60}\NormalTok{)), }\DataTypeTok{data =}\NormalTok{ Wage)}
+\NormalTok{pred <-}\StringTok{ }\KeywordTok{predict}\NormalTok{(fit, }\DataTypeTok{newdata =} \KeywordTok{list}\NormalTok{(}\DataTypeTok{age =}\NormalTok{ age.grid), }\DataTypeTok{se =} \OtherTok{TRUE}\NormalTok{)}
+\KeywordTok{par}\NormalTok{( }\DataTypeTok{mfrow =} \KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{))}
+\KeywordTok{plot}\NormalTok{(}\KeywordTok{jitter}\NormalTok{(age,}\DecValTok{2}\NormalTok{), wage, }\DataTypeTok{col =} \StringTok{"gray"}\NormalTok{, }\DataTypeTok{xlab =} \StringTok{"age"}\NormalTok{, }\DataTypeTok{bty =} \StringTok{"n"}\NormalTok{)}
+\KeywordTok{lines}\NormalTok{(age.grid, pred}\OperatorTok{$}\NormalTok{fit, }\DataTypeTok{lwd =} \DecValTok{2}\NormalTok{)}
+\KeywordTok{lines}\NormalTok{(age.grid, pred}\OperatorTok{$}\NormalTok{fit }\OperatorTok{+}\StringTok{ }\DecValTok{2} \OperatorTok{*}\StringTok{ }\NormalTok{pred}\OperatorTok{$}\NormalTok{se, }\DataTypeTok{lty =} \StringTok{"dashed"}\NormalTok{, }\DataTypeTok{lwd =} \DecValTok{2}\NormalTok{)}
+\KeywordTok{lines}\NormalTok{(age.grid, pred}\OperatorTok{$}\NormalTok{fit }\OperatorTok{-}\StringTok{ }\DecValTok{2} \OperatorTok{*}\StringTok{ }\NormalTok{pred}\OperatorTok{$}\NormalTok{se, }\DataTypeTok{lty =} \StringTok{"dashed"}\NormalTok{, }\DataTypeTok{lwd =} \DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ml101_files/figure-latex/unnamed-chunk-128-1.pdf}
 
 \hypertarget{tree-based-models}{%
 \section{Tree Based Models}\label{tree-based-models}}
@@ -1162,10 +3115,785 @@ Placeholder
 \hypertarget{seminar-5}{%
 \subsection{Seminar}\label{seminar-5}}
 
-Placeholder
+Tree models are non-parametric models. Depending on the data generation process, these models can be better predictive models than generalised linear models even with regularisation. We will start with the highly variable simple tree, followed by pruning, the random forrest model and boosting machines.
 
-\hypertarget{simulation-and-monte-carlo-simulation}{%
-\section{Simulation and Monte Carlo Simulation}\label{simulation-and-monte-carlo-simulation}}
+We load post-election survey data from the 2004 British Election Survey. The data is available \href{http://philippbroniecki.github.io/ML2017.io/data/bes.dta}{here}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# clear workspace}
+\KeywordTok{rm}\NormalTok{(}\DataTypeTok{list=}\KeywordTok{ls}\NormalTok{())}
+
+\CommentTok{# needed because .dta is a foreign file format (STATA format)}
+\KeywordTok{library}\NormalTok{(readstata13)}
+\NormalTok{bes <-}\StringTok{ }\KeywordTok{read.dta13}\NormalTok{(}\StringTok{"bes.dta"}\NormalTok{)}
+
+\CommentTok{# drop missing values}
+\NormalTok{bes <-}\StringTok{ }\KeywordTok{na.omit}\NormalTok{(bes)}
+
+\CommentTok{# drop id variable}
+\NormalTok{bes}\OperatorTok{$}\NormalTok{cs_id <-}\StringTok{ }\OtherTok{NULL}
+\end{Highlighting}
+\end{Shaded}
+
+We clean the \texttt{in\_school} variable which should be binary indicating whether a respondent is attending school or not. However, we estimated missing values (which is a superior treatment of missing values than list-wise deletion) and forgot classify those predictions into 0s and 1s.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# clean in_school}
+\KeywordTok{table}\NormalTok{(bes}\OperatorTok{$}\NormalTok{in_school)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+
+ -0.405100243979883  -0.286622836951644 -0.0932005119161492 
+                  1                   1                   1 
+  -0.08278915151733                   0  0.0403350016659423 
+                  1                4120                   1 
+  0.123419680101826   0.247478125358543                   1 
+                  1                   1                  34 
+\end{verbatim}
+
+We use the \texttt{ifelse()} function to classify into 0 and 1.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{bes}\OperatorTok{$}\NormalTok{in_school <-}\StringTok{ }\KeywordTok{ifelse}\NormalTok{ (bes}\OperatorTok{$}\NormalTok{in_school }\OperatorTok{<}\StringTok{ }\FloatTok{0.5}\NormalTok{, }\DecValTok{0}\NormalTok{, bes}\OperatorTok{$}\NormalTok{in_school)}
+\KeywordTok{table}\NormalTok{(bes}\OperatorTok{$}\NormalTok{in_school)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+
+   0    1 
+4127   34 
+\end{verbatim}
+
+Next, we declare the categorical variables in the dataset to be factors en bulk.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# data manipulation}
+\NormalTok{categcorical <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"Turnout"}\NormalTok{, }\StringTok{"Vote2001"}\NormalTok{, }\StringTok{"Gender"}\NormalTok{, }\StringTok{"PartyID"}\NormalTok{, }\StringTok{"Telephone"}\NormalTok{, }\StringTok{"edu15"}\NormalTok{,}
+                  \StringTok{"edu16"}\NormalTok{, }\StringTok{"edu17"}\NormalTok{, }\StringTok{"edu18"}\NormalTok{, }\StringTok{"edu19plus"}\NormalTok{, }\StringTok{"in_school"}\NormalTok{, }\StringTok{"in_uni"}\NormalTok{)}
+\CommentTok{# declare factor variables}
+\NormalTok{bes[, categcorical] <-}\StringTok{ }\KeywordTok{lapply}\NormalTok{(bes[, categcorical], factor)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{classification-trees}{%
+\subsubsection{Classification Trees}\label{classification-trees}}
+
+We use trees to classifyrespondents into voters and non-voters. Here we need the \texttt{tree} package which we have to install if is not already \texttt{install.packages("tree")}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(tree)}
+
+\CommentTok{# build classification tree (- in formula language means except)}
+\NormalTok{t1 <-}\StringTok{ }\KeywordTok{tree}\NormalTok{( Turnout }\OperatorTok{~}\StringTok{ }\NormalTok{. }\OperatorTok{-}\NormalTok{CivicDutyScores, }\DataTypeTok{data =}\NormalTok{ bes)}
+\KeywordTok{summary}\NormalTok{(t1)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+
+Classification tree:
+tree(formula = Turnout ~ . - CivicDutyScores, data = bes)
+Variables actually used in tree construction:
+[1] "CivicDutyIndex" "Vote2001"       "polinfoindex"  
+Number of terminal nodes:  6 
+Residual mean deviance:  0.8434 = 3504 / 4155 
+Misclassification error rate: 0.1769 = 736 / 4161 
+\end{verbatim}
+
+We can plot the tree using the standard plot function. On every split a condition is printed. The observations in the left branch are those for which the condition is true and the ones on the right are those for which the condition is false.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# plot tree object}
+\KeywordTok{plot}\NormalTok{(t1)}
+\KeywordTok{text}\NormalTok{(t1, }\DataTypeTok{pretty =} \DecValTok{0}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ml101_files/figure-latex/unnamed-chunk-136-1.pdf}
+
+We can also examine the splits as text.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# examin the tree object}
+\NormalTok{t1}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+node), split, n, deviance, yval, (yprob)
+      * denotes terminal node
+
+ 1) root 4161 4763.0 1 ( 0.25931 0.74069 )  
+   2) CivicDutyIndex < 19.5 3066 2446.0 1 ( 0.13666 0.86334 )  
+     4) Vote2001: 0 243  333.4 1 ( 0.44033 0.55967 ) *
+     5) Vote2001: 1 2823 1963.0 1 ( 0.11052 0.88948 )  
+      10) CivicDutyIndex < 16.5 1748  950.8 1 ( 0.07723 0.92277 ) *
+      11) CivicDutyIndex > 16.5 1075  961.7 1 ( 0.16465 0.83535 ) *
+   3) CivicDutyIndex > 19.5 1095 1471.0 0 ( 0.60274 0.39726 )  
+     6) Vote2001: 0 429  391.4 0 ( 0.82984 0.17016 ) *
+     7) Vote2001: 1 666  918.2 1 ( 0.45646 0.54354 )  
+      14) polinfoindex < 5.5 356  483.4 0 ( 0.58427 0.41573 ) *
+      15) polinfoindex > 5.5 310  383.7 1 ( 0.30968 0.69032 ) *
+\end{verbatim}
+
+Now we use the validation set approach for classification. We split our data and re-grow the tree on the training data.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# initialize random number generator}
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{2}\NormalTok{)}
+
+\CommentTok{# training/test split}
+\NormalTok{train <-}\StringTok{ }\KeywordTok{sample}\NormalTok{(}\KeywordTok{nrow}\NormalTok{(bes), }\DataTypeTok{size =} \KeywordTok{as.integer}\NormalTok{(}\KeywordTok{nrow}\NormalTok{(bes)}\OperatorTok{*}\NormalTok{.}\DecValTok{66}\NormalTok{))}
+\NormalTok{bes.test <-}\StringTok{ }\NormalTok{bes[ }\OperatorTok{-}\NormalTok{train, ]}
+\NormalTok{turnout.test <-}\StringTok{ }\KeywordTok{ifelse}\NormalTok{( bes}\OperatorTok{$}\NormalTok{Turnout[}\OperatorTok{-}\NormalTok{train] }\OperatorTok{==}\StringTok{ "1"}\NormalTok{, }\DataTypeTok{yes =} \DecValTok{1}\NormalTok{, }\DataTypeTok{no =} \DecValTok{0}\NormalTok{)}
+
+\CommentTok{# grow tree on training data}
+\NormalTok{t2 <-}\StringTok{ }\KeywordTok{tree}\NormalTok{( Turnout }\OperatorTok{~}\StringTok{ }\NormalTok{. , }\DataTypeTok{data =}\NormalTok{ bes, }\DataTypeTok{subset =}\NormalTok{ train)}
+\end{Highlighting}
+\end{Shaded}
+
+We predict outcomes using the \texttt{predict()} function.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# predict outcomes}
+\NormalTok{t2.pred <-}\StringTok{ }\KeywordTok{predict}\NormalTok{(t2, }\DataTypeTok{newdata =}\NormalTok{ bes.test, }\DataTypeTok{type =} \StringTok{"class"}\NormalTok{)}
+
+\CommentTok{# confusion matrix}
+\KeywordTok{table}\NormalTok{(}\DataTypeTok{prediction =}\NormalTok{ t2.pred, }\DataTypeTok{truth =}\NormalTok{ turnout.test)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+          truth
+prediction   0   1
+         0 179  72
+         1 186 978
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# percent correctly classified}
+\KeywordTok{mean}\NormalTok{( t2.pred }\OperatorTok{==}\StringTok{ }\NormalTok{turnout.test )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 0.8176678
+\end{verbatim}
+
+We correctly classify 82\% of the observations. In classification models, the Brier Score is often used as as measure of model quality. We estimate it as the average of the squared differences between predicted probabilities and true outcomes. It is, thus, similar to the MSE.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# using the predict function to predict outcomes from tree}
+\NormalTok{t2.pred <-}\StringTok{ }\KeywordTok{predict}\NormalTok{(t2, }\DataTypeTok{newdata =}\NormalTok{ bes.test, }\DataTypeTok{type =} \StringTok{"vector"}\NormalTok{)}
+\KeywordTok{head}\NormalTok{(t2.pred)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+            0         1
+1  0.39516129 0.6048387
+5  0.04152249 0.9584775
+6  0.13796477 0.8620352
+7  0.39516129 0.6048387
+9  0.04152249 0.9584775
+14 0.13796477 0.8620352
+\end{verbatim}
+
+Next we estimate the Brier Score.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# the second column of t2.pred is the probabilities that the outcomes is equal to 1}
+\NormalTok{t2.pred <-}\StringTok{ }\NormalTok{t2.pred[,}\DecValTok{2}\NormalTok{]}
+
+\CommentTok{# brier score}
+\NormalTok{mse.tree <-}\StringTok{ }\KeywordTok{mean}\NormalTok{( (t2.pred }\OperatorTok{-}\StringTok{ }\NormalTok{turnout.test)}\OperatorTok{^}\DecValTok{2}\NormalTok{ )}
+\end{Highlighting}
+\end{Shaded}
+
+We turn to cost-complexity pruning to see if we can simplify the tree and thus decrease variance without increasing bias. We use k-fold cross-validation to determine the best size of the tree.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{3}\NormalTok{)}
+\NormalTok{cv.t2 <-}\StringTok{ }\KeywordTok{cv.tree}\NormalTok{(t2, }\DataTypeTok{FUN =}\NormalTok{ prune.misclass)}
+
+\CommentTok{# illustrate}
+\KeywordTok{par}\NormalTok{(}\DataTypeTok{mfrow =} \KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{2}\NormalTok{))}
+\KeywordTok{plot}\NormalTok{(cv.t2}\OperatorTok{$}\NormalTok{size, cv.t2}\OperatorTok{$}\NormalTok{dev, }\DataTypeTok{type =} \StringTok{"b"}\NormalTok{)}
+\KeywordTok{plot}\NormalTok{(cv.t2}\OperatorTok{$}\NormalTok{k, cv.t2}\OperatorTok{$}\NormalTok{dev, }\DataTypeTok{type =} \StringTok{"b"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ml101_files/figure-latex/unnamed-chunk-142-1.pdf}
+
+We can prune the tree to four terminal nodes.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# prune the tree (pick the smallest tree that does not substiantially increase error)}
+\NormalTok{prune.t2 <-}\StringTok{ }\KeywordTok{prune.misclass}\NormalTok{(t2, }\DataTypeTok{best =} \DecValTok{4}\NormalTok{)}
+\KeywordTok{par}\NormalTok{(}\DataTypeTok{mfrow =} \KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{))}
+\KeywordTok{plot}\NormalTok{(prune.t2)}
+\KeywordTok{text}\NormalTok{(prune.t2, }\DataTypeTok{pretty =} \DecValTok{0}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ml101_files/figure-latex/unnamed-chunk-143-1.pdf}
+
+We then predict outcomes.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# predict outcomes}
+\NormalTok{t2.pred <-}\StringTok{ }\KeywordTok{predict}\NormalTok{(prune.t2, }\DataTypeTok{newdata =}\NormalTok{ bes.test, }\DataTypeTok{type =} \StringTok{"class"}\NormalTok{)}
+
+\CommentTok{# did we loose predictive power?}
+\KeywordTok{mean}\NormalTok{( t2.pred }\OperatorTok{==}\StringTok{ }\NormalTok{turnout.test )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 0.8176678
+\end{verbatim}
+
+Let's estimate the Brier Score
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Brier score}
+\NormalTok{t2.pred <-}\StringTok{ }\KeywordTok{predict}\NormalTok{(t2, }\DataTypeTok{newdata =}\NormalTok{ bes.test, }\DataTypeTok{type =} \StringTok{"vector"}\NormalTok{)[,}\DecValTok{2}\NormalTok{]}
+\NormalTok{mse.pruned <-}\StringTok{ }\KeywordTok{mean}\NormalTok{( (t2.pred }\OperatorTok{-}\StringTok{ }\NormalTok{turnout.test)}\OperatorTok{^}\DecValTok{2}\NormalTok{ ) }
+\end{Highlighting}
+\end{Shaded}
+
+We still correctly classify 0.1338879\% of the observations and the brier score remained stable. In the previous plots, we saw that we should do worse if we prune back the tree to have less than 4 terminal nodes. We examine what happens if we overdo it.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# using "wrong" value for pruning (where the error rate does increase)}
+\NormalTok{prune.t2 <-}\StringTok{ }\KeywordTok{prune.misclass}\NormalTok{(t2, }\DataTypeTok{best =} \DecValTok{2}\NormalTok{)}
+\KeywordTok{plot}\NormalTok{(prune.t2)}
+\KeywordTok{text}\NormalTok{(prune.t2, }\DataTypeTok{pretty =} \DecValTok{0}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ml101_files/figure-latex/unnamed-chunk-146-1.pdf}
+
+We now predict outcomes based on the tree that is too small.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{t2.pred <-}\StringTok{ }\KeywordTok{predict}\NormalTok{(prune.t2, }\DataTypeTok{newdata =}\NormalTok{ bes.test, }\DataTypeTok{type =} \StringTok{"class"}\NormalTok{)}
+
+\CommentTok{# our predictive power decreased}
+\KeywordTok{mean}\NormalTok{( t2.pred }\OperatorTok{==}\StringTok{ }\NormalTok{turnout.test )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 0.8007067
+\end{verbatim}
+
+Let's estimate the Brier Score.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# brier score}
+\NormalTok{t2.pred <-}\StringTok{ }\KeywordTok{predict}\NormalTok{(prune.t2, }\DataTypeTok{newdata =}\NormalTok{ bes.test, }\DataTypeTok{type =} \StringTok{"vector"}\NormalTok{)[,}\DecValTok{2}\NormalTok{]}
+\NormalTok{mse.pruned2 <-}\StringTok{ }\KeywordTok{mean}\NormalTok{( (t2.pred }\OperatorTok{-}\StringTok{ }\NormalTok{turnout.test)}\OperatorTok{^}\DecValTok{2}\NormalTok{ ) }
+\end{Highlighting}
+\end{Shaded}
+
+We see that our test error increases.
+
+\hypertarget{regression-trees}{%
+\subsubsection{Regression Trees}\label{regression-trees}}
+
+We predict the continuous variable \texttt{Income}. The plot of the regression tree is similar. However, in the terminal nodes the mean values of the dependent variable for that group are displayed rather than the class labels.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# grow a regression tree}
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{123}\NormalTok{)}
+\NormalTok{reg.t1 <-}\StringTok{ }\KeywordTok{tree}\NormalTok{(Income }\OperatorTok{~}\StringTok{ }\NormalTok{., }\DataTypeTok{data =}\NormalTok{ bes, }\DataTypeTok{subset =}\NormalTok{ train)}
+\KeywordTok{summary}\NormalTok{(reg.t1)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+
+Regression tree:
+tree(formula = Income ~ ., data = bes, subset = train)
+Variables actually used in tree construction:
+[1] "edu19plus" "Age"       "Telephone"
+Number of terminal nodes:  5 
+Residual mean deviance:  3.849 = 10550 / 2741 
+Distribution of residuals:
+    Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
+-6.98100 -1.48700  0.01935  0.00000  1.21000  9.21000 
+\end{verbatim}
+
+Let's plot the tree.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# plot regression tree}
+\KeywordTok{plot}\NormalTok{(reg.t1)}
+\KeywordTok{text}\NormalTok{(reg.t1, }\DataTypeTok{pretty =} \DecValTok{0}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ml101_files/figure-latex/unnamed-chunk-150-1.pdf}
+
+We can also examine the same output as text.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# examin the tree objext}
+\NormalTok{t1}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+node), split, n, deviance, yval, (yprob)
+      * denotes terminal node
+
+ 1) root 4161 4763.0 1 ( 0.25931 0.74069 )  
+   2) CivicDutyIndex < 19.5 3066 2446.0 1 ( 0.13666 0.86334 )  
+     4) Vote2001: 0 243  333.4 1 ( 0.44033 0.55967 ) *
+     5) Vote2001: 1 2823 1963.0 1 ( 0.11052 0.88948 )  
+      10) CivicDutyIndex < 16.5 1748  950.8 1 ( 0.07723 0.92277 ) *
+      11) CivicDutyIndex > 16.5 1075  961.7 1 ( 0.16465 0.83535 ) *
+   3) CivicDutyIndex > 19.5 1095 1471.0 0 ( 0.60274 0.39726 )  
+     6) Vote2001: 0 429  391.4 0 ( 0.82984 0.17016 ) *
+     7) Vote2001: 1 666  918.2 1 ( 0.45646 0.54354 )  
+      14) polinfoindex < 5.5 356  483.4 0 ( 0.58427 0.41573 ) *
+      15) polinfoindex > 5.5 310  383.7 1 ( 0.30968 0.69032 ) *
+\end{verbatim}
+
+We estimate test error of our tree.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# MSE}
+\NormalTok{mse.tree <-}\StringTok{ }\KeywordTok{mean}\NormalTok{( (bes.test}\OperatorTok{$}\NormalTok{Income }\OperatorTok{-}\StringTok{ }\KeywordTok{predict}\NormalTok{(reg.t1, }\DataTypeTok{newdata =}\NormalTok{ bes.test))}\OperatorTok{^}\DecValTok{2}\NormalTok{, }\DataTypeTok{na.rm =} \OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+We apply pruning again to get a smaller more interpretable tree.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# cross-validation (to determine cutback size for pruning)}
+\NormalTok{cv.reg.t1 <-}\StringTok{ }\KeywordTok{cv.tree}\NormalTok{(reg.t1)}
+\KeywordTok{plot}\NormalTok{(cv.reg.t1)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ml101_files/figure-latex/unnamed-chunk-153-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(cv.reg.t1}\OperatorTok{$}\NormalTok{size, cv.reg.t1}\OperatorTok{$}\NormalTok{dev, }\DataTypeTok{type =} \StringTok{"b"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ml101_files/figure-latex/unnamed-chunk-153-2.pdf}
+
+This is time we will increase error by pruning the tree. We choose four as a smaller tree size that does not increase RSS by much.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# pruning}
+\NormalTok{prune.reg.t1 <-}\StringTok{ }\KeywordTok{prune.tree}\NormalTok{(reg.t1, }\DataTypeTok{best =} \DecValTok{4}\NormalTok{)}
+\KeywordTok{plot}\NormalTok{(prune.reg.t1)}
+\KeywordTok{text}\NormalTok{(prune.reg.t1, }\DataTypeTok{pretty =} \DecValTok{0}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ml101_files/figure-latex/unnamed-chunk-154-1.pdf}
+
+We can predict the outcome based on our pruned back tree. We will predict four values because we have four terminal nodes. We can illustrate the groups and their variance and estimate the MSE of our prediction.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# predict outcomes}
+\NormalTok{yhat <-}\StringTok{ }\KeywordTok{predict}\NormalTok{(prune.reg.t1, }\DataTypeTok{newdata =}\NormalTok{ bes.test)}
+\KeywordTok{plot}\NormalTok{(yhat, bes.test}\OperatorTok{$}\NormalTok{Income)}
+\KeywordTok{abline}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ml101_files/figure-latex/unnamed-chunk-155-1.pdf}
+
+We estimate the Brier Score (prediction error).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# MSE}
+\NormalTok{mse.pruned <-}\StringTok{ }\KeywordTok{mean}\NormalTok{((yhat }\OperatorTok{-}\StringTok{ }\NormalTok{bes.test}\OperatorTok{$}\NormalTok{Income)}\OperatorTok{^}\DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{bagging-and-random-forests}{%
+\paragraph{Bagging and Random Forests}\label{bagging-and-random-forests}}
+
+We now apply bagging and random forests to improve our prediction. Bagging is the idea that the high variance of a single bushy tree can be reduced by bootstapping samples and averaging over trees that were grown on the samples.
+
+Note: Bagging gets an estimate of the test error for free as it always leaves out some observations when a tree is fit. The reported out-of-bag MSE is thus an estimate of test error. We also estimate test error separately on a test set. This is one particular test set, so the test error may vary.
+
+In our run below the OOB MSE may be a better estimate of test error. It is reported to be lower than our test error estimate. We need to install the \texttt{randomForest} package like so: \texttt{install.packages("randomForest")}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{123}\NormalTok{)}
+\KeywordTok{library}\NormalTok{(randomForest)}
+
+\CommentTok{# estiamte random forrests model (this may take a moment)}
+\NormalTok{bag1 <-}\StringTok{ }\KeywordTok{randomForest}\NormalTok{(Income }\OperatorTok{~}\StringTok{ }\NormalTok{. , }\DataTypeTok{mtry =} \DecValTok{19}\NormalTok{, }\DataTypeTok{data =}\NormalTok{ bes, }\DataTypeTok{subset =}\NormalTok{ train, }\DataTypeTok{importance =} \OtherTok{TRUE}\NormalTok{)}
+\NormalTok{bag1}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+
+Call:
+ randomForest(formula = Income ~ ., data = bes, mtry = 19, importance = TRUE,      subset = train) 
+               Type of random forest: regression
+                     Number of trees: 500
+No. of variables tried at each split: 19
+
+          Mean of squared residuals: 3.680305
+                    % Var explained: 37.89
+\end{verbatim}
+
+We can use the predict function to predict outcomes from our random forests object.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# predict outcome, illustrate, MSE}
+\NormalTok{yhat.bag <-}\StringTok{ }\KeywordTok{predict}\NormalTok{(bag1, }\DataTypeTok{newdata =}\NormalTok{ bes.test)}
+\KeywordTok{plot}\NormalTok{(yhat.bag, bes.test}\OperatorTok{$}\NormalTok{Income)}
+\KeywordTok{abline}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{) }\CommentTok{# line of 1:1 perfect prediction}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ml101_files/figure-latex/unnamed-chunk-158-1.pdf}
+
+We estimate the MSE in the validation set
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mse.bag <-}\StringTok{ }\KeywordTok{mean}\NormalTok{( (yhat.bag }\OperatorTok{-}\StringTok{ }\NormalTok{bes.test}\OperatorTok{$}\NormalTok{Income)}\OperatorTok{^}\DecValTok{2}\NormalTok{ )}
+
+\CommentTok{# reduction of error}
+\NormalTok{(mse.bag }\OperatorTok{-}\StringTok{ }\NormalTok{mse.tree) }\OperatorTok{/}\StringTok{ }\NormalTok{mse.tree}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] -0.05762335
+\end{verbatim}
+
+We reduce the error rate by 5.76\(%
+\) by using bagging. We examine what happens when we reduce the number of trees we grow. The default is 500.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# dcrease the number of trees (defaults to 500)}
+\NormalTok{bag2 <-}\StringTok{ }\KeywordTok{randomForest}\NormalTok{(Income }\OperatorTok{~}\StringTok{ }\NormalTok{., }\DataTypeTok{mtry =} \DecValTok{19}\NormalTok{, }\DataTypeTok{data =}\NormalTok{ bes, }\DataTypeTok{subset =}\NormalTok{ train, }\DataTypeTok{ntree =} \DecValTok{25}\NormalTok{, }\DataTypeTok{importance =} \OtherTok{TRUE}\NormalTok{)}
+
+\CommentTok{# predict outcome}
+\NormalTok{yhat.bag2 <-}\StringTok{ }\KeywordTok{predict}\NormalTok{(bag2, }\DataTypeTok{newdata =}\NormalTok{ bes.test)}
+\NormalTok{mse.bag2 <-}\StringTok{ }\NormalTok{( (yhat.bag2 }\OperatorTok{-}\StringTok{ }\NormalTok{bes.test}\OperatorTok{$}\NormalTok{Income)}\OperatorTok{^}\DecValTok{2}\NormalTok{ )}
+\end{Highlighting}
+\end{Shaded}
+
+The result is that our rate increases substantially again.
+
+We now apply random forest. The trick is to decorrelate the trees by randomly considering only a subset of variables at every split. We thereby reduce variance further. The number of variables argument \texttt{mtry} is a tuning parameter.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Random Forest: not trying all vars at each split decorrelates the trees}
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{123}\NormalTok{)}
+
+\CommentTok{# we try to find the optimal tuning parameter for the number of variables to use at each split}
+\NormalTok{oob.error <-}\StringTok{ }\OtherTok{NA}
+\NormalTok{val.set.error <-}\StringTok{ }\OtherTok{NA}
+\ControlFlowTok{for}\NormalTok{ ( idx }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{10}\NormalTok{)\{}
+\NormalTok{  rf1 <-}\StringTok{ }\KeywordTok{randomForest}\NormalTok{(Income }\OperatorTok{~}\StringTok{ }\NormalTok{., }\DataTypeTok{mtry =}\NormalTok{ idx, }\DataTypeTok{data =}\NormalTok{ bes, }\DataTypeTok{subset =}\NormalTok{ train, }\DataTypeTok{importance =} \OtherTok{TRUE}\NormalTok{)}
+  \CommentTok{# record out of bag error}
+\NormalTok{  oob.error[idx] <-}\StringTok{ }\NormalTok{rf1}\OperatorTok{$}\NormalTok{mse[}\KeywordTok{length}\NormalTok{(rf1}\OperatorTok{$}\NormalTok{mse)]}
+  \KeywordTok{cat}\NormalTok{(}\KeywordTok{paste}\NormalTok{(}\StringTok{"}\CharTok{\textbackslash{}n}\StringTok{"}\NormalTok{, }\StringTok{"Use "}\NormalTok{, idx, }\StringTok{" variables at each split"}\NormalTok{, }\DataTypeTok{sep=}\StringTok{""}\NormalTok{))}
+  \CommentTok{# record validation set error}
+\NormalTok{  val.set.error[idx] <-}\StringTok{ }\KeywordTok{mean}\NormalTok{( (}\KeywordTok{predict}\NormalTok{(rf1, }\DataTypeTok{newdata =}\NormalTok{ bes.test) }\OperatorTok{-}\StringTok{ }\NormalTok{bes.test}\OperatorTok{$}\NormalTok{Income)}\OperatorTok{^}\DecValTok{2}\NormalTok{ )}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+
+Use 1 variables at each split
+Use 2 variables at each split
+Use 3 variables at each split
+Use 4 variables at each split
+Use 5 variables at each split
+Use 6 variables at each split
+Use 7 variables at each split
+Use 8 variables at each split
+Use 9 variables at each split
+Use 10 variables at each split
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# check optimal values for mtry}
+\KeywordTok{matplot}\NormalTok{( }\DecValTok{1}\OperatorTok{:}\NormalTok{idx, }\KeywordTok{cbind}\NormalTok{(oob.error, val.set.error), }\DataTypeTok{pch =} \DecValTok{19}\NormalTok{, }\DataTypeTok{col =} \KeywordTok{c}\NormalTok{(}\StringTok{"red"}\NormalTok{, }\StringTok{"blue"}\NormalTok{),}
+         \DataTypeTok{type =} \StringTok{"b"}\NormalTok{, }\DataTypeTok{ylab =} \StringTok{"MSE"}\NormalTok{, }\DataTypeTok{frame.plot =} \OtherTok{FALSE}\NormalTok{)}
+\KeywordTok{legend}\NormalTok{(}\StringTok{"topright"}\NormalTok{, }\DataTypeTok{legend =} \KeywordTok{c}\NormalTok{(}\StringTok{"OOB"}\NormalTok{, }\StringTok{"Val. Set"}\NormalTok{), }\DataTypeTok{pch =} \DecValTok{19}\NormalTok{, }\DataTypeTok{col =} \KeywordTok{c}\NormalTok{(}\StringTok{"red"}\NormalTok{, }\StringTok{"blue"}\NormalTok{),}
+       \DataTypeTok{bty =} \StringTok{"n"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ml101_files/figure-latex/unnamed-chunk-161-1.pdf}
+
+We use 3 as the optimal value for \texttt{mtry}. In cases where it is hard to decide, it's a good idea to choose the less complex model.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{rf <-}\StringTok{ }\KeywordTok{randomForest}\NormalTok{(Income }\OperatorTok{~}\StringTok{ }\NormalTok{., }\DataTypeTok{mtry =} \DecValTok{4}\NormalTok{, }\DataTypeTok{data =}\NormalTok{ bes, }\DataTypeTok{subset =}\NormalTok{ train, }\DataTypeTok{importance =} \OtherTok{TRUE}\NormalTok{)}
+
+\CommentTok{# predict outcomes}
+\NormalTok{yhat.rf <-}\StringTok{ }\KeywordTok{predict}\NormalTok{(rf, }\DataTypeTok{newdata =}\NormalTok{ bes.test)}
+\NormalTok{mse.rf <-}\StringTok{ }\KeywordTok{mean}\NormalTok{( (yhat.rf }\OperatorTok{-}\StringTok{ }\NormalTok{bes.test}\OperatorTok{$}\NormalTok{Income)}\OperatorTok{^}\DecValTok{2}\NormalTok{ )}
+
+\CommentTok{# on previous random forests model}
+\NormalTok{(mse.rf }\OperatorTok{-}\StringTok{ }\NormalTok{mse.bag) }\OperatorTok{/}\StringTok{ }\NormalTok{mse.bag}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] -0.03454119
+\end{verbatim}
+
+We reduced the error rate by another 3.45\(\%\) by decorrelating the trees. We can exmine variable importance as well. Variable reduction is obtained as the average that a predictor reduces error at splits within a tree where it was used and averaged again over all trees. Similarly, node purity is based on the gini index of how heterogenous a group becomes due to a split.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{par}\NormalTok{(}\DataTypeTok{mfrow =} \KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{))}
+\CommentTok{# which varaibles help explain outcome}
+\KeywordTok{importance}\NormalTok{(rf1)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+                  %IncMSE IncNodePurity
+Turnout          3.485190     186.58860
+Vote2001         9.654237     180.45489
+Age             79.593695    3492.19404
+Gender           8.343223     281.50559
+PartyID          3.053795     207.56146
+Influence       13.608173     823.65790
+Attention       19.417204     955.05716
+Telephone       55.951595     534.66524
+LeftrightSelf    7.783832     869.14777
+CivicDutyIndex  24.542362     942.35134
+polinfoindex    12.441130     867.21040
+edu15           10.163296     580.35854
+edu16            5.283346     185.01184
+edu17            5.651777     112.05356
+edu18            2.655123     110.94208
+edu19plus       71.813297    3112.61687
+in_school       19.692186      80.59582
+in_uni          -2.576748      22.41477
+CivicDutyScores 25.916963    1684.33658
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# importance plot}
+\KeywordTok{varImpPlot}\NormalTok{(rf1)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ml101_files/figure-latex/unnamed-chunk-163-1.pdf}
+
+\hypertarget{boosting}{%
+\paragraph{Boosting}\label{boosting}}
+
+The general idea of boosting is that a tree is fit to predict outcome. The second tree is then fit on the residual of the first and so with all following trees. Each additional tree is discounted by a learning rate, so that each tree does not contribute much but slowly the ensemble becomes more predictive.
+
+Install the \texttt{gbm} package like so \texttt{install.packages("gbm")}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(gbm)}
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{1234}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+We run gradient boosting. The tuning parameters are the tree size. Tree size is directly related to the second tuning parameter: the learning rate. When the learning rate is smaller, we need more trees. The third tuning parameter interaction.depth determines how bushy the tree is. Common choices are 1, 2, 4, 8. When interaction depth is 1, each tree is a stump. If we increase to two we can get bivariate interactions with 2 splits and so. A final parameter that is related to the complexity of the tree could be minimum number of observations in the terminal node which defaults to 10.
+
+Notice that we just set hyperparameters. We might achieve better predictions by training the boosting model properly (however, this would take very long).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# gradient boosting}
+\NormalTok{gb1 <-}\StringTok{ }\KeywordTok{gbm}\NormalTok{(Income }\OperatorTok{~}\StringTok{ }\NormalTok{., }\DataTypeTok{data =}\NormalTok{ bes[train, ], }
+           \DataTypeTok{distribution =} \StringTok{"gaussian"}\NormalTok{, }
+           \DataTypeTok{n.trees =} \DecValTok{5000}\NormalTok{, }
+           \DataTypeTok{interaction.depth =} \DecValTok{4}\NormalTok{,}
+           \DataTypeTok{shrinkage =} \FloatTok{0.001}\NormalTok{)}
+
+\KeywordTok{summary}\NormalTok{(gb1)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ml101_files/figure-latex/unnamed-chunk-165-1.pdf}
+
+\begin{verbatim}
+                            var     rel.inf
+edu19plus             edu19plus 43.60824543
+Age                         Age 28.30747893
+Telephone             Telephone  7.24463534
+polinfoindex       polinfoindex  5.33906762
+edu15                     edu15  3.07150723
+Attention             Attention  2.56886790
+Gender                   Gender  1.56310050
+CivicDutyScores CivicDutyScores  1.48574280
+in_school             in_school  1.18768575
+LeftrightSelf     LeftrightSelf  1.13485329
+Turnout                 Turnout  1.03074516
+CivicDutyIndex   CivicDutyIndex  0.93773693
+edu16                     edu16  0.68203332
+edu17                     edu17  0.61758676
+Influence             Influence  0.57391921
+edu18                     edu18  0.25732928
+Vote2001               Vote2001  0.19667081
+PartyID                 PartyID  0.16443143
+in_uni                   in_uni  0.02836232
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# partial dependence plots}
+\KeywordTok{plot}\NormalTok{(gb1, }\DataTypeTok{i =} \StringTok{"edu19plus"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ml101_files/figure-latex/unnamed-chunk-166-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(gb1, }\DataTypeTok{i =} \StringTok{"Age"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ml101_files/figure-latex/unnamed-chunk-166-2.pdf}
+
+We predict the test MSE again and compare to our best model.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# predict outcome}
+\NormalTok{yhat.gb <-}\StringTok{ }\KeywordTok{predict}\NormalTok{(gb1, }\DataTypeTok{newdata =}\NormalTok{ bes.test, }\DataTypeTok{n.trees =} \DecValTok{5000}\NormalTok{)}
+\NormalTok{mse.gb <-}\StringTok{ }\KeywordTok{mean}\NormalTok{( (yhat.gb }\OperatorTok{-}\StringTok{ }\NormalTok{bes.test}\OperatorTok{$}\NormalTok{Income)}\OperatorTok{^}\DecValTok{2}\NormalTok{ )}
+
+\CommentTok{# reduction in error}
+\NormalTok{(mse.gb }\OperatorTok{-}\StringTok{ }\NormalTok{mse.rf) }\OperatorTok{/}\StringTok{ }\NormalTok{mse.rf}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] -0.03998188
+\end{verbatim}
+
+We reduce the error rate again quite a bit.
+
+\hypertarget{bayesian-additive-regression-trees-barts}{%
+\paragraph{Bayesian Additive Regression Trees (BARTs)}\label{bayesian-additive-regression-trees-barts}}
+
+BARTs move regression trees into a Bayesian framework were priors are used on several parameters to reduce some of the problems of over-fitting that boosting and random forests are prone to. We will illustrate a small example here. Before you can run this, \textbf{\emph{64bit JAVA}} must be installed on your computer. We then need to install \texttt{install.packages("rJava")} and then \texttt{install.packages("bartMachine")}. Installing Java can be tricky and you may need admin rights on your computer.
+
+There are several tuning parameters for the priors that are set to values that work for most applications. Check the documentation if you want to learn more about these. We set the number of trees to grow, the iterations in the Markow-Chain Monte-Carlo estimations to discard and the draws from the posterior distribution. These parameters should also be tested for instance using cross-validation. The algorithm needs some time to run and therefore we pick out-of-the-box values.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{options}\NormalTok{(}\DataTypeTok{java.parameters =} \StringTok{"-Xmx5g"}\NormalTok{)}
+\KeywordTok{library}\NormalTok{(bartMachine)}
+
+\CommentTok{# vector of covariate names}
+\NormalTok{Xs <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"Turnout"}\NormalTok{, }\StringTok{"Vote2001"}\NormalTok{, }\StringTok{"Age"}\NormalTok{, }\StringTok{"Gender"}\NormalTok{, }\StringTok{"PartyID"}\NormalTok{, }\StringTok{"Influence"}\NormalTok{, }\StringTok{"Attention"}\NormalTok{,}
+        \StringTok{"Telephone"}\NormalTok{, }\StringTok{"LeftrightSelf"}\NormalTok{, }\StringTok{"CivicDutyScores"}\NormalTok{, }\StringTok{"polinfoindex"}\NormalTok{, }\StringTok{"edu15"}\NormalTok{, }
+        \StringTok{"edu16"}\NormalTok{, }\StringTok{"edu18"}\NormalTok{, }\StringTok{"edu19plus"}\NormalTok{, }\StringTok{"in_school"}\NormalTok{, }\StringTok{"in_uni"}\NormalTok{)}
+
+
+\CommentTok{# run BART}
+\NormalTok{bart1 <-}\StringTok{ }\KeywordTok{bartMachine}\NormalTok{(}\DataTypeTok{X =}\NormalTok{ bes[train, Xs],}
+                     \DataTypeTok{y =}\NormalTok{ bes}\OperatorTok{$}\NormalTok{Income[train],}
+                     \DataTypeTok{num_trees =} \DecValTok{500}\NormalTok{,}
+                     \DataTypeTok{num_burn_in =} \DecValTok{200}\NormalTok{,}
+                     \DataTypeTok{num_iterations_after_burn_in =} \DecValTok{1000}\NormalTok{,}
+                     \DataTypeTok{seed =} \DecValTok{123}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+bartMachine initializing with 500 trees...
+bartMachine vars checked...
+bartMachine java init...
+bartMachine factors created...
+bartMachine before preprocess...
+bartMachine after preprocess... 29 total features...
+bartMachine sigsq estimated...
+bartMachine training data finalized...
+Now building bartMachine for regression ...Covariate importance prior ON. 
+evaluating in sample data...done
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# predict outcomes on the test set}
+\NormalTok{pred <-}\StringTok{ }\KeywordTok{predict}\NormalTok{(}\DataTypeTok{object =}\NormalTok{ bart1, }\DataTypeTok{new_data =}\NormalTok{ bes[}\OperatorTok{-}\NormalTok{train, Xs])}
+
+\CommentTok{# Brier Score}
+\NormalTok{mse.bart <-}\StringTok{ }\KeywordTok{mean}\NormalTok{((bes.test}\OperatorTok{$}\NormalTok{Income }\OperatorTok{-}\StringTok{ }\NormalTok{pred)}\OperatorTok{^}\DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Let's compare our final BART prediction to the reigning champion gradient boosting.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# reduction in error}
+\NormalTok{(mse.bart }\OperatorTok{-}\StringTok{ }\NormalTok{mse.gb) }\OperatorTok{/}\StringTok{ }\NormalTok{mse.gb}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] -0.01670494
+\end{verbatim}
+
+We have reduced the error by another 1.67\(\%\). Not bad\ldots{} However, keep in mind that we are usig the validation set approach here. A better evaluation would be based on cross-validation or a truly new dataset.
+
+\hypertarget{simulation-and-monte-carlos}{%
+\section{Simulation and Monte Carlos}\label{simulation-and-monte-carlos}}
 
 \hypertarget{seminar-6}{%
 \subsection{Seminar}\label{seminar-6}}

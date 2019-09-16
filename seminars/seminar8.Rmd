@@ -1,4 +1,4 @@
-# Simulation and Monte Carlo Simulation
+# Simulation and Monte Carlos
 
 ```{r, include = FALSE}
 par(bg = '#fdf6e3')

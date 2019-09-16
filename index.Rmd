@@ -34,11 +34,11 @@ Participants are expected to have a solid understanding of linear regression mod
 5. Regularisation
 6. Polynomials
 7. Tree based models
-8. Simulation and Monte Carlo Simulation
+8. Simulation and Monte Carlo simulation
 
 ***Acknowledgements***
 
-The material in this course is based on the text book: [James Gareth, Daniela Witten, Trevor Hastie and Robert Tibshirani. 2013. An introduction to statistical learning. Springer](http://faculty.marshall.usc.edu/gareth-james/ISL/ISLR%20Seventh%20Printing.pdf). In addition, the material is based on a machine learning class at the Essex Summer School with [Lucas Leeman](https://lucasleemann.ch).
+The material in this course is based on the textbook: [James Gareth, Daniela Witten, Trevor Hastie and Robert Tibshirani. 2013. An introduction to statistical learning. Springer](http://faculty.marshall.usc.edu/gareth-james/ISL/ISLR%20Seventh%20Printing.pdf). In addition, the material is based on a machine learning class at the Essex Summer School with [Lucas Leemann](https://lucasleemann.ch) and [Philipp Broniecki](https://philippbroniecki.com). The infrastracture for this website is in large parts adopted from work by UCL's [Altaf Ali](https://iris.ucl.ac.uk/iris/browse/profile?upi=ALIAX58), [Jack Blumenau](https://www.jackblumenau.com/), and [Philipp Broniecki](https://www.philippbroniecki.com/). 
 
 ----
 
