@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Chapter 3 Cross-Validation | Introduction to Data Science</title>
   <meta name="description" content="Chapter 3 Cross-Validation | Introduction to Data Science" />
-  <meta name="generator" content="bookdown 0.11 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Chapter 3 Cross-Validation | Introduction to Data Science" />
   <meta property="og:type" content="book" />
@@ -62,7 +62,6 @@ a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
 a.sourceLine:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
-div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
@@ -209,8 +208,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="seminar-1" class="section level2">
 <h2><span class="header-section-number">3.1</span> Seminar</h2>
 <p>We start by clearing our workspace.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># clear workspace</span>
-<span class="kw">rm</span>( <span class="dt">list =</span> <span class="kw">ls</span>() )</code></pre>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb64-1" title="1"><span class="co"># clear workspace</span></a>
+<a class="sourceLine" id="cb64-2" title="2"><span class="kw">rm</span>( <span class="dt">list =</span> <span class="kw">ls</span>() )</a></code></pre></div>
 <div id="the-validation-set-approach" class="section level3">
 <h3><span class="header-section-number">3.1.1</span> The Validation Set Approach</h3>
 <p>We use a subset of last weeks non-western immigrants data set (the version for this week includes men only). We can use the <code>head()</code> function to have a quick glance at the data. Download the data <a href="http://philippbroniecki.github.io/ML2017.io/data/BSAS_manip_men.RData">here</a></p>
@@ -277,39 +276,39 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </tr>
 </tbody>
 </table>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># load non-western foreigners data</span>
-<span class="kw">load</span>(<span class="st">&quot;BSAS_manip_men.RData&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb65-1" title="1"><span class="co"># load non-western foreigners data</span></a>
+<a class="sourceLine" id="cb65-2" title="2"><span class="kw">load</span>(<span class="st">&quot;BSAS_manip_men.RData&quot;</span>)</a></code></pre></div>
 <p>We first select a random sample of 239 out of 478 observations (check that that’s half the observations in our dataset using <code>nrow(data2)</code>). We initialize the random number generator with a seed using <code>set.seed()</code> to ensure that repeated runs produce consistent results.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># initialize random number generator</span>
-<span class="kw">set.seed</span>(<span class="dv">1</span>)
-
-<span class="co"># pick 239 numbers out of 1 to 478</span>
-train &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="dv">478</span>, <span class="dv">239</span>)</code></pre>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb66-1" title="1"><span class="co"># initialize random number generator</span></a>
+<a class="sourceLine" id="cb66-2" title="2"><span class="kw">set.seed</span>(<span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb66-3" title="3"></a>
+<a class="sourceLine" id="cb66-4" title="4"><span class="co"># pick 239 numbers out of 1 to 478</span></a>
+<a class="sourceLine" id="cb66-5" title="5">train &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="dv">478</span>, <span class="dv">239</span>)</a></code></pre></div>
 <p>We then estimate the effects of age on the perceived number of immigrants per 100 Brits with <code>lm()</code> on the selected subset.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># linear regression</span>
-m.lm &lt;-<span class="st"> </span><span class="kw">lm</span>( IMMBRIT <span class="op">~</span><span class="st"> </span>RAge, <span class="dt">data =</span> data2, <span class="dt">subset =</span> train)</code></pre>
+<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb67-1" title="1"><span class="co"># linear regression</span></a>
+<a class="sourceLine" id="cb67-2" title="2">m.lm &lt;-<span class="st"> </span><span class="kw">lm</span>( IMMBRIT <span class="op">~</span><span class="st"> </span>RAge, <span class="dt">data =</span> data2, <span class="dt">subset =</span> train)</a></code></pre></div>
 <p>Next, we use our model that we trained on the training set to predict outcomes in the test set - the test set contains unseen data. We subset the dataset using square brackets such that it excludes the training observations. The <code>-</code> operator means except in this case. So <code>data2[-tain, ]</code> is the dataset excluding training observations.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># predict on test set</span>
-preds.lm &lt;-<span class="st"> </span><span class="kw">predict</span>( m.lm, data2[<span class="op">-</span>train,] )</code></pre>
+<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb68-1" title="1"><span class="co"># predict on test set</span></a>
+<a class="sourceLine" id="cb68-2" title="2">preds.lm &lt;-<span class="st"> </span><span class="kw">predict</span>( m.lm, data2[<span class="op">-</span>train,] )</a></code></pre></div>
 <p>Next, we compare our predictions on the test set to the real outcomes. Our loss function (evaluation metric) is the mean squared error (MSE):</p>
 <p><span class="math display">\[ \frac{1}{n}\sum_{i=1}^{n}(y_i - \hat{y}_i)^2 \]</span></p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># mse in the validation (test) set</span>
-mse &lt;-<span class="st"> </span><span class="kw">mean</span>((data2<span class="op">$</span>IMMBRIT[<span class="op">-</span>train] <span class="op">-</span><span class="st"> </span>preds.lm)<span class="op">^</span><span class="dv">2</span>)
- <span class="co"># error rate</span>
-mse</code></pre>
+<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb69-1" title="1"><span class="co"># mse in the validation (test) set</span></a>
+<a class="sourceLine" id="cb69-2" title="2">mse &lt;-<span class="st"> </span><span class="kw">mean</span>((data2<span class="op">$</span>IMMBRIT[<span class="op">-</span>train] <span class="op">-</span><span class="st"> </span>preds.lm)<span class="op">^</span><span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb69-3" title="3"> <span class="co"># error rate</span></a>
+<a class="sourceLine" id="cb69-4" title="4">mse</a></code></pre></div>
 <pre><code>[1] 435.4077</code></pre>
 <p>The error rate for a linear model is 435.41. We can also fit higher degree polynomials with the <code>poly()</code> function. First, let’s try a quadratic model.</p>
 <p>So far, we have modelled the relationship between <code>RAge</code> and <code>IMMBRIT</code> as linear. It is possible that the relationship is non-linear. We can model this using polynomials, i.e. raising <code>RAge</code> to some power. We start with the square. We could use the <code>^2</code> operator to raise <code>RAge</code> to the second power like so: <code>data2$RAge^2</code>. However, it’s generally not a good idea to do this because polynomials are correlated introducing collinearity into the model. We can avoid this using the <code>poly()</code> function which decorrelates the variable and its powers.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># polynomials (quadratic)</span>
-m.lm2 &lt;-<span class="st"> </span><span class="kw">lm</span>( IMMBRIT <span class="op">~</span><span class="st"> </span><span class="kw">poly</span>(RAge, <span class="dv">2</span>), <span class="dt">data =</span> data2, <span class="dt">subset =</span> train)</code></pre>
+<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb71-1" title="1"><span class="co"># polynomials (quadratic)</span></a>
+<a class="sourceLine" id="cb71-2" title="2">m.lm2 &lt;-<span class="st"> </span><span class="kw">lm</span>( IMMBRIT <span class="op">~</span><span class="st"> </span><span class="kw">poly</span>(RAge, <span class="dv">2</span>), <span class="dt">data =</span> data2, <span class="dt">subset =</span> train)</a></code></pre></div>
 <p>Let’s have a quick look at the regression table using the <code>texreg</code> package.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(texreg)</code></pre>
+<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb72-1" title="1"><span class="kw">library</span>(texreg)</a></code></pre></div>
 <pre><code>Version:  1.36.23
 Date:     2017-03-03
 Author:   Philip Leifeld (University of Glasgow)
 
 Please cite the JSS article in your publications -- see citation(&quot;texreg&quot;).</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">texreg<span class="op">::</span><span class="kw">screenreg</span>(m.lm2)</code></pre>
+<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb74-1" title="1">texreg<span class="op">::</span><span class="kw">screenreg</span>(m.lm2)</a></code></pre></div>
 <pre><code>
 ==========================
                 Model 1   
@@ -328,35 +327,35 @@ RMSE             17.92
 ==========================
 *** p &lt; 0.001, ** p &lt; 0.01, * p &lt; 0.05</code></pre>
 <p>Interpreting polynomials is not straightforward because the effect is not linear, i.e. it is not constant. Here, <code>poly(RAge, 2)1</code> is <code>RAge</code> and <code>poly(RAge, 2)1</code> is the square of <code>RAge</code>. The effect is significant. However, to interpret the effect we would need to plot it. Instead, we will proceed by making predictions on the validation set (test set) again and calcuate the MSE.</p>
-<pre class="sourceCode r"><code class="sourceCode r">preds.lm2 &lt;-<span class="st"> </span><span class="kw">predict</span>(m.lm2, data2[<span class="op">-</span>train,])
-mse2 &lt;-<span class="st"> </span><span class="kw">mean</span>((data2<span class="op">$</span>IMMBRIT <span class="op">-</span><span class="st"> </span>preds.lm2)<span class="op">^</span><span class="dv">2</span>)
-mse2</code></pre>
+<div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb76-1" title="1">preds.lm2 &lt;-<span class="st"> </span><span class="kw">predict</span>(m.lm2, data2[<span class="op">-</span>train,])</a>
+<a class="sourceLine" id="cb76-2" title="2">mse2 &lt;-<span class="st"> </span><span class="kw">mean</span>((data2<span class="op">$</span>IMMBRIT <span class="op">-</span><span class="st"> </span>preds.lm2)<span class="op">^</span><span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb76-3" title="3">mse2</a></code></pre></div>
 <pre><code>[1] 391.8855</code></pre>
 <p>Quadratic regression performs better than a linear model because it reduces the error (MSE) from 435.41 to 391.89 (10%). We move on to a cubic model.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># cubic model</span>
-m.lm3 &lt;-<span class="st"> </span><span class="kw">lm</span>( IMMBRIT <span class="op">~</span><span class="st"> </span><span class="kw">poly</span>(RAge, <span class="dv">3</span>), <span class="dt">data =</span> data2, <span class="dt">subset =</span> train)
-mse3  &lt;-<span class="st"> </span><span class="kw">mean</span>( (data2<span class="op">$</span>IMMBRIT[<span class="op">-</span>train] <span class="op">-</span><span class="st">  </span><span class="kw">predict</span>(m.lm3, data2[<span class="op">-</span>train,]))<span class="op">^</span><span class="dv">2</span> )
-mse3</code></pre>
+<div class="sourceCode" id="cb78"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb78-1" title="1"><span class="co"># cubic model</span></a>
+<a class="sourceLine" id="cb78-2" title="2">m.lm3 &lt;-<span class="st"> </span><span class="kw">lm</span>( IMMBRIT <span class="op">~</span><span class="st"> </span><span class="kw">poly</span>(RAge, <span class="dv">3</span>), <span class="dt">data =</span> data2, <span class="dt">subset =</span> train)</a>
+<a class="sourceLine" id="cb78-3" title="3">mse3  &lt;-<span class="st"> </span><span class="kw">mean</span>( (data2<span class="op">$</span>IMMBRIT[<span class="op">-</span>train] <span class="op">-</span><span class="st">  </span><span class="kw">predict</span>(m.lm3, data2[<span class="op">-</span>train,]))<span class="op">^</span><span class="dv">2</span> )</a>
+<a class="sourceLine" id="cb78-4" title="4">mse3</a></code></pre></div>
 <pre><code>[1] 412.7887</code></pre>
 <p>According to our approach, the quadratic model is the best out of the three we tested. However, this might be due to the training/test split that we made. We will try again using a different split of the data.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># fit the models on a different training/test split</span>
-<span class="kw">set.seed</span>(<span class="dv">2</span>)
-train &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="dv">478</span>, <span class="dv">239</span>)
-m.lm &lt;-<span class="st"> </span><span class="kw">lm</span>( IMMBRIT <span class="op">~</span><span class="st"> </span>RAge, <span class="dt">data =</span> data2, <span class="dt">subset =</span> train)
-mse &lt;-<span class="st"> </span><span class="kw">mean</span>( (data2<span class="op">$</span>IMMBRIT[<span class="op">-</span>train] <span class="op">-</span><span class="st">  </span><span class="kw">predict</span>(m.lm, data2[<span class="op">-</span>train,]) )<span class="op">^</span><span class="dv">2</span> )
-
-<span class="co"># quadratic</span>
-m.lm2 &lt;-<span class="st"> </span><span class="kw">lm</span>( IMMBRIT <span class="op">~</span><span class="st"> </span><span class="kw">poly</span>(RAge, <span class="dv">2</span>), <span class="dt">data =</span> data2, <span class="dt">subset =</span> train)
-mse2 &lt;-<span class="st"> </span><span class="kw">mean</span>( (data2<span class="op">$</span>IMMBRIT[<span class="op">-</span>train] <span class="op">-</span><span class="st">  </span><span class="kw">predict</span>(m.lm2, data2[<span class="op">-</span>train,]))<span class="op">^</span><span class="dv">2</span> )
-
-<span class="co"># cubic</span>
-m.lm3 &lt;-<span class="st"> </span><span class="kw">lm</span>( IMMBRIT <span class="op">~</span><span class="st"> </span><span class="kw">poly</span>(RAge, <span class="dv">3</span>), <span class="dt">data =</span> data2, <span class="dt">subset =</span> train)
-mse3 &lt;-<span class="st"> </span><span class="kw">mean</span>( (data2<span class="op">$</span>IMMBRIT[<span class="op">-</span>train] <span class="op">-</span><span class="st">  </span><span class="kw">predict</span>(m.lm3, data2[<span class="op">-</span>train,]))<span class="op">^</span><span class="dv">2</span> )
-
-<span class="co"># outut</span>
-output &lt;-<span class="st"> </span><span class="kw">cbind</span>( mse, mse2, mse3 )
-<span class="kw">colnames</span>(output) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;linear&quot;</span>, <span class="st">&quot;quadratic&quot;</span>, <span class="st">&quot;cubic&quot;</span>)
-output</code></pre>
+<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb80-1" title="1"><span class="co"># fit the models on a different training/test split</span></a>
+<a class="sourceLine" id="cb80-2" title="2"><span class="kw">set.seed</span>(<span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb80-3" title="3">train &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="dv">478</span>, <span class="dv">239</span>)</a>
+<a class="sourceLine" id="cb80-4" title="4">m.lm &lt;-<span class="st"> </span><span class="kw">lm</span>( IMMBRIT <span class="op">~</span><span class="st"> </span>RAge, <span class="dt">data =</span> data2, <span class="dt">subset =</span> train)</a>
+<a class="sourceLine" id="cb80-5" title="5">mse &lt;-<span class="st"> </span><span class="kw">mean</span>( (data2<span class="op">$</span>IMMBRIT[<span class="op">-</span>train] <span class="op">-</span><span class="st">  </span><span class="kw">predict</span>(m.lm, data2[<span class="op">-</span>train,]) )<span class="op">^</span><span class="dv">2</span> )</a>
+<a class="sourceLine" id="cb80-6" title="6"></a>
+<a class="sourceLine" id="cb80-7" title="7"><span class="co"># quadratic</span></a>
+<a class="sourceLine" id="cb80-8" title="8">m.lm2 &lt;-<span class="st"> </span><span class="kw">lm</span>( IMMBRIT <span class="op">~</span><span class="st"> </span><span class="kw">poly</span>(RAge, <span class="dv">2</span>), <span class="dt">data =</span> data2, <span class="dt">subset =</span> train)</a>
+<a class="sourceLine" id="cb80-9" title="9">mse2 &lt;-<span class="st"> </span><span class="kw">mean</span>( (data2<span class="op">$</span>IMMBRIT[<span class="op">-</span>train] <span class="op">-</span><span class="st">  </span><span class="kw">predict</span>(m.lm2, data2[<span class="op">-</span>train,]))<span class="op">^</span><span class="dv">2</span> )</a>
+<a class="sourceLine" id="cb80-10" title="10"></a>
+<a class="sourceLine" id="cb80-11" title="11"><span class="co"># cubic</span></a>
+<a class="sourceLine" id="cb80-12" title="12">m.lm3 &lt;-<span class="st"> </span><span class="kw">lm</span>( IMMBRIT <span class="op">~</span><span class="st"> </span><span class="kw">poly</span>(RAge, <span class="dv">3</span>), <span class="dt">data =</span> data2, <span class="dt">subset =</span> train)</a>
+<a class="sourceLine" id="cb80-13" title="13">mse3 &lt;-<span class="st"> </span><span class="kw">mean</span>( (data2<span class="op">$</span>IMMBRIT[<span class="op">-</span>train] <span class="op">-</span><span class="st">  </span><span class="kw">predict</span>(m.lm3, data2[<span class="op">-</span>train,]))<span class="op">^</span><span class="dv">2</span> )</a>
+<a class="sourceLine" id="cb80-14" title="14"></a>
+<a class="sourceLine" id="cb80-15" title="15"><span class="co"># outut</span></a>
+<a class="sourceLine" id="cb80-16" title="16">output &lt;-<span class="st"> </span><span class="kw">cbind</span>( mse, mse2, mse3 )</a>
+<a class="sourceLine" id="cb80-17" title="17"><span class="kw">colnames</span>(output) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;linear&quot;</span>, <span class="st">&quot;quadratic&quot;</span>, <span class="st">&quot;cubic&quot;</span>)</a>
+<a class="sourceLine" id="cb80-18" title="18">output</a></code></pre></div>
 <pre><code>       linear quadratic    cubic
 [1,] 413.6691  399.0577 394.3029</code></pre>
 <p>Clearly, the results are different from our initial run. Not only, are the error rates different but in addition, the order of the models changes. In this trial, the cubic model performs best. It appears that we need to split data more often to determine which is the best model overall. We will move on to leave-one-out cross-validation which does exactly that.</p>
@@ -365,9 +364,9 @@ output</code></pre>
 <h3><span class="header-section-number">3.1.2</span> Leave-One-Out Cross-Validation (LOOCV)</h3>
 <p>In LOOCV, we train our model on all but the first observation and subsequently predict the first observation using our model. Next, we train our model on all but the second observation and predict the second observation with that model and so forth for every observation in the dataset. That means, we must estimate as many models as we have observations in the dataset. While there are some tricks to make the computation faster for linear models, LOOCV can take a long time to run.</p>
 <p>Before we get into it, we quickly introduce a new function. The <code>glm()</code> function offers a generalization of the linear model while allowing for different link functions and error distributions other than gaussian. By default, <code>glm()</code> simply fits a linear model identical to the one estimated with <code>lm()</code>. Let’s confirm this quickly.</p>
-<pre class="sourceCode r"><code class="sourceCode r">glm.fit &lt;-<span class="st"> </span><span class="kw">glm</span>( IMMBRIT <span class="op">~</span><span class="st"> </span>RAge, <span class="dt">data =</span> data2)
-lm.fit &lt;-<span class="st"> </span><span class="kw">lm</span>( IMMBRIT <span class="op">~</span><span class="st"> </span>RAge, <span class="dt">data =</span> data2)
-texreg<span class="op">::</span><span class="kw">screenreg</span>( <span class="kw">list</span>(glm.fit, lm.fit), <span class="dt">custom.model.names =</span> <span class="kw">c</span>(<span class="st">&quot;GLM&quot;</span>, <span class="st">&quot;LM&quot;</span>) )</code></pre>
+<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb82-1" title="1">glm.fit &lt;-<span class="st"> </span><span class="kw">glm</span>( IMMBRIT <span class="op">~</span><span class="st"> </span>RAge, <span class="dt">data =</span> data2)</a>
+<a class="sourceLine" id="cb82-2" title="2">lm.fit &lt;-<span class="st"> </span><span class="kw">lm</span>( IMMBRIT <span class="op">~</span><span class="st"> </span>RAge, <span class="dt">data =</span> data2)</a>
+<a class="sourceLine" id="cb82-3" title="3">texreg<span class="op">::</span><span class="kw">screenreg</span>( <span class="kw">list</span>(glm.fit, lm.fit), <span class="dt">custom.model.names =</span> <span class="kw">c</span>(<span class="st">&quot;GLM&quot;</span>, <span class="st">&quot;LM&quot;</span>) )</a></code></pre></div>
 <pre><code>
 =========================================
                 GLM            LM        
@@ -389,49 +388,49 @@ RMSE                            19.45
 *** p &lt; 0.001, ** p &lt; 0.01, * p &lt; 0.05</code></pre>
 <p>The coefficient estimates are similar but the fit statistics that are reported differ. Generally a GLM maximises the likelihood whereas LM minimises the sum of squared deviations from the regression line. Maximum likelihood estimation is more general and used in most statistical models.</p>
 <p>We will use the <code>glm()</code> function from here on because it can be used with <code>cv.glm()</code> which allows us to estimate the k-fold cross-validation prediction error. We also need to install a new package called <code>boot</code> using <code>install.packages("boot")</code>.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(boot)
-
-<span class="co"># use cv.glm() for k-fold corss-validation on glm</span>
-cv.err &lt;-<span class="st"> </span><span class="kw">cv.glm</span>(data2, glm.fit)
-
-<span class="co"># cross-validation error</span>
-cv.err<span class="op">$</span>delta</code></pre>
+<div class="sourceCode" id="cb84"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb84-1" title="1"><span class="kw">library</span>(boot)</a>
+<a class="sourceLine" id="cb84-2" title="2"></a>
+<a class="sourceLine" id="cb84-3" title="3"><span class="co"># use cv.glm() for k-fold corss-validation on glm</span></a>
+<a class="sourceLine" id="cb84-4" title="4">cv.err &lt;-<span class="st"> </span><span class="kw">cv.glm</span>(data2, glm.fit)</a>
+<a class="sourceLine" id="cb84-5" title="5"></a>
+<a class="sourceLine" id="cb84-6" title="6"><span class="co"># cross-validation error</span></a>
+<a class="sourceLine" id="cb84-7" title="7">cv.err<span class="op">$</span>delta</a></code></pre></div>
 <pre><code>[1] 380.2451 380.2415</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># the number of folds</span>
-cv.err<span class="op">$</span>K</code></pre>
+<div class="sourceCode" id="cb86"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb86-1" title="1"><span class="co"># the number of folds</span></a>
+<a class="sourceLine" id="cb86-2" title="2">cv.err<span class="op">$</span>K</a></code></pre></div>
 <pre><code>[1] 478</code></pre>
 <p>The returned value from <code>cv.glm()</code> contains a delta vector of components - the raw cross-validation estimate and the adjusted cross-validation estimate respectively. We are interested in the raw cross-validation error.</p>
 <p>NOTE: if we do not provide the option <strong>K</strong> in <code>cv.glm()</code> we automatically perfrom leave-one-out cross-validation (LOOCV).</p>
 <p>We repeat this process in a <code>for()</code> loop to compare the cross-validation error of higher-order polynomials. The following example estimates the polynomial fit of the order 1 through 7 and stores the result in a cv.error vector.</p>
 <p>We will also record the in-sample prediction error to illustrate that we do need to test our models using new data rather than improving them in-sample due to the bias-variance tradeoff.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># container for cv errors</span>
-cv.error &lt;-<span class="st"> </span><span class="ot">NA</span>
-
-<span class="co"># container for in-sample MSE</span>
-in.sample.error &lt;-<span class="st"> </span><span class="ot">NA</span>
-
-<span class="co"># loop over age raised to the power 1...7</span>
-<span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">7</span>){
-  
-  glm.fit &lt;-<span class="st"> </span><span class="kw">glm</span>( IMMBRIT <span class="op">~</span><span class="st"> </span><span class="kw">poly</span>(RAge, i), <span class="dt">data =</span> data2 )
-  
-  <span class="co"># cv error</span>
-  cv.error[i] &lt;-<span class="st"> </span><span class="kw">cv.glm</span>(data2, glm.fit)<span class="op">$</span>delta[<span class="dv">1</span>]
-  <span class="co"># in-sample mse</span>
-  in.sample.error[i] &lt;-<span class="st"> </span><span class="kw">mean</span>( (data2<span class="op">$</span>IMMBRIT <span class="op">-</span><span class="st"> </span><span class="kw">predict</span>(glm.fit, data2) )<span class="op">^</span><span class="dv">2</span>)
-
-}</code></pre>
+<div class="sourceCode" id="cb88"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb88-1" title="1"><span class="co"># container for cv errors</span></a>
+<a class="sourceLine" id="cb88-2" title="2">cv.error &lt;-<span class="st"> </span><span class="ot">NA</span></a>
+<a class="sourceLine" id="cb88-3" title="3"></a>
+<a class="sourceLine" id="cb88-4" title="4"><span class="co"># container for in-sample MSE</span></a>
+<a class="sourceLine" id="cb88-5" title="5">in.sample.error &lt;-<span class="st"> </span><span class="ot">NA</span></a>
+<a class="sourceLine" id="cb88-6" title="6"></a>
+<a class="sourceLine" id="cb88-7" title="7"><span class="co"># loop over age raised to the power 1...7</span></a>
+<a class="sourceLine" id="cb88-8" title="8"><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">7</span>){</a>
+<a class="sourceLine" id="cb88-9" title="9">  </a>
+<a class="sourceLine" id="cb88-10" title="10">  glm.fit &lt;-<span class="st"> </span><span class="kw">glm</span>( IMMBRIT <span class="op">~</span><span class="st"> </span><span class="kw">poly</span>(RAge, i), <span class="dt">data =</span> data2 )</a>
+<a class="sourceLine" id="cb88-11" title="11">  </a>
+<a class="sourceLine" id="cb88-12" title="12">  <span class="co"># cv error</span></a>
+<a class="sourceLine" id="cb88-13" title="13">  cv.error[i] &lt;-<span class="st"> </span><span class="kw">cv.glm</span>(data2, glm.fit)<span class="op">$</span>delta[<span class="dv">1</span>]</a>
+<a class="sourceLine" id="cb88-14" title="14">  <span class="co"># in-sample mse</span></a>
+<a class="sourceLine" id="cb88-15" title="15">  in.sample.error[i] &lt;-<span class="st"> </span><span class="kw">mean</span>( (data2<span class="op">$</span>IMMBRIT <span class="op">-</span><span class="st"> </span><span class="kw">predict</span>(glm.fit, data2) )<span class="op">^</span><span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb88-16" title="16"></a>
+<a class="sourceLine" id="cb88-17" title="17">}</a></code></pre></div>
 <p>Next, we plot the effect of increasing the complexity of the model. We also plot the in-sample error</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># plot of error rates</span>
-<span class="kw">plot</span>( cv.error <span class="op">~</span><span class="st"> </span><span class="kw">seq</span>(<span class="dv">1</span>, <span class="dv">7</span>), <span class="dt">bty =</span> <span class="st">&quot;n&quot;</span>, <span class="dt">pch =</span> <span class="dv">20</span>,
-      <span class="dt">xlab =</span> <span class="st">&quot;complexity&quot;</span>, <span class="dt">ylab =</span> <span class="st">&quot;cross-validation error&quot;</span>,
-      <span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">355</span>, <span class="dv">385</span>))
-<span class="co"># cv error</span>
-<span class="kw">lines</span>( <span class="dt">y =</span> cv.error, <span class="dt">x =</span> <span class="kw">seq</span>(<span class="dv">1</span>,<span class="dv">7</span>), <span class="dt">lwd =</span> <span class="dv">2</span>, <span class="dt">col =</span> <span class="dv">1</span>)
-<span class="co"># in-sample error</span>
-<span class="kw">lines</span>( <span class="dt">y =</span> in.sample.error, <span class="dt">x =</span> <span class="kw">seq</span>(<span class="dv">1</span>,<span class="dv">7</span>), <span class="dt">lwd =</span> <span class="dv">2</span>, <span class="dt">col =</span> <span class="dv">2</span> )
-<span class="co"># legend</span>
-<span class="kw">legend</span>(<span class="st">&quot;topright&quot;</span>, <span class="kw">c</span>(<span class="st">&quot;Out of sample MSE&quot;</span>, <span class="st">&quot;In sample MSE&quot;</span>), <span class="dt">col =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>), <span class="dt">lwd=</span> <span class="dv">2</span>)</code></pre>
+<div class="sourceCode" id="cb89"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb89-1" title="1"><span class="co"># plot of error rates</span></a>
+<a class="sourceLine" id="cb89-2" title="2"><span class="kw">plot</span>( cv.error <span class="op">~</span><span class="st"> </span><span class="kw">seq</span>(<span class="dv">1</span>, <span class="dv">7</span>), <span class="dt">bty =</span> <span class="st">&quot;n&quot;</span>, <span class="dt">pch =</span> <span class="dv">20</span>,</a>
+<a class="sourceLine" id="cb89-3" title="3">      <span class="dt">xlab =</span> <span class="st">&quot;complexity&quot;</span>, <span class="dt">ylab =</span> <span class="st">&quot;cross-validation error&quot;</span>,</a>
+<a class="sourceLine" id="cb89-4" title="4">      <span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">355</span>, <span class="dv">385</span>))</a>
+<a class="sourceLine" id="cb89-5" title="5"><span class="co"># cv error</span></a>
+<a class="sourceLine" id="cb89-6" title="6"><span class="kw">lines</span>( <span class="dt">y =</span> cv.error, <span class="dt">x =</span> <span class="kw">seq</span>(<span class="dv">1</span>,<span class="dv">7</span>), <span class="dt">lwd =</span> <span class="dv">2</span>, <span class="dt">col =</span> <span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb89-7" title="7"><span class="co"># in-sample error</span></a>
+<a class="sourceLine" id="cb89-8" title="8"><span class="kw">lines</span>( <span class="dt">y =</span> in.sample.error, <span class="dt">x =</span> <span class="kw">seq</span>(<span class="dv">1</span>,<span class="dv">7</span>), <span class="dt">lwd =</span> <span class="dv">2</span>, <span class="dt">col =</span> <span class="dv">2</span> )</a>
+<a class="sourceLine" id="cb89-9" title="9"><span class="co"># legend</span></a>
+<a class="sourceLine" id="cb89-10" title="10"><span class="kw">legend</span>(<span class="st">&quot;topright&quot;</span>, <span class="kw">c</span>(<span class="st">&quot;Out of sample MSE&quot;</span>, <span class="st">&quot;In sample MSE&quot;</span>), <span class="dt">col =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>), <span class="dt">lwd=</span> <span class="dv">2</span>)</a></code></pre></div>
 <p><img src="ml101_files/figure-html/non.finished.plotting-1.png" width="672" /></p>
 <p>Apparently, the cubic model performs best. We would have missed this using the initial split of the data into one training set and one test set. Futhermore, the in-sample MSE keeps decreasing the more complex we make our model (although with diminishing marginal returns). However, the more complex models start fitting ideosyncratic aspects of the sample (noise) and perform badly with new data.</p>
 </div>
@@ -439,23 +438,23 @@ in.sample.error &lt;-<span class="st"> </span><span class="ot">NA</span>
 <h3><span class="header-section-number">3.1.3</span> k-Fold Cross-Validation</h3>
 <p>K-fold cross-validation splits the datset into k datasets. Common choices for k are 5 and 10. Using 5, we would split the data into five folds. We would then train our model on the first fold and predict on the remaining folds. Next, we would train our model on the second fold and predict on the four remaining ones and so on until we train on the fith fold and predict on the remaining folds. Each time we will get an error (e.g. MSE). We would then average over the five MSEs to obtain the overall k-fold cross-validation MSE.</p>
 <p>In addition to LOOCV, <code>cv.glm()</code> can also be used to run k-fold cross-validation. In the following example, we estimate the cross-validation error of polynomials of the order <span class="math inline">\(1\)</span> through <span class="math inline">\(7\)</span> using <span class="math inline">\(10\)</span>-fold cross-validation.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># re-initialize random number generator</span>
-<span class="kw">set.seed</span>(<span class="dv">17</span>)
-
-<span class="co"># container for 10-fold cross-validation errors</span>
-cv.error<span class="fl">.10</span> &lt;-<span class="st"> </span><span class="ot">NA</span>
-
-<span class="co"># loop over 7 different powers of age</span>
-<span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">7</span>){
-  glm.fit &lt;-<span class="st"> </span><span class="kw">glm</span>( IMMBRIT <span class="op">~</span><span class="st"> </span><span class="kw">poly</span>(RAge, i), <span class="dt">data =</span> data2)
-  cv.error<span class="fl">.10</span>[i] &lt;-<span class="st"> </span><span class="kw">cv.glm</span>( data2, glm.fit, <span class="dt">K =</span> <span class="dv">10</span>)<span class="op">$</span>delta[<span class="dv">1</span>]
-}
-cv.error<span class="fl">.10</span></code></pre>
+<div class="sourceCode" id="cb90"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb90-1" title="1"><span class="co"># re-initialize random number generator</span></a>
+<a class="sourceLine" id="cb90-2" title="2"><span class="kw">set.seed</span>(<span class="dv">17</span>)</a>
+<a class="sourceLine" id="cb90-3" title="3"></a>
+<a class="sourceLine" id="cb90-4" title="4"><span class="co"># container for 10-fold cross-validation errors</span></a>
+<a class="sourceLine" id="cb90-5" title="5">cv.error<span class="fl">.10</span> &lt;-<span class="st"> </span><span class="ot">NA</span></a>
+<a class="sourceLine" id="cb90-6" title="6"></a>
+<a class="sourceLine" id="cb90-7" title="7"><span class="co"># loop over 7 different powers of age</span></a>
+<a class="sourceLine" id="cb90-8" title="8"><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">7</span>){</a>
+<a class="sourceLine" id="cb90-9" title="9">  glm.fit &lt;-<span class="st"> </span><span class="kw">glm</span>( IMMBRIT <span class="op">~</span><span class="st"> </span><span class="kw">poly</span>(RAge, i), <span class="dt">data =</span> data2)</a>
+<a class="sourceLine" id="cb90-10" title="10">  cv.error<span class="fl">.10</span>[i] &lt;-<span class="st"> </span><span class="kw">cv.glm</span>( data2, glm.fit, <span class="dt">K =</span> <span class="dv">10</span>)<span class="op">$</span>delta[<span class="dv">1</span>]</a>
+<a class="sourceLine" id="cb90-11" title="11">}</a>
+<a class="sourceLine" id="cb90-12" title="12">cv.error<span class="fl">.10</span></a></code></pre></div>
 <pre><code>[1] 380.5447 365.6740 367.5397 365.5214 369.5038 385.1270 373.3029</code></pre>
 <p>We add the results to the plot:</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># add to plot</span>
-<span class="kw">points</span>(<span class="dt">x =</span> <span class="kw">seq</span>(<span class="dv">1</span>,<span class="dv">7</span>), <span class="dt">y =</span> cv.error<span class="fl">.10</span>, <span class="dt">col =</span> <span class="dv">3</span>, <span class="dt">pch =</span> <span class="dv">20</span>)
-<span class="kw">lines</span>( <span class="dt">x =</span> <span class="kw">seq</span>(<span class="dv">1</span>,<span class="dv">7</span>), <span class="dt">y =</span> cv.error<span class="fl">.10</span>, <span class="dt">col =</span> <span class="dv">3</span>, <span class="dt">lwd =</span> <span class="dv">2</span>)</code></pre>
+<div class="sourceCode" id="cb92"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb92-1" title="1"><span class="co"># add to plot</span></a>
+<a class="sourceLine" id="cb92-2" title="2"><span class="kw">points</span>(<span class="dt">x =</span> <span class="kw">seq</span>(<span class="dv">1</span>,<span class="dv">7</span>), <span class="dt">y =</span> cv.error<span class="fl">.10</span>, <span class="dt">col =</span> <span class="dv">3</span>, <span class="dt">pch =</span> <span class="dv">20</span>)</a>
+<a class="sourceLine" id="cb92-3" title="3"><span class="kw">lines</span>( <span class="dt">x =</span> <span class="kw">seq</span>(<span class="dv">1</span>,<span class="dv">7</span>), <span class="dt">y =</span> cv.error<span class="fl">.10</span>, <span class="dt">col =</span> <span class="dv">3</span>, <span class="dt">lwd =</span> <span class="dv">2</span>)</a></code></pre></div>
 <p><img src="ml101_files/figure-html/unnamed-chunk-59-1.png" width="672" /></p>
 <p>The 10-fold cross-validation error is more wiggly. In this expample, it estimates the best performance with a square model of age wehreas the LOOCV errror finds a minimum at the cube of age. Eyeballing the results, we suggest that there are no substantial improvements beyond the squared term. However, using the cubic model would be an alternative.</p>
 

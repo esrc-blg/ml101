@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Chapter 7 Tree Based Models | Introduction to Data Science</title>
   <meta name="description" content="Chapter 7 Tree Based Models | Introduction to Data Science" />
-  <meta name="generator" content="bookdown 0.11 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Chapter 7 Tree Based Models | Introduction to Data Science" />
   <meta property="og:type" content="book" />
@@ -62,7 +62,6 @@ a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
 a.sourceLine:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
-div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
@@ -210,21 +209,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">7.1</span> Seminar</h2>
 <p>Tree models are non-parametric models. Depending on the data generation process, these models can be better predictive models than generalised linear models even with regularisation. We will start with the highly variable simple tree, followed by pruning, the random forrest model and boosting machines.</p>
 <p>We load post-election survey data from the 2004 British Election Survey. The data is available <a href="http://philippbroniecki.github.io/ML2017.io/data/bes.dta">here</a>.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># clear workspace</span>
-<span class="kw">rm</span>(<span class="dt">list=</span><span class="kw">ls</span>())
-
-<span class="co"># needed because .dta is a foreign file format (STATA format)</span>
-<span class="kw">library</span>(readstata13)
-bes &lt;-<span class="st"> </span><span class="kw">read.dta13</span>(<span class="st">&quot;bes.dta&quot;</span>)
-
-<span class="co"># drop missing values</span>
-bes &lt;-<span class="st"> </span><span class="kw">na.omit</span>(bes)
-
-<span class="co"># drop id variable</span>
-bes<span class="op">$</span>cs_id &lt;-<span class="st"> </span><span class="ot">NULL</span></code></pre>
+<div class="sourceCode" id="cb212"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb212-1" title="1"><span class="co"># clear workspace</span></a>
+<a class="sourceLine" id="cb212-2" title="2"><span class="kw">rm</span>(<span class="dt">list=</span><span class="kw">ls</span>())</a>
+<a class="sourceLine" id="cb212-3" title="3"></a>
+<a class="sourceLine" id="cb212-4" title="4"><span class="co"># needed because .dta is a foreign file format (STATA format)</span></a>
+<a class="sourceLine" id="cb212-5" title="5"><span class="kw">library</span>(readstata13)</a>
+<a class="sourceLine" id="cb212-6" title="6">bes &lt;-<span class="st"> </span><span class="kw">read.dta13</span>(<span class="st">&quot;bes.dta&quot;</span>)</a>
+<a class="sourceLine" id="cb212-7" title="7"></a>
+<a class="sourceLine" id="cb212-8" title="8"><span class="co"># drop missing values</span></a>
+<a class="sourceLine" id="cb212-9" title="9">bes &lt;-<span class="st"> </span><span class="kw">na.omit</span>(bes)</a>
+<a class="sourceLine" id="cb212-10" title="10"></a>
+<a class="sourceLine" id="cb212-11" title="11"><span class="co"># drop id variable</span></a>
+<a class="sourceLine" id="cb212-12" title="12">bes<span class="op">$</span>cs_id &lt;-<span class="st"> </span><span class="ot">NULL</span></a></code></pre></div>
 <p>We clean the <code>in_school</code> variable which should be binary indicating whether a respondent is attending school or not. However, we estimated missing values (which is a superior treatment of missing values than list-wise deletion) and forgot classify those predictions into 0s and 1s.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># clean in_school</span>
-<span class="kw">table</span>(bes<span class="op">$</span>in_school)</code></pre>
+<div class="sourceCode" id="cb213"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb213-1" title="1"><span class="co"># clean in_school</span></a>
+<a class="sourceLine" id="cb213-2" title="2"><span class="kw">table</span>(bes<span class="op">$</span>in_school)</a></code></pre></div>
 <pre><code>
  -0.405100243979883  -0.286622836951644 -0.0932005119161492 
                   1                   1                   1 
@@ -233,25 +232,25 @@ bes<span class="op">$</span>cs_id &lt;-<span class="st"> </span><span class="ot"
   0.123419680101826   0.247478125358543                   1 
                   1                   1                  34 </code></pre>
 <p>We use the <code>ifelse()</code> function to classify into 0 and 1.</p>
-<pre class="sourceCode r"><code class="sourceCode r">bes<span class="op">$</span>in_school &lt;-<span class="st"> </span><span class="kw">ifelse</span> (bes<span class="op">$</span>in_school <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.5</span>, <span class="dv">0</span>, bes<span class="op">$</span>in_school)
-<span class="kw">table</span>(bes<span class="op">$</span>in_school)</code></pre>
+<div class="sourceCode" id="cb215"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb215-1" title="1">bes<span class="op">$</span>in_school &lt;-<span class="st"> </span><span class="kw">ifelse</span> (bes<span class="op">$</span>in_school <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.5</span>, <span class="dv">0</span>, bes<span class="op">$</span>in_school)</a>
+<a class="sourceLine" id="cb215-2" title="2"><span class="kw">table</span>(bes<span class="op">$</span>in_school)</a></code></pre></div>
 <pre><code>
    0    1 
 4127   34 </code></pre>
 <p>Next, we declare the categorical variables in the dataset to be factors en bulk.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># data manipulation</span>
-categcorical &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Turnout&quot;</span>, <span class="st">&quot;Vote2001&quot;</span>, <span class="st">&quot;Gender&quot;</span>, <span class="st">&quot;PartyID&quot;</span>, <span class="st">&quot;Telephone&quot;</span>, <span class="st">&quot;edu15&quot;</span>,
-                  <span class="st">&quot;edu16&quot;</span>, <span class="st">&quot;edu17&quot;</span>, <span class="st">&quot;edu18&quot;</span>, <span class="st">&quot;edu19plus&quot;</span>, <span class="st">&quot;in_school&quot;</span>, <span class="st">&quot;in_uni&quot;</span>)
-<span class="co"># declare factor variables</span>
-bes[, categcorical] &lt;-<span class="st"> </span><span class="kw">lapply</span>(bes[, categcorical], factor)</code></pre>
+<div class="sourceCode" id="cb217"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb217-1" title="1"><span class="co"># data manipulation</span></a>
+<a class="sourceLine" id="cb217-2" title="2">categcorical &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Turnout&quot;</span>, <span class="st">&quot;Vote2001&quot;</span>, <span class="st">&quot;Gender&quot;</span>, <span class="st">&quot;PartyID&quot;</span>, <span class="st">&quot;Telephone&quot;</span>, <span class="st">&quot;edu15&quot;</span>,</a>
+<a class="sourceLine" id="cb217-3" title="3">                  <span class="st">&quot;edu16&quot;</span>, <span class="st">&quot;edu17&quot;</span>, <span class="st">&quot;edu18&quot;</span>, <span class="st">&quot;edu19plus&quot;</span>, <span class="st">&quot;in_school&quot;</span>, <span class="st">&quot;in_uni&quot;</span>)</a>
+<a class="sourceLine" id="cb217-4" title="4"><span class="co"># declare factor variables</span></a>
+<a class="sourceLine" id="cb217-5" title="5">bes[, categcorical] &lt;-<span class="st"> </span><span class="kw">lapply</span>(bes[, categcorical], factor)</a></code></pre></div>
 <div id="classification-trees" class="section level3">
 <h3><span class="header-section-number">7.1.1</span> Classification Trees</h3>
 <p>We use trees to classifyrespondents into voters and non-voters. Here we need the <code>tree</code> package which we have to install if is not already <code>install.packages("tree")</code>.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tree)
-
-<span class="co"># build classification tree (- in formula language means except)</span>
-t1 &lt;-<span class="st"> </span><span class="kw">tree</span>( Turnout <span class="op">~</span><span class="st"> </span>. <span class="op">-</span>CivicDutyScores, <span class="dt">data =</span> bes)
-<span class="kw">summary</span>(t1)</code></pre>
+<div class="sourceCode" id="cb218"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb218-1" title="1"><span class="kw">library</span>(tree)</a>
+<a class="sourceLine" id="cb218-2" title="2"></a>
+<a class="sourceLine" id="cb218-3" title="3"><span class="co"># build classification tree (- in formula language means except)</span></a>
+<a class="sourceLine" id="cb218-4" title="4">t1 &lt;-<span class="st"> </span><span class="kw">tree</span>( Turnout <span class="op">~</span><span class="st"> </span>. <span class="op">-</span>CivicDutyScores, <span class="dt">data =</span> bes)</a>
+<a class="sourceLine" id="cb218-5" title="5"><span class="kw">summary</span>(t1)</a></code></pre></div>
 <pre><code>
 Classification tree:
 tree(formula = Turnout ~ . - CivicDutyScores, data = bes)
@@ -261,13 +260,13 @@ Number of terminal nodes:  6
 Residual mean deviance:  0.8434 = 3504 / 4155 
 Misclassification error rate: 0.1769 = 736 / 4161 </code></pre>
 <p>We can plot the tree using the standard plot function. On every split a condition is printed. The observations in the left branch are those for which the condition is true and the ones on the right are those for which the condition is false.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># plot tree object</span>
-<span class="kw">plot</span>(t1)
-<span class="kw">text</span>(t1, <span class="dt">pretty =</span> <span class="dv">0</span>)</code></pre>
+<div class="sourceCode" id="cb220"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb220-1" title="1"><span class="co"># plot tree object</span></a>
+<a class="sourceLine" id="cb220-2" title="2"><span class="kw">plot</span>(t1)</a>
+<a class="sourceLine" id="cb220-3" title="3"><span class="kw">text</span>(t1, <span class="dt">pretty =</span> <span class="dv">0</span>)</a></code></pre></div>
 <p><img src="ml101_files/figure-html/unnamed-chunk-136-1.png" width="672" /></p>
 <p>We can also examine the splits as text.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># examin the tree object</span>
-t1</code></pre>
+<div class="sourceCode" id="cb221"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb221-1" title="1"><span class="co"># examin the tree object</span></a>
+<a class="sourceLine" id="cb221-2" title="2">t1</a></code></pre></div>
 <pre><code>node), split, n, deviance, yval, (yprob)
       * denotes terminal node
 
@@ -283,33 +282,33 @@ t1</code></pre>
       14) polinfoindex &lt; 5.5 356  483.4 0 ( 0.58427 0.41573 ) *
       15) polinfoindex &gt; 5.5 310  383.7 1 ( 0.30968 0.69032 ) *</code></pre>
 <p>Now we use the validation set approach for classification. We split our data and re-grow the tree on the training data.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># initialize random number generator</span>
-<span class="kw">set.seed</span>(<span class="dv">2</span>)
-
-<span class="co"># training/test split</span>
-train &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="kw">nrow</span>(bes), <span class="dt">size =</span> <span class="kw">as.integer</span>(<span class="kw">nrow</span>(bes)<span class="op">*</span>.<span class="dv">66</span>))
-bes.test &lt;-<span class="st"> </span>bes[ <span class="op">-</span>train, ]
-turnout.test &lt;-<span class="st"> </span><span class="kw">ifelse</span>( bes<span class="op">$</span>Turnout[<span class="op">-</span>train] <span class="op">==</span><span class="st"> &quot;1&quot;</span>, <span class="dt">yes =</span> <span class="dv">1</span>, <span class="dt">no =</span> <span class="dv">0</span>)
-
-<span class="co"># grow tree on training data</span>
-t2 &lt;-<span class="st"> </span><span class="kw">tree</span>( Turnout <span class="op">~</span><span class="st"> </span>. , <span class="dt">data =</span> bes, <span class="dt">subset =</span> train)</code></pre>
+<div class="sourceCode" id="cb223"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb223-1" title="1"><span class="co"># initialize random number generator</span></a>
+<a class="sourceLine" id="cb223-2" title="2"><span class="kw">set.seed</span>(<span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb223-3" title="3"></a>
+<a class="sourceLine" id="cb223-4" title="4"><span class="co"># training/test split</span></a>
+<a class="sourceLine" id="cb223-5" title="5">train &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="kw">nrow</span>(bes), <span class="dt">size =</span> <span class="kw">as.integer</span>(<span class="kw">nrow</span>(bes)<span class="op">*</span>.<span class="dv">66</span>))</a>
+<a class="sourceLine" id="cb223-6" title="6">bes.test &lt;-<span class="st"> </span>bes[ <span class="op">-</span>train, ]</a>
+<a class="sourceLine" id="cb223-7" title="7">turnout.test &lt;-<span class="st"> </span><span class="kw">ifelse</span>( bes<span class="op">$</span>Turnout[<span class="op">-</span>train] <span class="op">==</span><span class="st"> &quot;1&quot;</span>, <span class="dt">yes =</span> <span class="dv">1</span>, <span class="dt">no =</span> <span class="dv">0</span>)</a>
+<a class="sourceLine" id="cb223-8" title="8"></a>
+<a class="sourceLine" id="cb223-9" title="9"><span class="co"># grow tree on training data</span></a>
+<a class="sourceLine" id="cb223-10" title="10">t2 &lt;-<span class="st"> </span><span class="kw">tree</span>( Turnout <span class="op">~</span><span class="st"> </span>. , <span class="dt">data =</span> bes, <span class="dt">subset =</span> train)</a></code></pre></div>
 <p>We predict outcomes using the <code>predict()</code> function.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># predict outcomes</span>
-t2.pred &lt;-<span class="st"> </span><span class="kw">predict</span>(t2, <span class="dt">newdata =</span> bes.test, <span class="dt">type =</span> <span class="st">&quot;class&quot;</span>)
-
-<span class="co"># confusion matrix</span>
-<span class="kw">table</span>(<span class="dt">prediction =</span> t2.pred, <span class="dt">truth =</span> turnout.test)</code></pre>
+<div class="sourceCode" id="cb224"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb224-1" title="1"><span class="co"># predict outcomes</span></a>
+<a class="sourceLine" id="cb224-2" title="2">t2.pred &lt;-<span class="st"> </span><span class="kw">predict</span>(t2, <span class="dt">newdata =</span> bes.test, <span class="dt">type =</span> <span class="st">&quot;class&quot;</span>)</a>
+<a class="sourceLine" id="cb224-3" title="3"></a>
+<a class="sourceLine" id="cb224-4" title="4"><span class="co"># confusion matrix</span></a>
+<a class="sourceLine" id="cb224-5" title="5"><span class="kw">table</span>(<span class="dt">prediction =</span> t2.pred, <span class="dt">truth =</span> turnout.test)</a></code></pre></div>
 <pre><code>          truth
 prediction   0   1
          0 179  72
          1 186 978</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># percent correctly classified</span>
-<span class="kw">mean</span>( t2.pred <span class="op">==</span><span class="st"> </span>turnout.test )</code></pre>
+<div class="sourceCode" id="cb226"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb226-1" title="1"><span class="co"># percent correctly classified</span></a>
+<a class="sourceLine" id="cb226-2" title="2"><span class="kw">mean</span>( t2.pred <span class="op">==</span><span class="st"> </span>turnout.test )</a></code></pre></div>
 <pre><code>[1] 0.8176678</code></pre>
 <p>We correctly classify 82% of the observations. In classification models, the Brier Score is often used as as measure of model quality. We estimate it as the average of the squared differences between predicted probabilities and true outcomes. It is, thus, similar to the MSE.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># using the predict function to predict outcomes from tree</span>
-t2.pred &lt;-<span class="st"> </span><span class="kw">predict</span>(t2, <span class="dt">newdata =</span> bes.test, <span class="dt">type =</span> <span class="st">&quot;vector&quot;</span>)
-<span class="kw">head</span>(t2.pred)</code></pre>
+<div class="sourceCode" id="cb228"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb228-1" title="1"><span class="co"># using the predict function to predict outcomes from tree</span></a>
+<a class="sourceLine" id="cb228-2" title="2">t2.pred &lt;-<span class="st"> </span><span class="kw">predict</span>(t2, <span class="dt">newdata =</span> bes.test, <span class="dt">type =</span> <span class="st">&quot;vector&quot;</span>)</a>
+<a class="sourceLine" id="cb228-3" title="3"><span class="kw">head</span>(t2.pred)</a></code></pre></div>
 <pre><code>            0         1
 1  0.39516129 0.6048387
 5  0.04152249 0.9584775
@@ -318,63 +317,63 @@ t2.pred &lt;-<span class="st"> </span><span class="kw">predict</span>(t2, <span 
 9  0.04152249 0.9584775
 14 0.13796477 0.8620352</code></pre>
 <p>Next we estimate the Brier Score.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># the second column of t2.pred is the probabilities that the outcomes is equal to 1</span>
-t2.pred &lt;-<span class="st"> </span>t2.pred[,<span class="dv">2</span>]
-
-<span class="co"># brier score</span>
-mse.tree &lt;-<span class="st"> </span><span class="kw">mean</span>( (t2.pred <span class="op">-</span><span class="st"> </span>turnout.test)<span class="op">^</span><span class="dv">2</span> )</code></pre>
+<div class="sourceCode" id="cb230"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb230-1" title="1"><span class="co"># the second column of t2.pred is the probabilities that the outcomes is equal to 1</span></a>
+<a class="sourceLine" id="cb230-2" title="2">t2.pred &lt;-<span class="st"> </span>t2.pred[,<span class="dv">2</span>]</a>
+<a class="sourceLine" id="cb230-3" title="3"></a>
+<a class="sourceLine" id="cb230-4" title="4"><span class="co"># brier score</span></a>
+<a class="sourceLine" id="cb230-5" title="5">mse.tree &lt;-<span class="st"> </span><span class="kw">mean</span>( (t2.pred <span class="op">-</span><span class="st"> </span>turnout.test)<span class="op">^</span><span class="dv">2</span> )</a></code></pre></div>
 <p>We turn to cost-complexity pruning to see if we can simplify the tree and thus decrease variance without increasing bias. We use k-fold cross-validation to determine the best size of the tree.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">set.seed</span>(<span class="dv">3</span>)
-cv.t2 &lt;-<span class="st"> </span><span class="kw">cv.tree</span>(t2, <span class="dt">FUN =</span> prune.misclass)
-
-<span class="co"># illustrate</span>
-<span class="kw">par</span>(<span class="dt">mfrow =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))
-<span class="kw">plot</span>(cv.t2<span class="op">$</span>size, cv.t2<span class="op">$</span>dev, <span class="dt">type =</span> <span class="st">&quot;b&quot;</span>)
-<span class="kw">plot</span>(cv.t2<span class="op">$</span>k, cv.t2<span class="op">$</span>dev, <span class="dt">type =</span> <span class="st">&quot;b&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb231"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb231-1" title="1"><span class="kw">set.seed</span>(<span class="dv">3</span>)</a>
+<a class="sourceLine" id="cb231-2" title="2">cv.t2 &lt;-<span class="st"> </span><span class="kw">cv.tree</span>(t2, <span class="dt">FUN =</span> prune.misclass)</a>
+<a class="sourceLine" id="cb231-3" title="3"></a>
+<a class="sourceLine" id="cb231-4" title="4"><span class="co"># illustrate</span></a>
+<a class="sourceLine" id="cb231-5" title="5"><span class="kw">par</span>(<span class="dt">mfrow =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</a>
+<a class="sourceLine" id="cb231-6" title="6"><span class="kw">plot</span>(cv.t2<span class="op">$</span>size, cv.t2<span class="op">$</span>dev, <span class="dt">type =</span> <span class="st">&quot;b&quot;</span>)</a>
+<a class="sourceLine" id="cb231-7" title="7"><span class="kw">plot</span>(cv.t2<span class="op">$</span>k, cv.t2<span class="op">$</span>dev, <span class="dt">type =</span> <span class="st">&quot;b&quot;</span>)</a></code></pre></div>
 <p><img src="ml101_files/figure-html/unnamed-chunk-142-1.png" width="672" /></p>
 <p>We can prune the tree to four terminal nodes.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># prune the tree (pick the smallest tree that does not substiantially increase error)</span>
-prune.t2 &lt;-<span class="st"> </span><span class="kw">prune.misclass</span>(t2, <span class="dt">best =</span> <span class="dv">4</span>)
-<span class="kw">par</span>(<span class="dt">mfrow =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">1</span>))
-<span class="kw">plot</span>(prune.t2)
-<span class="kw">text</span>(prune.t2, <span class="dt">pretty =</span> <span class="dv">0</span>)</code></pre>
+<div class="sourceCode" id="cb232"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb232-1" title="1"><span class="co"># prune the tree (pick the smallest tree that does not substiantially increase error)</span></a>
+<a class="sourceLine" id="cb232-2" title="2">prune.t2 &lt;-<span class="st"> </span><span class="kw">prune.misclass</span>(t2, <span class="dt">best =</span> <span class="dv">4</span>)</a>
+<a class="sourceLine" id="cb232-3" title="3"><span class="kw">par</span>(<span class="dt">mfrow =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">1</span>))</a>
+<a class="sourceLine" id="cb232-4" title="4"><span class="kw">plot</span>(prune.t2)</a>
+<a class="sourceLine" id="cb232-5" title="5"><span class="kw">text</span>(prune.t2, <span class="dt">pretty =</span> <span class="dv">0</span>)</a></code></pre></div>
 <p><img src="ml101_files/figure-html/unnamed-chunk-143-1.png" width="672" /></p>
 <p>We then predict outcomes.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># predict outcomes</span>
-t2.pred &lt;-<span class="st"> </span><span class="kw">predict</span>(prune.t2, <span class="dt">newdata =</span> bes.test, <span class="dt">type =</span> <span class="st">&quot;class&quot;</span>)
-
-<span class="co"># did we loose predictive power?</span>
-<span class="kw">mean</span>( t2.pred <span class="op">==</span><span class="st"> </span>turnout.test )</code></pre>
+<div class="sourceCode" id="cb233"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb233-1" title="1"><span class="co"># predict outcomes</span></a>
+<a class="sourceLine" id="cb233-2" title="2">t2.pred &lt;-<span class="st"> </span><span class="kw">predict</span>(prune.t2, <span class="dt">newdata =</span> bes.test, <span class="dt">type =</span> <span class="st">&quot;class&quot;</span>)</a>
+<a class="sourceLine" id="cb233-3" title="3"></a>
+<a class="sourceLine" id="cb233-4" title="4"><span class="co"># did we loose predictive power?</span></a>
+<a class="sourceLine" id="cb233-5" title="5"><span class="kw">mean</span>( t2.pred <span class="op">==</span><span class="st"> </span>turnout.test )</a></code></pre></div>
 <pre><code>[1] 0.8176678</code></pre>
 <p>Let’s estimate the Brier Score</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Brier score</span>
-t2.pred &lt;-<span class="st"> </span><span class="kw">predict</span>(t2, <span class="dt">newdata =</span> bes.test, <span class="dt">type =</span> <span class="st">&quot;vector&quot;</span>)[,<span class="dv">2</span>]
-mse.pruned &lt;-<span class="st"> </span><span class="kw">mean</span>( (t2.pred <span class="op">-</span><span class="st"> </span>turnout.test)<span class="op">^</span><span class="dv">2</span> ) </code></pre>
+<div class="sourceCode" id="cb235"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb235-1" title="1"><span class="co"># Brier score</span></a>
+<a class="sourceLine" id="cb235-2" title="2">t2.pred &lt;-<span class="st"> </span><span class="kw">predict</span>(t2, <span class="dt">newdata =</span> bes.test, <span class="dt">type =</span> <span class="st">&quot;vector&quot;</span>)[,<span class="dv">2</span>]</a>
+<a class="sourceLine" id="cb235-3" title="3">mse.pruned &lt;-<span class="st"> </span><span class="kw">mean</span>( (t2.pred <span class="op">-</span><span class="st"> </span>turnout.test)<span class="op">^</span><span class="dv">2</span> ) </a></code></pre></div>
 <p>We still correctly classify 0.1338879% of the observations and the brier score remained stable. In the previous plots, we saw that we should do worse if we prune back the tree to have less than 4 terminal nodes. We examine what happens if we overdo it.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># using &quot;wrong&quot; value for pruning (where the error rate does increase)</span>
-prune.t2 &lt;-<span class="st"> </span><span class="kw">prune.misclass</span>(t2, <span class="dt">best =</span> <span class="dv">2</span>)
-<span class="kw">plot</span>(prune.t2)
-<span class="kw">text</span>(prune.t2, <span class="dt">pretty =</span> <span class="dv">0</span>)</code></pre>
+<div class="sourceCode" id="cb236"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb236-1" title="1"><span class="co"># using &quot;wrong&quot; value for pruning (where the error rate does increase)</span></a>
+<a class="sourceLine" id="cb236-2" title="2">prune.t2 &lt;-<span class="st"> </span><span class="kw">prune.misclass</span>(t2, <span class="dt">best =</span> <span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb236-3" title="3"><span class="kw">plot</span>(prune.t2)</a>
+<a class="sourceLine" id="cb236-4" title="4"><span class="kw">text</span>(prune.t2, <span class="dt">pretty =</span> <span class="dv">0</span>)</a></code></pre></div>
 <p><img src="ml101_files/figure-html/unnamed-chunk-146-1.png" width="672" /></p>
 <p>We now predict outcomes based on the tree that is too small.</p>
-<pre class="sourceCode r"><code class="sourceCode r">t2.pred &lt;-<span class="st"> </span><span class="kw">predict</span>(prune.t2, <span class="dt">newdata =</span> bes.test, <span class="dt">type =</span> <span class="st">&quot;class&quot;</span>)
-
-<span class="co"># our predictive power decreased</span>
-<span class="kw">mean</span>( t2.pred <span class="op">==</span><span class="st"> </span>turnout.test )</code></pre>
+<div class="sourceCode" id="cb237"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb237-1" title="1">t2.pred &lt;-<span class="st"> </span><span class="kw">predict</span>(prune.t2, <span class="dt">newdata =</span> bes.test, <span class="dt">type =</span> <span class="st">&quot;class&quot;</span>)</a>
+<a class="sourceLine" id="cb237-2" title="2"></a>
+<a class="sourceLine" id="cb237-3" title="3"><span class="co"># our predictive power decreased</span></a>
+<a class="sourceLine" id="cb237-4" title="4"><span class="kw">mean</span>( t2.pred <span class="op">==</span><span class="st"> </span>turnout.test )</a></code></pre></div>
 <pre><code>[1] 0.8007067</code></pre>
 <p>Let’s estimate the Brier Score.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># brier score</span>
-t2.pred &lt;-<span class="st"> </span><span class="kw">predict</span>(prune.t2, <span class="dt">newdata =</span> bes.test, <span class="dt">type =</span> <span class="st">&quot;vector&quot;</span>)[,<span class="dv">2</span>]
-mse.pruned2 &lt;-<span class="st"> </span><span class="kw">mean</span>( (t2.pred <span class="op">-</span><span class="st"> </span>turnout.test)<span class="op">^</span><span class="dv">2</span> ) </code></pre>
+<div class="sourceCode" id="cb239"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb239-1" title="1"><span class="co"># brier score</span></a>
+<a class="sourceLine" id="cb239-2" title="2">t2.pred &lt;-<span class="st"> </span><span class="kw">predict</span>(prune.t2, <span class="dt">newdata =</span> bes.test, <span class="dt">type =</span> <span class="st">&quot;vector&quot;</span>)[,<span class="dv">2</span>]</a>
+<a class="sourceLine" id="cb239-3" title="3">mse.pruned2 &lt;-<span class="st"> </span><span class="kw">mean</span>( (t2.pred <span class="op">-</span><span class="st"> </span>turnout.test)<span class="op">^</span><span class="dv">2</span> ) </a></code></pre></div>
 <p>We see that our test error increases.</p>
 </div>
 <div id="regression-trees" class="section level3">
 <h3><span class="header-section-number">7.1.2</span> Regression Trees</h3>
 <p>We predict the continuous variable <code>Income</code>. The plot of the regression tree is similar. However, in the terminal nodes the mean values of the dependent variable for that group are displayed rather than the class labels.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># grow a regression tree</span>
-<span class="kw">set.seed</span>(<span class="dv">123</span>)
-reg.t1 &lt;-<span class="st"> </span><span class="kw">tree</span>(Income <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> bes, <span class="dt">subset =</span> train)
-<span class="kw">summary</span>(reg.t1)</code></pre>
+<div class="sourceCode" id="cb240"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb240-1" title="1"><span class="co"># grow a regression tree</span></a>
+<a class="sourceLine" id="cb240-2" title="2"><span class="kw">set.seed</span>(<span class="dv">123</span>)</a>
+<a class="sourceLine" id="cb240-3" title="3">reg.t1 &lt;-<span class="st"> </span><span class="kw">tree</span>(Income <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> bes, <span class="dt">subset =</span> train)</a>
+<a class="sourceLine" id="cb240-4" title="4"><span class="kw">summary</span>(reg.t1)</a></code></pre></div>
 <pre><code>
 Regression tree:
 tree(formula = Income ~ ., data = bes, subset = train)
@@ -386,13 +385,13 @@ Distribution of residuals:
     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
 -6.98100 -1.48700  0.01935  0.00000  1.21000  9.21000 </code></pre>
 <p>Let’s plot the tree.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># plot regression tree</span>
-<span class="kw">plot</span>(reg.t1)
-<span class="kw">text</span>(reg.t1, <span class="dt">pretty =</span> <span class="dv">0</span>)</code></pre>
+<div class="sourceCode" id="cb242"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb242-1" title="1"><span class="co"># plot regression tree</span></a>
+<a class="sourceLine" id="cb242-2" title="2"><span class="kw">plot</span>(reg.t1)</a>
+<a class="sourceLine" id="cb242-3" title="3"><span class="kw">text</span>(reg.t1, <span class="dt">pretty =</span> <span class="dv">0</span>)</a></code></pre></div>
 <p><img src="ml101_files/figure-html/unnamed-chunk-150-1.png" width="672" /></p>
 <p>We can also examine the same output as text.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># examin the tree objext</span>
-t1</code></pre>
+<div class="sourceCode" id="cb243"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb243-1" title="1"><span class="co"># examin the tree objext</span></a>
+<a class="sourceLine" id="cb243-2" title="2">t1</a></code></pre></div>
 <pre><code>node), split, n, deviance, yval, (yprob)
       * denotes terminal node
 
@@ -408,42 +407,42 @@ t1</code></pre>
       14) polinfoindex &lt; 5.5 356  483.4 0 ( 0.58427 0.41573 ) *
       15) polinfoindex &gt; 5.5 310  383.7 1 ( 0.30968 0.69032 ) *</code></pre>
 <p>We estimate test error of our tree.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># MSE</span>
-mse.tree &lt;-<span class="st"> </span><span class="kw">mean</span>( (bes.test<span class="op">$</span>Income <span class="op">-</span><span class="st"> </span><span class="kw">predict</span>(reg.t1, <span class="dt">newdata =</span> bes.test))<span class="op">^</span><span class="dv">2</span>, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)</code></pre>
+<div class="sourceCode" id="cb245"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb245-1" title="1"><span class="co"># MSE</span></a>
+<a class="sourceLine" id="cb245-2" title="2">mse.tree &lt;-<span class="st"> </span><span class="kw">mean</span>( (bes.test<span class="op">$</span>Income <span class="op">-</span><span class="st"> </span><span class="kw">predict</span>(reg.t1, <span class="dt">newdata =</span> bes.test))<span class="op">^</span><span class="dv">2</span>, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
 <p>We apply pruning again to get a smaller more interpretable tree.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># cross-validation (to determine cutback size for pruning)</span>
-cv.reg.t1 &lt;-<span class="st"> </span><span class="kw">cv.tree</span>(reg.t1)
-<span class="kw">plot</span>(cv.reg.t1)</code></pre>
+<div class="sourceCode" id="cb246"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb246-1" title="1"><span class="co"># cross-validation (to determine cutback size for pruning)</span></a>
+<a class="sourceLine" id="cb246-2" title="2">cv.reg.t1 &lt;-<span class="st"> </span><span class="kw">cv.tree</span>(reg.t1)</a>
+<a class="sourceLine" id="cb246-3" title="3"><span class="kw">plot</span>(cv.reg.t1)</a></code></pre></div>
 <p><img src="ml101_files/figure-html/unnamed-chunk-153-1.png" width="672" /></p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(cv.reg.t1<span class="op">$</span>size, cv.reg.t1<span class="op">$</span>dev, <span class="dt">type =</span> <span class="st">&quot;b&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb247"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb247-1" title="1"><span class="kw">plot</span>(cv.reg.t1<span class="op">$</span>size, cv.reg.t1<span class="op">$</span>dev, <span class="dt">type =</span> <span class="st">&quot;b&quot;</span>)</a></code></pre></div>
 <p><img src="ml101_files/figure-html/unnamed-chunk-153-2.png" width="672" /></p>
 <p>This is time we will increase error by pruning the tree. We choose four as a smaller tree size that does not increase RSS by much.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># pruning</span>
-prune.reg.t1 &lt;-<span class="st"> </span><span class="kw">prune.tree</span>(reg.t1, <span class="dt">best =</span> <span class="dv">4</span>)
-<span class="kw">plot</span>(prune.reg.t1)
-<span class="kw">text</span>(prune.reg.t1, <span class="dt">pretty =</span> <span class="dv">0</span>)</code></pre>
+<div class="sourceCode" id="cb248"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb248-1" title="1"><span class="co"># pruning</span></a>
+<a class="sourceLine" id="cb248-2" title="2">prune.reg.t1 &lt;-<span class="st"> </span><span class="kw">prune.tree</span>(reg.t1, <span class="dt">best =</span> <span class="dv">4</span>)</a>
+<a class="sourceLine" id="cb248-3" title="3"><span class="kw">plot</span>(prune.reg.t1)</a>
+<a class="sourceLine" id="cb248-4" title="4"><span class="kw">text</span>(prune.reg.t1, <span class="dt">pretty =</span> <span class="dv">0</span>)</a></code></pre></div>
 <p><img src="ml101_files/figure-html/unnamed-chunk-154-1.png" width="672" /></p>
 <p>We can predict the outcome based on our pruned back tree. We will predict four values because we have four terminal nodes. We can illustrate the groups and their variance and estimate the MSE of our prediction.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># predict outcomes</span>
-yhat &lt;-<span class="st"> </span><span class="kw">predict</span>(prune.reg.t1, <span class="dt">newdata =</span> bes.test)
-<span class="kw">plot</span>(yhat, bes.test<span class="op">$</span>Income)
-<span class="kw">abline</span>(<span class="dv">0</span>, <span class="dv">1</span>)</code></pre>
+<div class="sourceCode" id="cb249"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb249-1" title="1"><span class="co"># predict outcomes</span></a>
+<a class="sourceLine" id="cb249-2" title="2">yhat &lt;-<span class="st"> </span><span class="kw">predict</span>(prune.reg.t1, <span class="dt">newdata =</span> bes.test)</a>
+<a class="sourceLine" id="cb249-3" title="3"><span class="kw">plot</span>(yhat, bes.test<span class="op">$</span>Income)</a>
+<a class="sourceLine" id="cb249-4" title="4"><span class="kw">abline</span>(<span class="dv">0</span>, <span class="dv">1</span>)</a></code></pre></div>
 <p><img src="ml101_files/figure-html/unnamed-chunk-155-1.png" width="672" /></p>
 <p>We estimate the Brier Score (prediction error).</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># MSE</span>
-mse.pruned &lt;-<span class="st"> </span><span class="kw">mean</span>((yhat <span class="op">-</span><span class="st"> </span>bes.test<span class="op">$</span>Income)<span class="op">^</span><span class="dv">2</span>)</code></pre>
+<div class="sourceCode" id="cb250"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb250-1" title="1"><span class="co"># MSE</span></a>
+<a class="sourceLine" id="cb250-2" title="2">mse.pruned &lt;-<span class="st"> </span><span class="kw">mean</span>((yhat <span class="op">-</span><span class="st"> </span>bes.test<span class="op">$</span>Income)<span class="op">^</span><span class="dv">2</span>)</a></code></pre></div>
 <div id="bagging-and-random-forests" class="section level4">
 <h4><span class="header-section-number">7.1.2.1</span> Bagging and Random Forests</h4>
 <p>We now apply bagging and random forests to improve our prediction. Bagging is the idea that the high variance of a single bushy tree can be reduced by bootstapping samples and averaging over trees that were grown on the samples.</p>
 <p>Note: Bagging gets an estimate of the test error for free as it always leaves out some observations when a tree is fit. The reported out-of-bag MSE is thus an estimate of test error. We also estimate test error separately on a test set. This is one particular test set, so the test error may vary.</p>
 <p>In our run below the OOB MSE may be a better estimate of test error. It is reported to be lower than our test error estimate. We need to install the <code>randomForest</code> package like so: <code>install.packages("randomForest")</code>.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">set.seed</span>(<span class="dv">123</span>)
-<span class="kw">library</span>(randomForest)</code></pre>
+<div class="sourceCode" id="cb251"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb251-1" title="1"><span class="kw">set.seed</span>(<span class="dv">123</span>)</a>
+<a class="sourceLine" id="cb251-2" title="2"><span class="kw">library</span>(randomForest)</a></code></pre></div>
 <pre><code>randomForest 4.6-14</code></pre>
 <pre><code>Type rfNews() to see new features/changes/bug fixes.</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># estiamte random forrests model (this may take a moment)</span>
-bag1 &lt;-<span class="st"> </span><span class="kw">randomForest</span>(Income <span class="op">~</span><span class="st"> </span>. , <span class="dt">mtry =</span> <span class="dv">19</span>, <span class="dt">data =</span> bes, <span class="dt">subset =</span> train, <span class="dt">importance =</span> <span class="ot">TRUE</span>)
-bag1</code></pre>
+<div class="sourceCode" id="cb254"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb254-1" title="1"><span class="co"># estiamte random forrests model (this may take a moment)</span></a>
+<a class="sourceLine" id="cb254-2" title="2">bag1 &lt;-<span class="st"> </span><span class="kw">randomForest</span>(Income <span class="op">~</span><span class="st"> </span>. , <span class="dt">mtry =</span> <span class="dv">19</span>, <span class="dt">data =</span> bes, <span class="dt">subset =</span> train, <span class="dt">importance =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb254-3" title="3">bag1</a></code></pre></div>
 <pre><code>
 Call:
  randomForest(formula = Income ~ ., data = bes, mtry = 19, importance = TRUE,      subset = train) 
@@ -454,40 +453,40 @@ No. of variables tried at each split: 19
           Mean of squared residuals: 3.680305
                     % Var explained: 37.89</code></pre>
 <p>We can use the predict function to predict outcomes from our random forests object.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># predict outcome, illustrate, MSE</span>
-yhat.bag &lt;-<span class="st"> </span><span class="kw">predict</span>(bag1, <span class="dt">newdata =</span> bes.test)
-<span class="kw">plot</span>(yhat.bag, bes.test<span class="op">$</span>Income)
-<span class="kw">abline</span>(<span class="dv">0</span>, <span class="dv">1</span>) <span class="co"># line of 1:1 perfect prediction</span></code></pre>
+<div class="sourceCode" id="cb256"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb256-1" title="1"><span class="co"># predict outcome, illustrate, MSE</span></a>
+<a class="sourceLine" id="cb256-2" title="2">yhat.bag &lt;-<span class="st"> </span><span class="kw">predict</span>(bag1, <span class="dt">newdata =</span> bes.test)</a>
+<a class="sourceLine" id="cb256-3" title="3"><span class="kw">plot</span>(yhat.bag, bes.test<span class="op">$</span>Income)</a>
+<a class="sourceLine" id="cb256-4" title="4"><span class="kw">abline</span>(<span class="dv">0</span>, <span class="dv">1</span>) <span class="co"># line of 1:1 perfect prediction</span></a></code></pre></div>
 <p><img src="ml101_files/figure-html/unnamed-chunk-158-1.png" width="672" /></p>
 <p>We estimate the MSE in the validation set</p>
-<pre class="sourceCode r"><code class="sourceCode r">mse.bag &lt;-<span class="st"> </span><span class="kw">mean</span>( (yhat.bag <span class="op">-</span><span class="st"> </span>bes.test<span class="op">$</span>Income)<span class="op">^</span><span class="dv">2</span> )
-
-<span class="co"># reduction of error</span>
-(mse.bag <span class="op">-</span><span class="st"> </span>mse.tree) <span class="op">/</span><span class="st"> </span>mse.tree</code></pre>
+<div class="sourceCode" id="cb257"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb257-1" title="1">mse.bag &lt;-<span class="st"> </span><span class="kw">mean</span>( (yhat.bag <span class="op">-</span><span class="st"> </span>bes.test<span class="op">$</span>Income)<span class="op">^</span><span class="dv">2</span> )</a>
+<a class="sourceLine" id="cb257-2" title="2"></a>
+<a class="sourceLine" id="cb257-3" title="3"><span class="co"># reduction of error</span></a>
+<a class="sourceLine" id="cb257-4" title="4">(mse.bag <span class="op">-</span><span class="st"> </span>mse.tree) <span class="op">/</span><span class="st"> </span>mse.tree</a></code></pre></div>
 <pre><code>[1] -0.05762335</code></pre>
 <p>We reduce the error rate by 5.76<span class="math inline">\(%\)</span> by using bagging. We examine what happens when we reduce the number of trees we grow. The default is 500.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># dcrease the number of trees (defaults to 500)</span>
-bag2 &lt;-<span class="st"> </span><span class="kw">randomForest</span>(Income <span class="op">~</span><span class="st"> </span>., <span class="dt">mtry =</span> <span class="dv">19</span>, <span class="dt">data =</span> bes, <span class="dt">subset =</span> train, <span class="dt">ntree =</span> <span class="dv">25</span>, <span class="dt">importance =</span> <span class="ot">TRUE</span>)
-
-<span class="co"># predict outcome</span>
-yhat.bag2 &lt;-<span class="st"> </span><span class="kw">predict</span>(bag2, <span class="dt">newdata =</span> bes.test)
-mse.bag2 &lt;-<span class="st"> </span>( (yhat.bag2 <span class="op">-</span><span class="st"> </span>bes.test<span class="op">$</span>Income)<span class="op">^</span><span class="dv">2</span> )</code></pre>
+<div class="sourceCode" id="cb259"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb259-1" title="1"><span class="co"># dcrease the number of trees (defaults to 500)</span></a>
+<a class="sourceLine" id="cb259-2" title="2">bag2 &lt;-<span class="st"> </span><span class="kw">randomForest</span>(Income <span class="op">~</span><span class="st"> </span>., <span class="dt">mtry =</span> <span class="dv">19</span>, <span class="dt">data =</span> bes, <span class="dt">subset =</span> train, <span class="dt">ntree =</span> <span class="dv">25</span>, <span class="dt">importance =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb259-3" title="3"></a>
+<a class="sourceLine" id="cb259-4" title="4"><span class="co"># predict outcome</span></a>
+<a class="sourceLine" id="cb259-5" title="5">yhat.bag2 &lt;-<span class="st"> </span><span class="kw">predict</span>(bag2, <span class="dt">newdata =</span> bes.test)</a>
+<a class="sourceLine" id="cb259-6" title="6">mse.bag2 &lt;-<span class="st"> </span>( (yhat.bag2 <span class="op">-</span><span class="st"> </span>bes.test<span class="op">$</span>Income)<span class="op">^</span><span class="dv">2</span> )</a></code></pre></div>
 <p>The result is that our rate increases substantially again.</p>
 <p>We now apply random forest. The trick is to decorrelate the trees by randomly considering only a subset of variables at every split. We thereby reduce variance further. The number of variables argument <code>mtry</code> is a tuning parameter.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Random Forest: not trying all vars at each split decorrelates the trees</span>
-<span class="kw">set.seed</span>(<span class="dv">123</span>)
-
-<span class="co"># we try to find the optimal tuning parameter for the number of variables to use at each split</span>
-oob.error &lt;-<span class="st"> </span><span class="ot">NA</span>
-val.set.error &lt;-<span class="st"> </span><span class="ot">NA</span>
-<span class="cf">for</span> ( idx <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">10</span>){
-  rf1 &lt;-<span class="st"> </span><span class="kw">randomForest</span>(Income <span class="op">~</span><span class="st"> </span>., <span class="dt">mtry =</span> idx, <span class="dt">data =</span> bes, <span class="dt">subset =</span> train, <span class="dt">importance =</span> <span class="ot">TRUE</span>)
-  <span class="co"># record out of bag error</span>
-  oob.error[idx] &lt;-<span class="st"> </span>rf1<span class="op">$</span>mse[<span class="kw">length</span>(rf1<span class="op">$</span>mse)]
-  <span class="kw">cat</span>(<span class="kw">paste</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>, <span class="st">&quot;Use &quot;</span>, idx, <span class="st">&quot; variables at each split&quot;</span>, <span class="dt">sep=</span><span class="st">&quot;&quot;</span>))
-  <span class="co"># record validation set error</span>
-  val.set.error[idx] &lt;-<span class="st"> </span><span class="kw">mean</span>( (<span class="kw">predict</span>(rf1, <span class="dt">newdata =</span> bes.test) <span class="op">-</span><span class="st"> </span>bes.test<span class="op">$</span>Income)<span class="op">^</span><span class="dv">2</span> )
-}</code></pre>
+<div class="sourceCode" id="cb260"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb260-1" title="1"><span class="co"># Random Forest: not trying all vars at each split decorrelates the trees</span></a>
+<a class="sourceLine" id="cb260-2" title="2"><span class="kw">set.seed</span>(<span class="dv">123</span>)</a>
+<a class="sourceLine" id="cb260-3" title="3"></a>
+<a class="sourceLine" id="cb260-4" title="4"><span class="co"># we try to find the optimal tuning parameter for the number of variables to use at each split</span></a>
+<a class="sourceLine" id="cb260-5" title="5">oob.error &lt;-<span class="st"> </span><span class="ot">NA</span></a>
+<a class="sourceLine" id="cb260-6" title="6">val.set.error &lt;-<span class="st"> </span><span class="ot">NA</span></a>
+<a class="sourceLine" id="cb260-7" title="7"><span class="cf">for</span> ( idx <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">10</span>){</a>
+<a class="sourceLine" id="cb260-8" title="8">  rf1 &lt;-<span class="st"> </span><span class="kw">randomForest</span>(Income <span class="op">~</span><span class="st"> </span>., <span class="dt">mtry =</span> idx, <span class="dt">data =</span> bes, <span class="dt">subset =</span> train, <span class="dt">importance =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb260-9" title="9">  <span class="co"># record out of bag error</span></a>
+<a class="sourceLine" id="cb260-10" title="10">  oob.error[idx] &lt;-<span class="st"> </span>rf1<span class="op">$</span>mse[<span class="kw">length</span>(rf1<span class="op">$</span>mse)]</a>
+<a class="sourceLine" id="cb260-11" title="11">  <span class="kw">cat</span>(<span class="kw">paste</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>, <span class="st">&quot;Use &quot;</span>, idx, <span class="st">&quot; variables at each split&quot;</span>, <span class="dt">sep=</span><span class="st">&quot;&quot;</span>))</a>
+<a class="sourceLine" id="cb260-12" title="12">  <span class="co"># record validation set error</span></a>
+<a class="sourceLine" id="cb260-13" title="13">  val.set.error[idx] &lt;-<span class="st"> </span><span class="kw">mean</span>( (<span class="kw">predict</span>(rf1, <span class="dt">newdata =</span> bes.test) <span class="op">-</span><span class="st"> </span>bes.test<span class="op">$</span>Income)<span class="op">^</span><span class="dv">2</span> )</a>
+<a class="sourceLine" id="cb260-14" title="14">}</a></code></pre></div>
 <pre><code>
 Use 1 variables at each split
 Use 2 variables at each split
@@ -499,26 +498,26 @@ Use 7 variables at each split
 Use 8 variables at each split
 Use 9 variables at each split
 Use 10 variables at each split</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># check optimal values for mtry</span>
-<span class="kw">matplot</span>( <span class="dv">1</span><span class="op">:</span>idx, <span class="kw">cbind</span>(oob.error, val.set.error), <span class="dt">pch =</span> <span class="dv">19</span>, <span class="dt">col =</span> <span class="kw">c</span>(<span class="st">&quot;red&quot;</span>, <span class="st">&quot;blue&quot;</span>),
-         <span class="dt">type =</span> <span class="st">&quot;b&quot;</span>, <span class="dt">ylab =</span> <span class="st">&quot;MSE&quot;</span>, <span class="dt">frame.plot =</span> <span class="ot">FALSE</span>)
-<span class="kw">legend</span>(<span class="st">&quot;topright&quot;</span>, <span class="dt">legend =</span> <span class="kw">c</span>(<span class="st">&quot;OOB&quot;</span>, <span class="st">&quot;Val. Set&quot;</span>), <span class="dt">pch =</span> <span class="dv">19</span>, <span class="dt">col =</span> <span class="kw">c</span>(<span class="st">&quot;red&quot;</span>, <span class="st">&quot;blue&quot;</span>),
-       <span class="dt">bty =</span> <span class="st">&quot;n&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb262"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb262-1" title="1"><span class="co"># check optimal values for mtry</span></a>
+<a class="sourceLine" id="cb262-2" title="2"><span class="kw">matplot</span>( <span class="dv">1</span><span class="op">:</span>idx, <span class="kw">cbind</span>(oob.error, val.set.error), <span class="dt">pch =</span> <span class="dv">19</span>, <span class="dt">col =</span> <span class="kw">c</span>(<span class="st">&quot;red&quot;</span>, <span class="st">&quot;blue&quot;</span>),</a>
+<a class="sourceLine" id="cb262-3" title="3">         <span class="dt">type =</span> <span class="st">&quot;b&quot;</span>, <span class="dt">ylab =</span> <span class="st">&quot;MSE&quot;</span>, <span class="dt">frame.plot =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb262-4" title="4"><span class="kw">legend</span>(<span class="st">&quot;topright&quot;</span>, <span class="dt">legend =</span> <span class="kw">c</span>(<span class="st">&quot;OOB&quot;</span>, <span class="st">&quot;Val. Set&quot;</span>), <span class="dt">pch =</span> <span class="dv">19</span>, <span class="dt">col =</span> <span class="kw">c</span>(<span class="st">&quot;red&quot;</span>, <span class="st">&quot;blue&quot;</span>),</a>
+<a class="sourceLine" id="cb262-5" title="5">       <span class="dt">bty =</span> <span class="st">&quot;n&quot;</span>)</a></code></pre></div>
 <p><img src="ml101_files/figure-html/unnamed-chunk-161-1.png" width="672" /></p>
 <p>We use 3 as the optimal value for <code>mtry</code>. In cases where it is hard to decide, it’s a good idea to choose the less complex model.</p>
-<pre class="sourceCode r"><code class="sourceCode r">rf &lt;-<span class="st"> </span><span class="kw">randomForest</span>(Income <span class="op">~</span><span class="st"> </span>., <span class="dt">mtry =</span> <span class="dv">4</span>, <span class="dt">data =</span> bes, <span class="dt">subset =</span> train, <span class="dt">importance =</span> <span class="ot">TRUE</span>)
-
-<span class="co"># predict outcomes</span>
-yhat.rf &lt;-<span class="st"> </span><span class="kw">predict</span>(rf, <span class="dt">newdata =</span> bes.test)
-mse.rf &lt;-<span class="st"> </span><span class="kw">mean</span>( (yhat.rf <span class="op">-</span><span class="st"> </span>bes.test<span class="op">$</span>Income)<span class="op">^</span><span class="dv">2</span> )
-
-<span class="co"># on previous random forests model</span>
-(mse.rf <span class="op">-</span><span class="st"> </span>mse.bag) <span class="op">/</span><span class="st"> </span>mse.bag</code></pre>
+<div class="sourceCode" id="cb263"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb263-1" title="1">rf &lt;-<span class="st"> </span><span class="kw">randomForest</span>(Income <span class="op">~</span><span class="st"> </span>., <span class="dt">mtry =</span> <span class="dv">4</span>, <span class="dt">data =</span> bes, <span class="dt">subset =</span> train, <span class="dt">importance =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb263-2" title="2"></a>
+<a class="sourceLine" id="cb263-3" title="3"><span class="co"># predict outcomes</span></a>
+<a class="sourceLine" id="cb263-4" title="4">yhat.rf &lt;-<span class="st"> </span><span class="kw">predict</span>(rf, <span class="dt">newdata =</span> bes.test)</a>
+<a class="sourceLine" id="cb263-5" title="5">mse.rf &lt;-<span class="st"> </span><span class="kw">mean</span>( (yhat.rf <span class="op">-</span><span class="st"> </span>bes.test<span class="op">$</span>Income)<span class="op">^</span><span class="dv">2</span> )</a>
+<a class="sourceLine" id="cb263-6" title="6"></a>
+<a class="sourceLine" id="cb263-7" title="7"><span class="co"># on previous random forests model</span></a>
+<a class="sourceLine" id="cb263-8" title="8">(mse.rf <span class="op">-</span><span class="st"> </span>mse.bag) <span class="op">/</span><span class="st"> </span>mse.bag</a></code></pre></div>
 <pre><code>[1] -0.03454119</code></pre>
 <p>We reduced the error rate by another 3.45<span class="math inline">\(\%\)</span> by decorrelating the trees. We can exmine variable importance as well. Variable reduction is obtained as the average that a predictor reduces error at splits within a tree where it was used and averaged again over all trees. Similarly, node purity is based on the gini index of how heterogenous a group becomes due to a split.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">par</span>(<span class="dt">mfrow =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">1</span>))
-<span class="co"># which varaibles help explain outcome</span>
-<span class="kw">importance</span>(rf1)</code></pre>
+<div class="sourceCode" id="cb265"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb265-1" title="1"><span class="kw">par</span>(<span class="dt">mfrow =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">1</span>))</a>
+<a class="sourceLine" id="cb265-2" title="2"><span class="co"># which varaibles help explain outcome</span></a>
+<a class="sourceLine" id="cb265-3" title="3"><span class="kw">importance</span>(rf1)</a></code></pre></div>
 <pre><code>                  %IncMSE IncNodePurity
 Turnout          3.485190     186.58860
 Vote2001         9.654237     180.45489
@@ -539,27 +538,27 @@ edu19plus       71.813297    3112.61687
 in_school       19.692186      80.59582
 in_uni          -2.576748      22.41477
 CivicDutyScores 25.916963    1684.33658</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># importance plot</span>
-<span class="kw">varImpPlot</span>(rf1)</code></pre>
+<div class="sourceCode" id="cb267"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb267-1" title="1"><span class="co"># importance plot</span></a>
+<a class="sourceLine" id="cb267-2" title="2"><span class="kw">varImpPlot</span>(rf1)</a></code></pre></div>
 <p><img src="ml101_files/figure-html/unnamed-chunk-163-1.png" width="672" /></p>
 </div>
 <div id="boosting" class="section level4">
 <h4><span class="header-section-number">7.1.2.2</span> Boosting</h4>
 <p>The general idea of boosting is that a tree is fit to predict outcome. The second tree is then fit on the residual of the first and so with all following trees. Each additional tree is discounted by a learning rate, so that each tree does not contribute much but slowly the ensemble becomes more predictive.</p>
 <p>Install the <code>gbm</code> package like so <code>install.packages("gbm")</code>.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(gbm)</code></pre>
+<div class="sourceCode" id="cb268"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb268-1" title="1"><span class="kw">library</span>(gbm)</a></code></pre></div>
 <pre><code>Loaded gbm 2.1.5</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">set.seed</span>(<span class="dv">1234</span>)</code></pre>
+<div class="sourceCode" id="cb270"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb270-1" title="1"><span class="kw">set.seed</span>(<span class="dv">1234</span>)</a></code></pre></div>
 <p>We run gradient boosting. The tuning parameters are the tree size. Tree size is directly related to the second tuning parameter: the learning rate. When the learning rate is smaller, we need more trees. The third tuning parameter interaction.depth determines how bushy the tree is. Common choices are 1, 2, 4, 8. When interaction depth is 1, each tree is a stump. If we increase to two we can get bivariate interactions with 2 splits and so. A final parameter that is related to the complexity of the tree could be minimum number of observations in the terminal node which defaults to 10.</p>
 <p>Notice that we just set hyperparameters. We might achieve better predictions by training the boosting model properly (however, this would take very long).</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># gradient boosting</span>
-gb1 &lt;-<span class="st"> </span><span class="kw">gbm</span>(Income <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> bes[train, ], 
-           <span class="dt">distribution =</span> <span class="st">&quot;gaussian&quot;</span>, 
-           <span class="dt">n.trees =</span> <span class="dv">5000</span>, 
-           <span class="dt">interaction.depth =</span> <span class="dv">4</span>,
-           <span class="dt">shrinkage =</span> <span class="fl">0.001</span>)
-
-<span class="kw">summary</span>(gb1)</code></pre>
+<div class="sourceCode" id="cb271"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb271-1" title="1"><span class="co"># gradient boosting</span></a>
+<a class="sourceLine" id="cb271-2" title="2">gb1 &lt;-<span class="st"> </span><span class="kw">gbm</span>(Income <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> bes[train, ], </a>
+<a class="sourceLine" id="cb271-3" title="3">           <span class="dt">distribution =</span> <span class="st">&quot;gaussian&quot;</span>, </a>
+<a class="sourceLine" id="cb271-4" title="4">           <span class="dt">n.trees =</span> <span class="dv">5000</span>, </a>
+<a class="sourceLine" id="cb271-5" title="5">           <span class="dt">interaction.depth =</span> <span class="dv">4</span>,</a>
+<a class="sourceLine" id="cb271-6" title="6">           <span class="dt">shrinkage =</span> <span class="fl">0.001</span>)</a>
+<a class="sourceLine" id="cb271-7" title="7"></a>
+<a class="sourceLine" id="cb271-8" title="8"><span class="kw">summary</span>(gb1, <span class="dt">order =</span> <span class="ot">TRUE</span>, <span class="dt">las =</span> <span class="dv">2</span>)</a></code></pre></div>
 <p><img src="ml101_files/figure-html/unnamed-chunk-165-1.png" width="672" /></p>
 <pre><code>                            var     rel.inf
 edu19plus             edu19plus 43.60824543
@@ -581,18 +580,20 @@ edu18                     edu18  0.25732928
 Vote2001               Vote2001  0.19667081
 PartyID                 PartyID  0.16443143
 in_uni                   in_uni  0.02836232</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># partial dependence plots</span>
-<span class="kw">plot</span>(gb1, <span class="dt">i =</span> <span class="st">&quot;edu19plus&quot;</span>)</code></pre>
+<p>The variable importance plot gives a good idea about which variables are important predictors. The general weakness of GBM is that the model is somewhat of a black box. However, variables importance gives us some insights into the model. For instance, it seems that high education and age are most predictive. Variables like arty identification or ideology play less of a role in the predictive model. Gender is the sixth strongest predictor.</p>
+<p>The importance plot does not inform us about the direction of the relationship. To get insights into such predictors, we can assess partial dependence plots. Let’s do so for the high education variable <code>edu19plus</code> and for <code>Age</code>.</p>
+<div class="sourceCode" id="cb273"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb273-1" title="1"><span class="co"># partial dependence plots</span></a>
+<a class="sourceLine" id="cb273-2" title="2"><span class="kw">plot</span>(gb1, <span class="dt">i =</span> <span class="st">&quot;edu19plus&quot;</span>)</a></code></pre></div>
 <p><img src="ml101_files/figure-html/unnamed-chunk-166-1.png" width="672" /></p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(gb1, <span class="dt">i =</span> <span class="st">&quot;Age&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb274"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb274-1" title="1"><span class="kw">plot</span>(gb1, <span class="dt">i =</span> <span class="st">&quot;Age&quot;</span>)</a></code></pre></div>
 <p><img src="ml101_files/figure-html/unnamed-chunk-166-2.png" width="672" /></p>
 <p>We predict the test MSE again and compare to our best model.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># predict outcome</span>
-yhat.gb &lt;-<span class="st"> </span><span class="kw">predict</span>(gb1, <span class="dt">newdata =</span> bes.test, <span class="dt">n.trees =</span> <span class="dv">5000</span>)
-mse.gb &lt;-<span class="st"> </span><span class="kw">mean</span>( (yhat.gb <span class="op">-</span><span class="st"> </span>bes.test<span class="op">$</span>Income)<span class="op">^</span><span class="dv">2</span> )
-
-<span class="co"># reduction in error</span>
-(mse.gb <span class="op">-</span><span class="st"> </span>mse.rf) <span class="op">/</span><span class="st"> </span>mse.rf</code></pre>
+<div class="sourceCode" id="cb275"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb275-1" title="1"><span class="co"># predict outcome</span></a>
+<a class="sourceLine" id="cb275-2" title="2">yhat.gb &lt;-<span class="st"> </span><span class="kw">predict</span>(gb1, <span class="dt">newdata =</span> bes.test, <span class="dt">n.trees =</span> <span class="dv">5000</span>)</a>
+<a class="sourceLine" id="cb275-3" title="3">mse.gb &lt;-<span class="st"> </span><span class="kw">mean</span>( (yhat.gb <span class="op">-</span><span class="st"> </span>bes.test<span class="op">$</span>Income)<span class="op">^</span><span class="dv">2</span> )</a>
+<a class="sourceLine" id="cb275-4" title="4"></a>
+<a class="sourceLine" id="cb275-5" title="5"><span class="co"># reduction in error</span></a>
+<a class="sourceLine" id="cb275-6" title="6">(mse.gb <span class="op">-</span><span class="st"> </span>mse.rf) <span class="op">/</span><span class="st"> </span>mse.rf</a></code></pre></div>
 <pre><code>[1] -0.03998188</code></pre>
 <p>We reduce the error rate again quite a bit.</p>
 </div>
@@ -600,8 +601,8 @@ mse.gb &lt;-<span class="st"> </span><span class="kw">mean</span>( (yhat.gb <spa
 <h4><span class="header-section-number">7.1.2.3</span> Bayesian Additive Regression Trees (BARTs)</h4>
 <p>BARTs move regression trees into a Bayesian framework were priors are used on several parameters to reduce some of the problems of over-fitting that boosting and random forests are prone to. We will illustrate a small example here. Before you can run this, <strong><em>64bit JAVA</em></strong> must be installed on your computer. We then need to install <code>install.packages("rJava")</code> and then <code>install.packages("bartMachine")</code>. Installing Java can be tricky and you may need admin rights on your computer.</p>
 <p>There are several tuning parameters for the priors that are set to values that work for most applications. Check the documentation if you want to learn more about these. We set the number of trees to grow, the iterations in the Markow-Chain Monte-Carlo estimations to discard and the draws from the posterior distribution. These parameters should also be tested for instance using cross-validation. The algorithm needs some time to run and therefore we pick out-of-the-box values.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">options</span>(<span class="dt">java.parameters =</span> <span class="st">&quot;-Xmx5g&quot;</span>)
-<span class="kw">library</span>(bartMachine)</code></pre>
+<div class="sourceCode" id="cb277"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb277-1" title="1"><span class="kw">options</span>(<span class="dt">java.parameters =</span> <span class="st">&quot;-Xmx5g&quot;</span>)</a>
+<a class="sourceLine" id="cb277-2" title="2"><span class="kw">library</span>(bartMachine)</a></code></pre></div>
 <pre><code>Loading required package: rJava</code></pre>
 <pre><code>Loading required package: bartMachineJARs</code></pre>
 <pre><code>Loading required package: car</code></pre>
@@ -619,19 +620,19 @@ Attaching package: &#39;car&#39;</code></pre>
 If you run out of memory, restart R, and use e.g.
 &#39;options(java.parameters = &quot;-Xmx5g&quot;)&#39; for 5GB of RAM before you call
 &#39;library(bartMachine)&#39;.</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># vector of covariate names</span>
-Xs &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Turnout&quot;</span>, <span class="st">&quot;Vote2001&quot;</span>, <span class="st">&quot;Age&quot;</span>, <span class="st">&quot;Gender&quot;</span>, <span class="st">&quot;PartyID&quot;</span>, <span class="st">&quot;Influence&quot;</span>, <span class="st">&quot;Attention&quot;</span>,
-        <span class="st">&quot;Telephone&quot;</span>, <span class="st">&quot;LeftrightSelf&quot;</span>, <span class="st">&quot;CivicDutyScores&quot;</span>, <span class="st">&quot;polinfoindex&quot;</span>, <span class="st">&quot;edu15&quot;</span>, 
-        <span class="st">&quot;edu16&quot;</span>, <span class="st">&quot;edu18&quot;</span>, <span class="st">&quot;edu19plus&quot;</span>, <span class="st">&quot;in_school&quot;</span>, <span class="st">&quot;in_uni&quot;</span>)
-
-
-<span class="co"># run BART</span>
-bart1 &lt;-<span class="st"> </span><span class="kw">bartMachine</span>(<span class="dt">X =</span> bes[train, Xs],
-                     <span class="dt">y =</span> bes<span class="op">$</span>Income[train],
-                     <span class="dt">num_trees =</span> <span class="dv">500</span>,
-                     <span class="dt">num_burn_in =</span> <span class="dv">200</span>,
-                     <span class="dt">num_iterations_after_burn_in =</span> <span class="dv">1000</span>,
-                     <span class="dt">seed =</span> <span class="dv">123</span>)</code></pre>
+<div class="sourceCode" id="cb288"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb288-1" title="1"><span class="co"># vector of covariate names</span></a>
+<a class="sourceLine" id="cb288-2" title="2">Xs &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Turnout&quot;</span>, <span class="st">&quot;Vote2001&quot;</span>, <span class="st">&quot;Age&quot;</span>, <span class="st">&quot;Gender&quot;</span>, <span class="st">&quot;PartyID&quot;</span>, <span class="st">&quot;Influence&quot;</span>, <span class="st">&quot;Attention&quot;</span>,</a>
+<a class="sourceLine" id="cb288-3" title="3">        <span class="st">&quot;Telephone&quot;</span>, <span class="st">&quot;LeftrightSelf&quot;</span>, <span class="st">&quot;CivicDutyScores&quot;</span>, <span class="st">&quot;polinfoindex&quot;</span>, <span class="st">&quot;edu15&quot;</span>, </a>
+<a class="sourceLine" id="cb288-4" title="4">        <span class="st">&quot;edu16&quot;</span>, <span class="st">&quot;edu18&quot;</span>, <span class="st">&quot;edu19plus&quot;</span>, <span class="st">&quot;in_school&quot;</span>, <span class="st">&quot;in_uni&quot;</span>)</a>
+<a class="sourceLine" id="cb288-5" title="5"></a>
+<a class="sourceLine" id="cb288-6" title="6"></a>
+<a class="sourceLine" id="cb288-7" title="7"><span class="co"># run BART</span></a>
+<a class="sourceLine" id="cb288-8" title="8">bart1 &lt;-<span class="st"> </span><span class="kw">bartMachine</span>(<span class="dt">X =</span> bes[train, Xs],</a>
+<a class="sourceLine" id="cb288-9" title="9">                     <span class="dt">y =</span> bes<span class="op">$</span>Income[train],</a>
+<a class="sourceLine" id="cb288-10" title="10">                     <span class="dt">num_trees =</span> <span class="dv">500</span>,</a>
+<a class="sourceLine" id="cb288-11" title="11">                     <span class="dt">num_burn_in =</span> <span class="dv">200</span>,</a>
+<a class="sourceLine" id="cb288-12" title="12">                     <span class="dt">num_iterations_after_burn_in =</span> <span class="dv">1000</span>,</a>
+<a class="sourceLine" id="cb288-13" title="13">                     <span class="dt">seed =</span> <span class="dv">123</span>)</a></code></pre></div>
 <pre><code>bartMachine initializing with 500 trees...
 bartMachine vars checked...
 bartMachine java init...
@@ -642,14 +643,14 @@ bartMachine sigsq estimated...
 bartMachine training data finalized...
 Now building bartMachine for regression ...Covariate importance prior ON. 
 evaluating in sample data...done</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># predict outcomes on the test set</span>
-pred &lt;-<span class="st"> </span><span class="kw">predict</span>(<span class="dt">object =</span> bart1, <span class="dt">new_data =</span> bes[<span class="op">-</span>train, Xs])
-
-<span class="co"># Brier Score</span>
-mse.bart &lt;-<span class="st"> </span><span class="kw">mean</span>((bes.test<span class="op">$</span>Income <span class="op">-</span><span class="st"> </span>pred)<span class="op">^</span><span class="dv">2</span>)</code></pre>
+<div class="sourceCode" id="cb290"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb290-1" title="1"><span class="co"># predict outcomes on the test set</span></a>
+<a class="sourceLine" id="cb290-2" title="2">pred &lt;-<span class="st"> </span><span class="kw">predict</span>(<span class="dt">object =</span> bart1, <span class="dt">new_data =</span> bes[<span class="op">-</span>train, Xs])</a>
+<a class="sourceLine" id="cb290-3" title="3"></a>
+<a class="sourceLine" id="cb290-4" title="4"><span class="co"># Brier Score</span></a>
+<a class="sourceLine" id="cb290-5" title="5">mse.bart &lt;-<span class="st"> </span><span class="kw">mean</span>((bes.test<span class="op">$</span>Income <span class="op">-</span><span class="st"> </span>pred)<span class="op">^</span><span class="dv">2</span>)</a></code></pre></div>
 <p>Let’s compare our final BART prediction to the reigning champion gradient boosting.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># reduction in error</span>
-(mse.bart <span class="op">-</span><span class="st"> </span>mse.gb) <span class="op">/</span><span class="st"> </span>mse.gb</code></pre>
+<div class="sourceCode" id="cb291"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb291-1" title="1"><span class="co"># reduction in error</span></a>
+<a class="sourceLine" id="cb291-2" title="2">(mse.bart <span class="op">-</span><span class="st"> </span>mse.gb) <span class="op">/</span><span class="st"> </span>mse.gb</a></code></pre></div>
 <pre><code>[1] -0.01670494</code></pre>
 <p>We have reduced the error by another 1.67<span class="math inline">\(\%\)</span>. Not bad… However, keep in mind that we are usig the validation set approach here. A better evaluation would be based on cross-validation or a truly new dataset.</p>
 

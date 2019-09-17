@@ -3381,13 +3381,13 @@ Let's estimate the Brier Score
 \end{Highlighting}
 \end{Shaded}
 
-We still correctly classify 0.1338879\% of the observations and the brier score remained stable. In the previous plots, we saw that we should do worse if we prune back the tree to have less than 4 terminal nodes. We examine what happens if we overdo it.
+We still correctly classify 0\(\%\) of the observations and the brier score remained stable. In the previous plots, we saw that we should do worse if we prune back the tree to have less than 4 terminal nodes. We examine what happens if we overdo it.
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{# using "wrong" value for pruning (where the error rate does increase)}
 \NormalTok{prune.t2 <-}\StringTok{ }\KeywordTok{prune.misclass}\NormalTok{(t2, }\DataTypeTok{best =} \DecValTok{2}\NormalTok{)}
-\KeywordTok{plot}\NormalTok{(prune.t2)}
+\KeywordTok{plot}\NormalTok{(prune.t2, }\DataTypeTok{bty =} \StringTok{"n"}\NormalTok{)}
 \KeywordTok{text}\NormalTok{(prune.t2, }\DataTypeTok{pretty =} \DecValTok{0}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
@@ -3610,8 +3610,7 @@ We estimate the MSE in the validation set
 [1] -0.05762335
 \end{verbatim}
 
-We reduce the error rate by 5.76\(%
-\) by using bagging. We examine what happens when we reduce the number of trees we grow. The default is 500.
+We reduce the error rate by 5.76\(\%\) by using bagging. We examine what happens when we reduce the number of trees we grow. The default is 500.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -3761,7 +3760,7 @@ Notice that we just set hyperparameters. We might achieve better predictions by 
            \DataTypeTok{interaction.depth =} \DecValTok{4}\NormalTok{,}
            \DataTypeTok{shrinkage =} \FloatTok{0.001}\NormalTok{)}
 
-\KeywordTok{summary}\NormalTok{(gb1)}
+\KeywordTok{summary}\NormalTok{(gb1, }\DataTypeTok{order =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{las =} \DecValTok{2}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -3789,6 +3788,10 @@ Vote2001               Vote2001  0.19667081
 PartyID                 PartyID  0.16443143
 in_uni                   in_uni  0.02836232
 \end{verbatim}
+
+The variable importance plot gives a good idea about which variables are important predictors. The general weakness of GBM is that the model is somewhat of a black box. However, variables importance gives us some insights into the model. For instance, it seems that high education and age are most predictive. Variables like arty identification or ideology play less of a role in the predictive model. Gender is the sixth strongest predictor.
+
+The importance plot does not inform us about the direction of the relationship. To get insights into such predictors, we can assess partial dependence plots. Let's do so for the high education variable \texttt{edu19plus} and for \texttt{Age}.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -3891,6 +3894,7 @@ Let's compare our final BART prediction to the reigning champion gradient boosti
 \end{verbatim}
 
 We have reduced the error by another 1.67\(\%\). Not bad\ldots{} However, keep in mind that we are usig the validation set approach here. A better evaluation would be based on cross-validation or a truly new dataset.
++
 
 \hypertarget{simulation-and-monte-carlos}{%
 \section{Simulation and Monte Carlos}\label{simulation-and-monte-carlos}}

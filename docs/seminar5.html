@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Chapter 5 Regularisation | Introduction to Data Science</title>
   <meta name="description" content="Chapter 5 Regularisation | Introduction to Data Science" />
-  <meta name="generator" content="bookdown 0.11 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Chapter 5 Regularisation | Introduction to Data Science" />
   <meta property="og:type" content="book" />
@@ -62,7 +62,6 @@ a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
 a.sourceLine:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
-div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
@@ -212,27 +211,27 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h3><span class="header-section-number">5.1.1</span> Ridge Regression and the Lasso</h3>
 <p>We start by clearing our workspace, loading the foreigners data, and doing the necessary variable manipulations. The data is available <a href="http://philippbroniecki.github.io/ML2017.io/data/BSAS_manip.RData">here</a>.</p>
 <p>We then need to normalize all numeric variables to put them on the same scale. Regularization requires that variables are comparable.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># clear workspace</span>
-<span class="kw">rm</span>(<span class="dt">list=</span><span class="kw">ls</span>())
-
-<span class="co"># load foreigners data</span>
-<span class="kw">load</span>(<span class="st">&quot;your directory/BSAS_manip.RData&quot;</span>)
-<span class="kw">head</span>(data2)
-
-<span class="co"># we declare the factor variables</span>
-data2<span class="op">$</span>urban &lt;-<span class="st"> </span><span class="kw">factor</span>(data2<span class="op">$</span>urban, <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;rural&quot;</span>, <span class="st">&quot;more rural&quot;</span>, <span class="st">&quot;more urban&quot;</span>, <span class="st">&quot;urban&quot;</span>))
-data2<span class="op">$</span>RSex &lt;-<span class="st"> </span><span class="kw">factor</span>(data2<span class="op">$</span>RSex, <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;Male&quot;</span>, <span class="st">&quot;Female&quot;</span>))
-data2<span class="op">$</span>health.good &lt;-<span class="st"> </span><span class="kw">factor</span>(data2<span class="op">$</span>health.good, <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;bad&quot;</span>, <span class="st">&quot;fair&quot;</span>, <span class="st">&quot;fairly good&quot;</span>, <span class="st">&quot;good&quot;</span>) )
-
-<span class="co"># categorical variables</span>
-cat.vars &lt;-<span class="st"> </span><span class="kw">unlist</span>(<span class="kw">lapply</span>(data2, <span class="cf">function</span>(x) <span class="kw">is.factor</span>(x) <span class="op">|</span><span class="st"> </span><span class="kw">all</span>(x <span class="op">==</span><span class="st"> </span><span class="dv">0</span> <span class="op">|</span><span class="st"> </span>x<span class="op">==</span><span class="dv">1</span>) <span class="op">|</span><span class="st"> </span><span class="kw">all</span>( x<span class="op">==</span><span class="dv">1</span> <span class="op">|</span><span class="st"> </span>x<span class="op">==</span><span class="dv">2</span>) ))
-<span class="co"># normalize numeric variables</span>
-data2[, <span class="op">!</span>cat.vars] &lt;-<span class="st"> </span><span class="kw">apply</span>(data2[, <span class="op">!</span>cat.vars], <span class="dv">2</span>, scale)</code></pre>
+<div class="sourceCode" id="cb146"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb146-1" title="1"><span class="co"># clear workspace</span></a>
+<a class="sourceLine" id="cb146-2" title="2"><span class="kw">rm</span>(<span class="dt">list=</span><span class="kw">ls</span>())</a>
+<a class="sourceLine" id="cb146-3" title="3"></a>
+<a class="sourceLine" id="cb146-4" title="4"><span class="co"># load foreigners data</span></a>
+<a class="sourceLine" id="cb146-5" title="5"><span class="kw">load</span>(<span class="st">&quot;your directory/BSAS_manip.RData&quot;</span>)</a>
+<a class="sourceLine" id="cb146-6" title="6"><span class="kw">head</span>(data2)</a>
+<a class="sourceLine" id="cb146-7" title="7"></a>
+<a class="sourceLine" id="cb146-8" title="8"><span class="co"># we declare the factor variables</span></a>
+<a class="sourceLine" id="cb146-9" title="9">data2<span class="op">$</span>urban &lt;-<span class="st"> </span><span class="kw">factor</span>(data2<span class="op">$</span>urban, <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;rural&quot;</span>, <span class="st">&quot;more rural&quot;</span>, <span class="st">&quot;more urban&quot;</span>, <span class="st">&quot;urban&quot;</span>))</a>
+<a class="sourceLine" id="cb146-10" title="10">data2<span class="op">$</span>RSex &lt;-<span class="st"> </span><span class="kw">factor</span>(data2<span class="op">$</span>RSex, <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;Male&quot;</span>, <span class="st">&quot;Female&quot;</span>))</a>
+<a class="sourceLine" id="cb146-11" title="11">data2<span class="op">$</span>health.good &lt;-<span class="st"> </span><span class="kw">factor</span>(data2<span class="op">$</span>health.good, <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;bad&quot;</span>, <span class="st">&quot;fair&quot;</span>, <span class="st">&quot;fairly good&quot;</span>, <span class="st">&quot;good&quot;</span>) )</a>
+<a class="sourceLine" id="cb146-12" title="12"></a>
+<a class="sourceLine" id="cb146-13" title="13"><span class="co"># categorical variables</span></a>
+<a class="sourceLine" id="cb146-14" title="14">cat.vars &lt;-<span class="st"> </span><span class="kw">unlist</span>(<span class="kw">lapply</span>(data2, <span class="cf">function</span>(x) <span class="kw">is.factor</span>(x) <span class="op">|</span><span class="st"> </span><span class="kw">all</span>(x <span class="op">==</span><span class="st"> </span><span class="dv">0</span> <span class="op">|</span><span class="st"> </span>x<span class="op">==</span><span class="dv">1</span>) <span class="op">|</span><span class="st"> </span><span class="kw">all</span>( x<span class="op">==</span><span class="dv">1</span> <span class="op">|</span><span class="st"> </span>x<span class="op">==</span><span class="dv">2</span>) ))</a>
+<a class="sourceLine" id="cb146-15" title="15"><span class="co"># normalize numeric variables</span></a>
+<a class="sourceLine" id="cb146-16" title="16">data2[, <span class="op">!</span>cat.vars] &lt;-<span class="st"> </span><span class="kw">apply</span>(data2[, <span class="op">!</span>cat.vars], <span class="dv">2</span>, scale)</a></code></pre></div>
 <p>In order to run ridge regression, we create a matrix from our dataset using the <code>model.matrix()</code> function. We also need to remove the intercept from the resulting matrix because the function to run ridge regression automatically includes one. Furthermore, we will use the subjective rate of immigrants as response. Consequently, we have to remove <code>over.estimate</code> as it measures the same thing. Lastly, the party affiliation dummies are mutually exclusive, se we have to exclude the model category <code>Cons</code>.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># covariates in matrix form but remove the intercept, over.estimate, and Cons</span>
-x &lt;-<span class="st"> </span><span class="kw">model.matrix</span>(IMMBRIT <span class="op">~</span><span class="st"> </span>. <span class="dv">-1</span> <span class="op">-</span>over.estimate <span class="op">-</span>Cons, data2)
-<span class="co"># check if it looks fine</span>
-<span class="kw">head</span>(x)</code></pre>
+<div class="sourceCode" id="cb147"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb147-1" title="1"><span class="co"># covariates in matrix form but remove the intercept, over.estimate, and Cons</span></a>
+<a class="sourceLine" id="cb147-2" title="2">x &lt;-<span class="st"> </span><span class="kw">model.matrix</span>(IMMBRIT <span class="op">~</span><span class="st"> </span>. <span class="dv">-1</span> <span class="op">-</span>over.estimate <span class="op">-</span>Cons, data2)</a>
+<a class="sourceLine" id="cb147-3" title="3"><span class="co"># check if it looks fine</span></a>
+<a class="sourceLine" id="cb147-4" title="4"><span class="kw">head</span>(x)</a></code></pre></div>
 <pre><code>  RSexMale RSexFemale       RAge   Househld Lab SNP Ukip BNP GP
 1        1          0  0.0144845 -0.2925308   1   0    0   0  0
 2        0          1 -1.8065476  0.4540989   0   0    0   0  0
@@ -261,38 +260,38 @@ x &lt;-<span class="st"> </span><span class="kw">model.matrix</span>(IMMBRIT <sp
 4               1 -0.3419038
 5               1 -0.1263647
 6               0 -0.1263647</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># response vector</span>
-y &lt;-<span class="st"> </span>data2<span class="op">$</span>IMMBRIT</code></pre>
+<div class="sourceCode" id="cb149"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb149-1" title="1"><span class="co"># response vector</span></a>
+<a class="sourceLine" id="cb149-2" title="2">y &lt;-<span class="st"> </span>data2<span class="op">$</span>IMMBRIT</a></code></pre></div>
 <div id="ridge-regression" class="section level4">
 <h4><span class="header-section-number">5.1.1.1</span> Ridge Regression</h4>
 <p>The <code>glmnet</code> package provides functionality to fit ridge regression and lasso models. We load the package and call <code>glmnet()</code> to perform ridge regression. Before being able to run this, we have to install the package like so: <code>install.packages("glmnet")</code>.</p>
 <p>The performance of ridge depends on the right choice of lambda. A tuning parameter is a parameter that we need to set and we need to set correctly. We do this by trying different values. All different values are what we refer to as our grid.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(glmnet)</code></pre>
+<div class="sourceCode" id="cb150"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb150-1" title="1"><span class="kw">library</span>(glmnet)</a></code></pre></div>
 <pre><code>Loading required package: Matrix</code></pre>
 <pre><code>Loading required package: foreach</code></pre>
 <pre><code>Loaded glmnet 2.0-18</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># tuning parameter</span>
-grid &lt;-<span class="st"> </span><span class="dv">10</span><span class="op">^</span><span class="kw">seq</span>(<span class="dv">4</span>, <span class="dv">-2</span>, <span class="dt">length =</span> <span class="dv">100</span>)
-
-<span class="kw">plot</span>(grid, <span class="dt">bty =</span> <span class="st">&quot;n&quot;</span>, <span class="dt">pch =</span> <span class="dv">19</span>,
-     <span class="dt">main =</span> <span class="kw">expression</span>(<span class="kw">paste</span>(<span class="st">&quot;Grid of Tuning Parameters &quot;</span>, lambda)))</code></pre>
+<div class="sourceCode" id="cb154"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb154-1" title="1"><span class="co"># tuning parameter</span></a>
+<a class="sourceLine" id="cb154-2" title="2">grid &lt;-<span class="st"> </span><span class="dv">10</span><span class="op">^</span><span class="kw">seq</span>(<span class="dv">4</span>, <span class="dv">-2</span>, <span class="dt">length =</span> <span class="dv">100</span>)</a>
+<a class="sourceLine" id="cb154-3" title="3"></a>
+<a class="sourceLine" id="cb154-4" title="4"><span class="kw">plot</span>(grid, <span class="dt">bty =</span> <span class="st">&quot;n&quot;</span>, <span class="dt">pch =</span> <span class="dv">19</span>,</a>
+<a class="sourceLine" id="cb154-5" title="5">     <span class="dt">main =</span> <span class="kw">expression</span>(<span class="kw">paste</span>(<span class="st">&quot;Grid of Tuning Parameters &quot;</span>, lambda)))</a></code></pre></div>
 <p><img src="ml101_files/figure-html/unnamed-chunk-97-1.png" width="672" /></p>
 <p>We now run ridge regression. We tune <code>lambda</code> and set <code>alpha</code> to 0 which means we carry out ridge regression (instead as for instance the Lasso or the Elastic Net).</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># run ridge; alpha = 0 means do ridge</span>
-ridge.mod &lt;-<span class="st"> </span><span class="kw">glmnet</span>(x, y, <span class="dt">alpha =</span> <span class="dv">0</span>, <span class="dt">lambda =</span> grid)
-
-<span class="co"># coefficient shrinkage visualized</span>
-<span class="kw">plot</span>(ridge.mod, <span class="dt">xvar =</span> <span class="st">&quot;lambda&quot;</span>, <span class="dt">label =</span> <span class="ot">TRUE</span>)</code></pre>
+<div class="sourceCode" id="cb155"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb155-1" title="1"><span class="co"># run ridge; alpha = 0 means do ridge</span></a>
+<a class="sourceLine" id="cb155-2" title="2">ridge.mod &lt;-<span class="st"> </span><span class="kw">glmnet</span>(x, y, <span class="dt">alpha =</span> <span class="dv">0</span>, <span class="dt">lambda =</span> grid)</a>
+<a class="sourceLine" id="cb155-3" title="3"></a>
+<a class="sourceLine" id="cb155-4" title="4"><span class="co"># coefficient shrinkage visualized</span></a>
+<a class="sourceLine" id="cb155-5" title="5"><span class="kw">plot</span>(ridge.mod, <span class="dt">xvar =</span> <span class="st">&quot;lambda&quot;</span>, <span class="dt">label =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
 <p><img src="ml101_files/figure-html/unnamed-chunk-98-1.png" width="672" /></p>
 <p>the object <code>ridge.mod</code> contains a set of coefficients for each of the lambdas which we can access by runing the <code>coef()</code> functio on the object <code>ridge.mod</code>. We tried 100 lambda values and therefore we get 100 coefficient sets. The object is a matrix where rows are variables and columns are the coefficients based on the chosen lambda values.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># a set of coefficients for each lambda</span>
-<span class="kw">dim</span>(<span class="kw">coef</span>(ridge.mod))</code></pre>
+<div class="sourceCode" id="cb156"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb156-1" title="1"><span class="co"># a set of coefficients for each lambda</span></a>
+<a class="sourceLine" id="cb156-2" title="2"><span class="kw">dim</span>(<span class="kw">coef</span>(ridge.mod))</a></code></pre></div>
 <pre><code>[1]  22 100</code></pre>
 <p>We can look at the coefficients at different values for <span class="math inline">\(\lambda\)</span>. Here, we randomly choose two different values and notice that smaller values of <span class="math inline">\(\lambda\)</span> result in larger coefficient estimates and vice-versa.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Lambda and Betas</span>
-ridge.mod<span class="op">$</span>lambda[<span class="dv">80</span>]</code></pre>
+<div class="sourceCode" id="cb158"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb158-1" title="1"><span class="co"># Lambda and Betas</span></a>
+<a class="sourceLine" id="cb158-2" title="2">ridge.mod<span class="op">$</span>lambda[<span class="dv">80</span>]</a></code></pre></div>
 <pre><code>[1] 0.1629751</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">coef</span>(ridge.mod)[, <span class="dv">80</span>]</code></pre>
+<div class="sourceCode" id="cb160"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb160-1" title="1"><span class="kw">coef</span>(ridge.mod)[, <span class="dv">80</span>]</a></code></pre></div>
 <pre><code>           (Intercept)               RSexMale             RSexFemale 
           -0.061607390           -0.160606935            0.159900421 
                   RAge               Househld                    Lab 
@@ -309,11 +308,11 @@ ridge.mod<span class="op">$</span>lambda[<span class="dv">80</span>]</code></pre
           -0.051779228           -0.006372962            0.002867504 
                  HHInc 
           -0.291172989 </code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sqrt</span>( <span class="kw">sum</span>(<span class="kw">coef</span>(ridge.mod)[<span class="op">-</span><span class="dv">1</span>, <span class="dv">80</span>]<span class="op">^</span><span class="dv">2</span>) )</code></pre>
+<div class="sourceCode" id="cb162"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb162-1" title="1"><span class="kw">sqrt</span>( <span class="kw">sum</span>(<span class="kw">coef</span>(ridge.mod)[<span class="op">-</span><span class="dv">1</span>, <span class="dv">80</span>]<span class="op">^</span><span class="dv">2</span>) )</a></code></pre></div>
 <pre><code>[1] 0.6911836</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">ridge.mod<span class="op">$</span>lambda[<span class="dv">40</span>]</code></pre>
+<div class="sourceCode" id="cb164"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb164-1" title="1">ridge.mod<span class="op">$</span>lambda[<span class="dv">40</span>]</a></code></pre></div>
 <pre><code>[1] 43.28761</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">coef</span>(ridge.mod)[, <span class="dv">40</span>]</code></pre>
+<div class="sourceCode" id="cb166"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb166-1" title="1"><span class="kw">coef</span>(ridge.mod)[, <span class="dv">40</span>]</a></code></pre></div>
 <pre><code>           (Intercept)               RSexMale             RSexFemale 
          -0.0024035442          -0.0086089993           0.0086089995 
                   RAge               Househld                    Lab 
@@ -330,11 +329,11 @@ ridge.mod<span class="op">$</span>lambda[<span class="dv">80</span>]</code></pre
           0.0002138639           0.0003043203          -0.0019519248 
                  HHInc 
          -0.0072791705 </code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sqrt</span>(<span class="kw">sum</span>(<span class="kw">coef</span>(ridge.mod)[<span class="op">-</span><span class="dv">1</span>, <span class="dv">40</span>]<span class="op">^</span><span class="dv">2</span>))</code></pre>
+<div class="sourceCode" id="cb168"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb168-1" title="1"><span class="kw">sqrt</span>(<span class="kw">sum</span>(<span class="kw">coef</span>(ridge.mod)[<span class="op">-</span><span class="dv">1</span>, <span class="dv">40</span>]<span class="op">^</span><span class="dv">2</span>))</a></code></pre></div>
 <pre><code>[1] 0.02287352</code></pre>
 <p>We can get ridge regression coefficients for any value of <span class="math inline">\(\lambda\)</span> using predict.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># compute coefficients at lambda = s</span>
-<span class="kw">predict</span>(ridge.mod, <span class="dt">s =</span> <span class="dv">50</span>, <span class="dt">type =</span> <span class="st">&quot;coefficients&quot;</span>)[<span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(<span class="kw">coef</span>(ridge.mod)), ]</code></pre>
+<div class="sourceCode" id="cb170"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb170-1" title="1"><span class="co"># compute coefficients at lambda = s</span></a>
+<a class="sourceLine" id="cb170-2" title="2"><span class="kw">predict</span>(ridge.mod, <span class="dt">s =</span> <span class="dv">50</span>, <span class="dt">type =</span> <span class="st">&quot;coefficients&quot;</span>)[<span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(<span class="kw">coef</span>(ridge.mod)), ]</a></code></pre></div>
 <pre><code>           (Intercept)               RSexMale             RSexFemale 
          -0.0020916615          -0.0075062040           0.0075062041 
                   RAge               Househld                    Lab 
@@ -353,44 +352,44 @@ ridge.mod<span class="op">$</span>lambda[<span class="dv">80</span>]</code></pre
          -0.0063276702 </code></pre>
 <p>We would like to know which value of lambda gives us the model with the best predictive power. We use cross-validation on ridge regression by first splitting the dataset into training and test subsets.</p>
 <p>We can choose different values for <span class="math inline">\(\lambda\)</span> by running cross-validation on ridge regression using <code>cv.glmnet()</code>.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">set.seed</span>(<span class="dv">1</span>)
-
-<span class="co"># training data for CV to find optimal lambda, but then test data to estimate test error</span>
-cv.out &lt;-<span class="st"> </span><span class="kw">cv.glmnet</span>(x, y, <span class="dt">alpha =</span> <span class="dv">0</span>, <span class="dt">nfolds =</span> <span class="dv">5</span>)
-
-<span class="co"># illustrate test MSE based on size of lambda</span>
-<span class="kw">plot</span>(cv.out)</code></pre>
+<div class="sourceCode" id="cb172"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb172-1" title="1"><span class="kw">set.seed</span>(<span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb172-2" title="2"></a>
+<a class="sourceLine" id="cb172-3" title="3"><span class="co"># training data for CV to find optimal lambda, but then test data to estimate test error</span></a>
+<a class="sourceLine" id="cb172-4" title="4">cv.out &lt;-<span class="st"> </span><span class="kw">cv.glmnet</span>(x, y, <span class="dt">alpha =</span> <span class="dv">0</span>, <span class="dt">nfolds =</span> <span class="dv">5</span>)</a>
+<a class="sourceLine" id="cb172-5" title="5"></a>
+<a class="sourceLine" id="cb172-6" title="6"><span class="co"># illustrate test MSE based on size of lambda</span></a>
+<a class="sourceLine" id="cb172-7" title="7"><span class="kw">plot</span>(cv.out)</a></code></pre></div>
 <p><img src="ml101_files/figure-html/unnamed-chunk-102-1.png" width="672" /></p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># best performing model&#39;s lambda value</span>
-bestlam &lt;-<span class="st"> </span>cv.out<span class="op">$</span>lambda.min
-bestlam</code></pre>
+<div class="sourceCode" id="cb173"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb173-1" title="1"><span class="co"># best performing model&#39;s lambda value</span></a>
+<a class="sourceLine" id="cb173-2" title="2">bestlam &lt;-<span class="st"> </span>cv.out<span class="op">$</span>lambda.min</a>
+<a class="sourceLine" id="cb173-3" title="3">bestlam</a></code></pre></div>
 <pre><code>[1] 0.1726934</code></pre>
 <p>The best performing model is the one with <span class="math inline">\(\lambda =\)</span> 0.1726934. We can also extract the mean cross-validated error of the best model.</p>
-<pre class="sourceCode r"><code class="sourceCode r">cv.out<span class="op">$</span>cvm[ <span class="kw">which</span>(cv.out<span class="op">$</span>lambda <span class="op">==</span><span class="st"> </span>bestlam) ]</code></pre>
+<div class="sourceCode" id="cb175"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb175-1" title="1">cv.out<span class="op">$</span>cvm[ <span class="kw">which</span>(cv.out<span class="op">$</span>lambda <span class="op">==</span><span class="st"> </span>bestlam) ]</a></code></pre></div>
 <pre><code>[1] 0.8663222</code></pre>
 </div>
 <div id="the-lasso" class="section level4">
 <h4><span class="header-section-number">5.1.1.2</span> The Lasso</h4>
 <p>The lasso model can be estimated in the same way as ridge regression. The <code>alpha = 1</code> parameter tells <code>glmnet()</code> to run lasso regression instead of ridge regression. Lasso is often used more as a variable selection model because a large shrinkage parameter <span class="math inline">\(\lambda\)</span> can cause coefficients of some variables to be exactly zero which means that those variables are excluded from the model.</p>
-<pre class="sourceCode r"><code class="sourceCode r">lasso.mod &lt;-<span class="st"> </span><span class="kw">glmnet</span>(x, y, <span class="dt">alpha =</span> <span class="dv">1</span>, <span class="dt">lambda =</span> grid)
-<span class="kw">plot</span>(lasso.mod)</code></pre>
+<div class="sourceCode" id="cb177"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb177-1" title="1">lasso.mod &lt;-<span class="st"> </span><span class="kw">glmnet</span>(x, y, <span class="dt">alpha =</span> <span class="dv">1</span>, <span class="dt">lambda =</span> grid)</a>
+<a class="sourceLine" id="cb177-2" title="2"><span class="kw">plot</span>(lasso.mod)</a></code></pre></div>
 <pre><code>Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
 unique &#39;x&#39; values</code></pre>
 <p><img src="ml101_files/figure-html/unnamed-chunk-104-1.png" width="672" /></p>
 <p>Similarly, we can perform cross-validation using identical step as we did on ridge regression.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># cross-validation to pick lambda</span>
-<span class="kw">set.seed</span>(<span class="dv">1</span>)
-cv.out &lt;-<span class="st"> </span><span class="kw">cv.glmnet</span>(x, y, <span class="dt">alpha =</span> <span class="dv">1</span>, <span class="dt">nfolds =</span> <span class="dv">5</span>)
-<span class="kw">plot</span>(cv.out)</code></pre>
+<div class="sourceCode" id="cb179"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb179-1" title="1"><span class="co"># cross-validation to pick lambda</span></a>
+<a class="sourceLine" id="cb179-2" title="2"><span class="kw">set.seed</span>(<span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb179-3" title="3">cv.out &lt;-<span class="st"> </span><span class="kw">cv.glmnet</span>(x, y, <span class="dt">alpha =</span> <span class="dv">1</span>, <span class="dt">nfolds =</span> <span class="dv">5</span>)</a>
+<a class="sourceLine" id="cb179-4" title="4"><span class="kw">plot</span>(cv.out)</a></code></pre></div>
 <p><img src="ml101_files/figure-html/unnamed-chunk-105-1.png" width="672" /></p>
 <p>We select the best Lambda value and the cross-validation error.</p>
-<pre class="sourceCode r"><code class="sourceCode r">bestlam &lt;-<span class="st"> </span>cv.out<span class="op">$</span>lambda.min
-cv.out<span class="op">$</span>cvm[ <span class="kw">which</span>(cv.out<span class="op">$</span>lambda <span class="op">==</span><span class="st"> </span>bestlam) ]</code></pre>
+<div class="sourceCode" id="cb180"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb180-1" title="1">bestlam &lt;-<span class="st"> </span>cv.out<span class="op">$</span>lambda.min</a>
+<a class="sourceLine" id="cb180-2" title="2">cv.out<span class="op">$</span>cvm[ <span class="kw">which</span>(cv.out<span class="op">$</span>lambda <span class="op">==</span><span class="st"> </span>bestlam) ]</a></code></pre></div>
 <pre><code>[1] 0.8598552</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># compare to ridge regression</span>
-out &lt;-<span class="st"> </span><span class="kw">glmnet</span>(x, y, <span class="dt">alpha =</span> <span class="dv">1</span>, <span class="dt">lambda =</span> grid)
-lasso.coef &lt;-<span class="st"> </span><span class="kw">predict</span>(out, <span class="dt">type =</span> <span class="st">&quot;coefficients&quot;</span>, <span class="dt">s =</span> bestlam)[<span class="dv">1</span><span class="op">:</span><span class="dv">16</span>, ]
-lasso.coef[lasso.coef <span class="op">!=</span><span class="st"> </span><span class="dv">0</span>]</code></pre>
+<div class="sourceCode" id="cb182"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb182-1" title="1"><span class="co"># compare to ridge regression</span></a>
+<a class="sourceLine" id="cb182-2" title="2">out &lt;-<span class="st"> </span><span class="kw">glmnet</span>(x, y, <span class="dt">alpha =</span> <span class="dv">1</span>, <span class="dt">lambda =</span> grid)</a>
+<a class="sourceLine" id="cb182-3" title="3">lasso.coef &lt;-<span class="st"> </span><span class="kw">predict</span>(out, <span class="dt">type =</span> <span class="st">&quot;coefficients&quot;</span>, <span class="dt">s =</span> bestlam)[<span class="dv">1</span><span class="op">:</span><span class="dv">16</span>, ]</a>
+<a class="sourceLine" id="cb182-4" title="4">lasso.coef[lasso.coef <span class="op">!=</span><span class="st"> </span><span class="dv">0</span>]</a></code></pre></div>
 <pre><code>    (Intercept)        RSexMale            RAge        Househld 
     0.123666790    -0.290927784    -0.040834908     0.080195229 
             Lab             SNP            Ukip             BNP 

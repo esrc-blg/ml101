@@ -160,12 +160,12 @@ t2.pred <- predict(t2, newdata = bes.test, type = "vector")[,2]
 mse.pruned <- mean( (t2.pred - turnout.test)^2 ) 
 ```
 
-We still correctly classify `r mean( (t2.pred - turnout.test)^2 )`% of the observations and the brier score remained stable. In the previous plots, we saw that we should do worse if we prune back the tree to have less than 4 terminal nodes. We examine what happens if we overdo it.
+We still correctly classify `r round(mean( t2.pred == turnout.test )*100,2)`$\%$ of the observations and the brier score remained stable. In the previous plots, we saw that we should do worse if we prune back the tree to have less than 4 terminal nodes. We examine what happens if we overdo it.
 
 ```{r}
 # using "wrong" value for pruning (where the error rate does increase)
 prune.t2 <- prune.misclass(t2, best = 2)
-plot(prune.t2)
+plot(prune.t2, bty = "n")
 text(prune.t2, pretty = 0)
 ```
 
@@ -288,7 +288,7 @@ mse.bag <- mean( (yhat.bag - bes.test$Income)^2 )
 (mse.bag - mse.tree) / mse.tree
 ```
 
-We reduce the error rate by `r round(((mse.bag - mse.tree) / mse.tree)*-100, 2)`$%$ by using bagging. We examine what happens when we reduce the number of trees we grow. The default is 500.
+We reduce the error rate by `r round(((mse.bag - mse.tree) / mse.tree)*-100, 2)`$\%$ by using bagging. We examine what happens when we reduce the number of trees we grow. The default is 500.
 
 ```{r}
 # dcrease the number of trees (defaults to 500)
@@ -364,7 +364,7 @@ We run gradient boosting. The tuning parameters are the tree size. Tree size is 
 
 Notice that we just set hyperparameters. We might achieve better predictions by training the boosting model properly (however, this would take very long).
 
-```{r}
+```{r, fig.height=8}
 # gradient boosting
 gb1 <- gbm(Income ~ ., data = bes[train, ], 
            distribution = "gaussian", 
@@ -372,8 +372,12 @@ gb1 <- gbm(Income ~ ., data = bes[train, ],
            interaction.depth = 4,
            shrinkage = 0.001)
 
-summary(gb1)
+summary(gb1, order = TRUE, las = 2)
 ```
+
+The variable importance plot gives a good idea about which variables are important predictors. The general weakness of GBM is that the model is somewhat of a black box. However, variables importance gives us some insights into the model. For instance, it seems that high education and age are most predictive. Variables like arty identification or ideology play less of a role in the predictive model. Gender is the sixth strongest predictor.
+
+The importance plot does not inform us about the direction of the relationship. To get insights into such predictors, we can assess partial dependence plots. Let's do so for the high education variable `edu19plus` and for `Age`.
 
 ```{r}
 # partial dependence plots
@@ -391,6 +395,7 @@ mse.gb <- mean( (yhat.gb - bes.test$Income)^2 )
 # reduction in error
 (mse.gb - mse.rf) / mse.rf
 ```
+
 We reduce the error rate again quite a bit.
 
 #### Bayesian Additive Regression Trees (BARTs)
@@ -433,3 +438,4 @@ Let's compare our final BART prediction to the reigning champion gradient boosti
 ```
 
 We have reduced the error by another `r round(((mse.bart - mse.gb) / mse.gb)*-100,2)`$\%$. Not bad... However, keep in mind that we are usig the validation set approach here. A better evaluation would be based on cross-validation or a truly new dataset.
++

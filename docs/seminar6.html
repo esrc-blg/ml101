@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Chapter 6 All non-linear (polynomials to splines) | Introduction to Data Science</title>
   <meta name="description" content="Chapter 6 All non-linear (polynomials to splines) | Introduction to Data Science" />
-  <meta name="generator" content="bookdown 0.11 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Chapter 6 All non-linear (polynomials to splines) | Introduction to Data Science" />
   <meta property="og:type" content="book" />
@@ -62,7 +62,6 @@ a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
 a.sourceLine:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
-div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
@@ -211,18 +210,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>In this exercise, we will learn how to model non-linearities in generalised linear models. This exercise is based on based on James et al. 2013. We begin by loading that <code>ISLR</code> package and attaching to the Wage dataset that we will be using throughout this exercise. When we attach a dataset, we do not need to write <code>dataset.name$variable.name</code> to access a variable but we can instead just write <code>variable.name</code> to access it.</p>
 <p>Note: We need to install the <code>ISLR</code> package if it is not installed alread like so: <code>install.packages("ISLR")</code>
 Note2: The <code>Wage</code> dataset is spelled with a capital W.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># clear workspace, load ISLR, attach wage data set</span>
-<span class="kw">rm</span>(<span class="dt">list=</span><span class="kw">ls</span>())
-<span class="kw">library</span>(ISLR)
-<span class="kw">attach</span>(Wage)
-?Wage <span class="co"># codebook</span></code></pre>
+<div class="sourceCode" id="cb184"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb184-1" title="1"><span class="co"># clear workspace, load ISLR, attach wage data set</span></a>
+<a class="sourceLine" id="cb184-2" title="2"><span class="kw">rm</span>(<span class="dt">list=</span><span class="kw">ls</span>())</a>
+<a class="sourceLine" id="cb184-3" title="3"><span class="kw">library</span>(ISLR)</a>
+<a class="sourceLine" id="cb184-4" title="4"><span class="kw">attach</span>(Wage)</a>
+<a class="sourceLine" id="cb184-5" title="5">?Wage <span class="co"># codebook</span></a></code></pre></div>
 <div id="polynomial-regression" class="section level3">
 <h3><span class="header-section-number">6.1.1</span> Polynomial Regression</h3>
 <p>Let’s fit a linear model to predict <code>wage</code> with a forth-degree polynomial using the <code>poly()</code> function.</p>
 <p>Note: The dependent variable <code>wage</code> is spelled with a lower case w.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># linear regression on wage, with age up to a 4th degree polynomial</span>
-fit &lt;-<span class="st"> </span><span class="kw">lm</span>(wage <span class="op">~</span><span class="st"> </span><span class="kw">poly</span>(age, <span class="dv">4</span>), <span class="dt">data =</span> Wage)
-<span class="kw">coef</span>(<span class="kw">summary</span>(fit))</code></pre>
+<div class="sourceCode" id="cb185"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb185-1" title="1"><span class="co"># linear regression on wage, with age up to a 4th degree polynomial</span></a>
+<a class="sourceLine" id="cb185-2" title="2">fit &lt;-<span class="st"> </span><span class="kw">lm</span>(wage <span class="op">~</span><span class="st"> </span><span class="kw">poly</span>(age, <span class="dv">4</span>), <span class="dt">data =</span> Wage)</a>
+<a class="sourceLine" id="cb185-3" title="3"><span class="kw">coef</span>(<span class="kw">summary</span>(fit))</a></code></pre></div>
 <pre><code>                Estimate Std. Error    t value     Pr(&gt;|t|)
 (Intercept)    111.70361  0.7287409 153.283015 0.000000e+00
 poly(age, 4)1  447.06785 39.9147851  11.200558 1.484604e-28
@@ -230,8 +229,8 @@ poly(age, 4)2 -478.31581 39.9147851 -11.983424 2.355831e-32
 poly(age, 4)3  125.52169 39.9147851   3.144742 1.678622e-03
 poly(age, 4)4  -77.91118 39.9147851  -1.951938 5.103865e-02</code></pre>
 <p>We can also obtain raw instead of orthogonal polynomials by passing the <code>raw = TRUE</code> argument to <code>poly()</code>. The coefficients will change the fit should be largely unaffected. It is not advisable to use the raw argument because it introduces unnecessary multicollinearity into the model.</p>
-<pre class="sourceCode r"><code class="sourceCode r">fit2 &lt;-<span class="st"> </span><span class="kw">lm</span>(wage <span class="op">~</span><span class="st"> </span><span class="kw">poly</span>(age, <span class="dv">4</span>, <span class="dt">raw =</span> <span class="ot">TRUE</span>), <span class="dt">data =</span> Wage)
-<span class="kw">coef</span>(<span class="kw">summary</span>(fit2))</code></pre>
+<div class="sourceCode" id="cb187"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb187-1" title="1">fit2 &lt;-<span class="st"> </span><span class="kw">lm</span>(wage <span class="op">~</span><span class="st"> </span><span class="kw">poly</span>(age, <span class="dv">4</span>, <span class="dt">raw =</span> <span class="ot">TRUE</span>), <span class="dt">data =</span> Wage)</a>
+<a class="sourceLine" id="cb187-2" title="2"><span class="kw">coef</span>(<span class="kw">summary</span>(fit2))</a></code></pre></div>
 <pre><code>                               Estimate   Std. Error   t value
 (Intercept)               -1.841542e+02 6.004038e+01 -3.067172
 poly(age, 4, raw = TRUE)1  2.124552e+01 5.886748e+00  3.609042
@@ -245,13 +244,13 @@ poly(age, 4, raw = TRUE)2 0.0062606446
 poly(age, 4, raw = TRUE)3 0.0263977518
 poly(age, 4, raw = TRUE)4 0.0510386498</code></pre>
 <p>There are several ways to specify polynomials. These are, however a little less convenient.</p>
-<pre class="sourceCode r"><code class="sourceCode r">fit2a &lt;-<span class="st"> </span><span class="kw">lm</span>(wage <span class="op">~</span><span class="st"> </span>age <span class="op">+</span><span class="st"> </span><span class="kw">I</span>(age<span class="op">^</span><span class="dv">2</span>) <span class="op">+</span><span class="st"> </span><span class="kw">I</span>(age<span class="op">^</span><span class="dv">3</span>) <span class="op">+</span><span class="st"> </span><span class="kw">I</span>(age<span class="op">^</span><span class="dv">4</span>), <span class="dt">data =</span> Wage)
-<span class="kw">coef</span>(fit2a)</code></pre>
+<div class="sourceCode" id="cb189"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb189-1" title="1">fit2a &lt;-<span class="st"> </span><span class="kw">lm</span>(wage <span class="op">~</span><span class="st"> </span>age <span class="op">+</span><span class="st"> </span><span class="kw">I</span>(age<span class="op">^</span><span class="dv">2</span>) <span class="op">+</span><span class="st"> </span><span class="kw">I</span>(age<span class="op">^</span><span class="dv">3</span>) <span class="op">+</span><span class="st"> </span><span class="kw">I</span>(age<span class="op">^</span><span class="dv">4</span>), <span class="dt">data =</span> Wage)</a>
+<a class="sourceLine" id="cb189-2" title="2"><span class="kw">coef</span>(fit2a)</a></code></pre></div>
 <pre><code>  (Intercept)           age      I(age^2)      I(age^3)      I(age^4) 
 -1.841542e+02  2.124552e+01 -5.638593e-01  6.810688e-03 -3.203830e-05 </code></pre>
 <p>A more compact version of the same example uses <code>cbind()</code> and eliminates the need to wrap each term in <code>I()</code>. The output is less readable though.</p>
-<pre class="sourceCode r"><code class="sourceCode r">fit2b &lt;-<span class="st"> </span><span class="kw">lm</span>(wage <span class="op">~</span><span class="st"> </span><span class="kw">cbind</span>(age, age<span class="op">^</span><span class="dv">2</span>, age<span class="op">^</span><span class="dv">3</span>, age<span class="op">^</span><span class="dv">4</span>), <span class="dt">data =</span> Wage)
-<span class="kw">coef</span>(fit2b)</code></pre>
+<div class="sourceCode" id="cb191"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb191-1" title="1">fit2b &lt;-<span class="st"> </span><span class="kw">lm</span>(wage <span class="op">~</span><span class="st"> </span><span class="kw">cbind</span>(age, age<span class="op">^</span><span class="dv">2</span>, age<span class="op">^</span><span class="dv">3</span>, age<span class="op">^</span><span class="dv">4</span>), <span class="dt">data =</span> Wage)</a>
+<a class="sourceLine" id="cb191-2" title="2"><span class="kw">coef</span>(fit2b)</a></code></pre></div>
 <pre><code>                       (Intercept) cbind(age, age^2, age^3, age^4)age 
                      -1.841542e+02                       2.124552e+01 
    cbind(age, age^2, age^3, age^4)    cbind(age, age^2, age^3, age^4) 
@@ -259,43 +258,43 @@ poly(age, 4, raw = TRUE)4 0.0510386498</code></pre>
    cbind(age, age^2, age^3, age^4) 
                      -3.203830e-05 </code></pre>
 <p>We can create an age grid (minimum age to maximum age) and pass the grid to <code>predict()</code>. We can set the argument <code>se=TRUE</code> in the <code>predict()</code> function which will return a list that includes standard errors of the outcome. We can use these to an upper and lower bound of our estimate of <span class="math inline">\(y\)</span>.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># minimum and maximum values of age variable</span>
-agelims &lt;-<span class="st"> </span><span class="kw">range</span>(age) 
-age.grid &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dt">from =</span> agelims[<span class="dv">1</span>], <span class="dt">to =</span> agelims[<span class="dv">2</span>])
-
-<span class="co"># se=TRUE returns standard errors</span>
-preds &lt;-<span class="st"> </span><span class="kw">predict</span>(fit, <span class="dt">newdata =</span> <span class="kw">list</span>(<span class="dt">age =</span> age.grid), <span class="dt">se =</span> <span class="ot">TRUE</span>)
-
-<span class="co"># confidence intervals as estimate + and - 2 standard deviations</span>
-se.bands &lt;-<span class="st"> </span><span class="kw">cbind</span>(preds<span class="op">$</span>fit <span class="op">+</span><span class="st"> </span><span class="dv">2</span> <span class="op">*</span><span class="st"> </span>preds<span class="op">$</span>se.fit, preds<span class="op">$</span>fit <span class="op">-</span><span class="st"> </span><span class="dv">2</span> <span class="op">*</span><span class="st"> </span>preds<span class="op">$</span>se.fit)</code></pre>
+<div class="sourceCode" id="cb193"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb193-1" title="1"><span class="co"># minimum and maximum values of age variable</span></a>
+<a class="sourceLine" id="cb193-2" title="2">agelims &lt;-<span class="st"> </span><span class="kw">range</span>(age) </a>
+<a class="sourceLine" id="cb193-3" title="3">age.grid &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dt">from =</span> agelims[<span class="dv">1</span>], <span class="dt">to =</span> agelims[<span class="dv">2</span>])</a>
+<a class="sourceLine" id="cb193-4" title="4"></a>
+<a class="sourceLine" id="cb193-5" title="5"><span class="co"># se=TRUE returns standard errors</span></a>
+<a class="sourceLine" id="cb193-6" title="6">preds &lt;-<span class="st"> </span><span class="kw">predict</span>(fit, <span class="dt">newdata =</span> <span class="kw">list</span>(<span class="dt">age =</span> age.grid), <span class="dt">se =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb193-7" title="7"></a>
+<a class="sourceLine" id="cb193-8" title="8"><span class="co"># confidence intervals as estimate + and - 2 standard deviations</span></a>
+<a class="sourceLine" id="cb193-9" title="9">se.bands &lt;-<span class="st"> </span><span class="kw">cbind</span>(preds<span class="op">$</span>fit <span class="op">+</span><span class="st"> </span><span class="dv">2</span> <span class="op">*</span><span class="st"> </span>preds<span class="op">$</span>se.fit, preds<span class="op">$</span>fit <span class="op">-</span><span class="st"> </span><span class="dv">2</span> <span class="op">*</span><span class="st"> </span>preds<span class="op">$</span>se.fit)</a></code></pre></div>
 <p>We can plot the data and add the fit from the degree-4 polynomial. We set the margins and outer margins in our plot the later plot a title that will be the overall title for two plots that we plot next to each other. The function <code>matlines()</code> lets us draw the lines fo the uncertainty bounds in one go.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># set margins to plot title in margins</span>
-<span class="kw">par</span>(<span class="dt">mfrow =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>), <span class="dt">mar =</span> <span class="kw">c</span>(<span class="fl">4.5</span>, <span class="fl">4.5</span>, <span class="dv">1</span>, <span class="dv">1</span>), <span class="dt">oma =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">4</span>, <span class="dv">0</span>))
-
-<span class="kw">plot</span>(wage <span class="op">~</span><span class="st"> </span><span class="kw">jitter</span>(age,<span class="dv">2</span>), <span class="dt">xlim =</span> agelims, <span class="dt">cex =</span> <span class="fl">0.5</span>, <span class="dt">col =</span> <span class="st">&quot;darkgrey&quot;</span>, <span class="dt">bty =</span> <span class="st">&quot;n&quot;</span>,
-     <span class="dt">xlab =</span> <span class="st">&quot;age&quot;</span>)
-
-<span class="co"># overall plot window title</span>
-<span class="kw">title</span>(<span class="st">&quot;Degree -4 Polynomial &quot;</span>, <span class="dt">outer =</span> <span class="ot">TRUE</span>)
-
-<span class="co"># line for mean estimate</span>
-<span class="kw">lines</span>(age.grid, preds<span class="op">$</span>fit, <span class="dt">lwd =</span> <span class="dv">2</span>, <span class="dt">col =</span> <span class="st">&quot;blue&quot;</span>)
-
-<span class="co"># ~95% ci&#39;s</span>
-<span class="kw">matlines</span>(age.grid, se.bands, <span class="dt">lwd =</span> <span class="dv">2</span>, <span class="dt">col =</span> <span class="st">&quot;blue&quot;</span>, <span class="dt">lty =</span> <span class="dv">3</span>)</code></pre>
+<div class="sourceCode" id="cb194"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb194-1" title="1"><span class="co"># set margins to plot title in margins</span></a>
+<a class="sourceLine" id="cb194-2" title="2"><span class="kw">par</span>(<span class="dt">mfrow =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>), <span class="dt">mar =</span> <span class="kw">c</span>(<span class="fl">4.5</span>, <span class="fl">4.5</span>, <span class="dv">1</span>, <span class="dv">1</span>), <span class="dt">oma =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">4</span>, <span class="dv">0</span>))</a>
+<a class="sourceLine" id="cb194-3" title="3"></a>
+<a class="sourceLine" id="cb194-4" title="4"><span class="kw">plot</span>(wage <span class="op">~</span><span class="st"> </span><span class="kw">jitter</span>(age,<span class="dv">2</span>), <span class="dt">xlim =</span> agelims, <span class="dt">cex =</span> <span class="fl">0.5</span>, <span class="dt">col =</span> <span class="st">&quot;darkgrey&quot;</span>, <span class="dt">bty =</span> <span class="st">&quot;n&quot;</span>,</a>
+<a class="sourceLine" id="cb194-5" title="5">     <span class="dt">xlab =</span> <span class="st">&quot;age&quot;</span>)</a>
+<a class="sourceLine" id="cb194-6" title="6"></a>
+<a class="sourceLine" id="cb194-7" title="7"><span class="co"># overall plot window title</span></a>
+<a class="sourceLine" id="cb194-8" title="8"><span class="kw">title</span>(<span class="st">&quot;Degree -4 Polynomial &quot;</span>, <span class="dt">outer =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb194-9" title="9"></a>
+<a class="sourceLine" id="cb194-10" title="10"><span class="co"># line for mean estimate</span></a>
+<a class="sourceLine" id="cb194-11" title="11"><span class="kw">lines</span>(age.grid, preds<span class="op">$</span>fit, <span class="dt">lwd =</span> <span class="dv">2</span>, <span class="dt">col =</span> <span class="st">&quot;blue&quot;</span>)</a>
+<a class="sourceLine" id="cb194-12" title="12"></a>
+<a class="sourceLine" id="cb194-13" title="13"><span class="co"># ~95% ci&#39;s</span></a>
+<a class="sourceLine" id="cb194-14" title="14"><span class="kw">matlines</span>(age.grid, se.bands, <span class="dt">lwd =</span> <span class="dv">2</span>, <span class="dt">col =</span> <span class="st">&quot;blue&quot;</span>, <span class="dt">lty =</span> <span class="dv">3</span>)</a></code></pre></div>
 <p><img src="ml101_files/figure-html/unnamed-chunk-118-1.png" width="672" /></p>
 <p>We compare the orthogonolized polynomials that we saved in the object called <code>fit</code> with the polynomials that plain polynomials sved in <code>fit2</code>. The difference will be close to <span class="math inline">\(0\)</span>. We predict the outcome from the fit with the raw polynomials and take the diffence to the fit with the independent linear combinations of the powers of age.</p>
-<pre class="sourceCode r"><code class="sourceCode r">preds2 &lt;-<span class="st"> </span><span class="kw">predict</span>(fit2, <span class="dt">newdata =</span> <span class="kw">list</span>(<span class="dt">age =</span> age.grid), <span class="dt">se =</span> <span class="ot">TRUE</span>)
-
-<span class="co"># average difference</span>
-<span class="kw">mean</span>(preds<span class="op">$</span>fit <span class="op">-</span><span class="st"> </span>preds2<span class="op">$</span>fit)</code></pre>
+<div class="sourceCode" id="cb195"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb195-1" title="1">preds2 &lt;-<span class="st"> </span><span class="kw">predict</span>(fit2, <span class="dt">newdata =</span> <span class="kw">list</span>(<span class="dt">age =</span> age.grid), <span class="dt">se =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb195-2" title="2"></a>
+<a class="sourceLine" id="cb195-3" title="3"><span class="co"># average difference</span></a>
+<a class="sourceLine" id="cb195-4" title="4"><span class="kw">mean</span>(preds<span class="op">$</span>fit <span class="op">-</span><span class="st"> </span>preds2<span class="op">$</span>fit)</a></code></pre></div>
 <pre><code>[1] -1.752311e-11</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># maximum difference</span>
-<span class="kw">max</span>(<span class="kw">abs</span>(preds<span class="op">$</span>fit <span class="op">-</span><span class="st"> </span>preds2<span class="op">$</span>fit))</code></pre>
+<div class="sourceCode" id="cb197"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb197-1" title="1"><span class="co"># maximum difference</span></a>
+<a class="sourceLine" id="cb197-2" title="2"><span class="kw">max</span>(<span class="kw">abs</span>(preds<span class="op">$</span>fit <span class="op">-</span><span class="st"> </span>preds2<span class="op">$</span>fit))</a></code></pre></div>
 <pre><code>[1] 7.81597e-11</code></pre>
 <p>When we have only predictor variable and and its powers we use the <code>coef()</code> function to see whether the powers of the variable improve in-sample model fit.</p>
-<pre class="sourceCode r"><code class="sourceCode r">fit<span class="fl">.5</span> &lt;-<span class="st"> </span><span class="kw">lm</span>(wage <span class="op">~</span><span class="st"> </span><span class="kw">poly</span>(age, <span class="dv">5</span>), <span class="dt">data =</span> Wage)
-<span class="kw">coef</span>(<span class="kw">summary</span>(fit<span class="fl">.5</span>))</code></pre>
+<div class="sourceCode" id="cb199"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb199-1" title="1">fit<span class="fl">.5</span> &lt;-<span class="st"> </span><span class="kw">lm</span>(wage <span class="op">~</span><span class="st"> </span><span class="kw">poly</span>(age, <span class="dv">5</span>), <span class="dt">data =</span> Wage)</a>
+<a class="sourceLine" id="cb199-2" title="2"><span class="kw">coef</span>(<span class="kw">summary</span>(fit<span class="fl">.5</span>))</a></code></pre></div>
 <pre><code>                Estimate Std. Error     t value     Pr(&gt;|t|)
 (Intercept)    111.70361  0.7287647 153.2780243 0.000000e+00
 poly(age, 5)1  447.06785 39.9160847  11.2001930 1.491111e-28
@@ -304,11 +303,11 @@ poly(age, 5)3  125.52169 39.9160847   3.1446392 1.679213e-03
 poly(age, 5)4  -77.91118 39.9160847  -1.9518743 5.104623e-02
 poly(age, 5)5  -35.81289 39.9160847  -0.8972045 3.696820e-01</code></pre>
 <p>With more variables, we use the <code>anova()</code> function and look at the F-test to decide whether in-sample fit improves by including powers of a variable.</p>
-<pre class="sourceCode r"><code class="sourceCode r">fit<span class="fl">.1</span> &lt;-<span class="st"> </span><span class="kw">lm</span>(wage <span class="op">~</span><span class="st"> </span>age, <span class="dt">data =</span> Wage)
-fit<span class="fl">.2</span> &lt;-<span class="st"> </span><span class="kw">lm</span>(wage <span class="op">~</span><span class="st"> </span><span class="kw">poly</span>(age, <span class="dv">2</span>), <span class="dt">data =</span> Wage)
-fit<span class="fl">.3</span> &lt;-<span class="st"> </span><span class="kw">lm</span>(wage <span class="op">~</span><span class="st"> </span><span class="kw">poly</span>(age, <span class="dv">3</span>), <span class="dt">data =</span> Wage)
-fit<span class="fl">.4</span> &lt;-<span class="st"> </span><span class="kw">lm</span>(wage <span class="op">~</span><span class="st"> </span><span class="kw">poly</span>(age, <span class="dv">4</span>), <span class="dt">data =</span> Wage)
-<span class="kw">anova</span>(fit<span class="fl">.1</span>, fit<span class="fl">.2</span>, fit<span class="fl">.3</span>, fit<span class="fl">.4</span>, fit<span class="fl">.5</span>)</code></pre>
+<div class="sourceCode" id="cb201"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb201-1" title="1">fit<span class="fl">.1</span> &lt;-<span class="st"> </span><span class="kw">lm</span>(wage <span class="op">~</span><span class="st"> </span>age, <span class="dt">data =</span> Wage)</a>
+<a class="sourceLine" id="cb201-2" title="2">fit<span class="fl">.2</span> &lt;-<span class="st"> </span><span class="kw">lm</span>(wage <span class="op">~</span><span class="st"> </span><span class="kw">poly</span>(age, <span class="dv">2</span>), <span class="dt">data =</span> Wage)</a>
+<a class="sourceLine" id="cb201-3" title="3">fit<span class="fl">.3</span> &lt;-<span class="st"> </span><span class="kw">lm</span>(wage <span class="op">~</span><span class="st"> </span><span class="kw">poly</span>(age, <span class="dv">3</span>), <span class="dt">data =</span> Wage)</a>
+<a class="sourceLine" id="cb201-4" title="4">fit<span class="fl">.4</span> &lt;-<span class="st"> </span><span class="kw">lm</span>(wage <span class="op">~</span><span class="st"> </span><span class="kw">poly</span>(age, <span class="dv">4</span>), <span class="dt">data =</span> Wage)</a>
+<a class="sourceLine" id="cb201-5" title="5"><span class="kw">anova</span>(fit<span class="fl">.1</span>, fit<span class="fl">.2</span>, fit<span class="fl">.3</span>, fit<span class="fl">.4</span>, fit<span class="fl">.5</span>)</a></code></pre></div>
 <pre><code>Analysis of Variance Table
 
 Model 1: wage ~ age
@@ -325,26 +324,26 @@ Model 5: wage ~ poly(age, 5)
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 <p>With <code>glm()</code> we can also fit a polynomial logistic regression. Here, we create a binary variable that is 1 if wage &gt; 250 and 0 otherwise.</p>
-<pre class="sourceCode r"><code class="sourceCode r">fit &lt;-<span class="st"> </span><span class="kw">glm</span>(<span class="kw">I</span>(wage <span class="op">&gt;</span><span class="st"> </span><span class="dv">250</span>) <span class="op">~</span><span class="st"> </span><span class="kw">poly</span>(age, <span class="dv">4</span>), <span class="dt">data =</span> Wage, <span class="dt">family =</span> binomial)</code></pre>
+<div class="sourceCode" id="cb203"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb203-1" title="1">fit &lt;-<span class="st"> </span><span class="kw">glm</span>(<span class="kw">I</span>(wage <span class="op">&gt;</span><span class="st"> </span><span class="dv">250</span>) <span class="op">~</span><span class="st"> </span><span class="kw">poly</span>(age, <span class="dv">4</span>), <span class="dt">data =</span> Wage, <span class="dt">family =</span> binomial)</a></code></pre></div>
 <p>Similar to <code>lm()</code> we use the <code>predict()</code> function again and also obtain standard errors by setting <code>se=TRUE</code>.</p>
 <p>Note: If we do <strong>not</strong> set <code>type="response"</code> in the <code>predict()</code> function, we get the latent <span class="math inline">\(y\)</span> as <span class="math inline">\(X\beta\)</span>. We have to send those values through the link function to get predicted probabilities. We do this, so that we can estimate the standard errors on the latent <span class="math inline">\(y\)</span>. We then send these through the link function as well. This ensures that our confidence intervals will never be outside the logical <span class="math inline">\([0, 1]\)</span> interval for probabilities. If we would not do this, we could get standard errors outside the <span class="math inline">\([0, 1]\)</span> interval.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># predict latent y</span>
-preds &lt;-<span class="st"> </span><span class="kw">predict</span>(fit, <span class="dt">newdata =</span> <span class="kw">list</span>(<span class="dt">age =</span> age.grid), <span class="dt">se =</span> <span class="ot">TRUE</span>)
-
-<span class="co"># send latent y through the link function</span>
-pfit &lt;-<span class="st"> </span><span class="dv">1</span> <span class="op">/</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">+</span><span class="st"> </span><span class="kw">exp</span>(<span class="op">-</span>preds<span class="op">$</span>fit))
-
-<span class="co"># error bands calculate on the latent y</span>
-se.bands.logit &lt;-<span class="st"> </span><span class="kw">cbind</span>(preds<span class="op">$</span>fit <span class="op">+</span><span class="st"> </span><span class="dv">2</span> <span class="op">*</span><span class="st"> </span>preds<span class="op">$</span>se.fit, preds<span class="op">$</span>fit <span class="op">-</span><span class="st"> </span><span class="dv">2</span> <span class="op">*</span><span class="st"> </span>preds<span class="op">$</span>se.fit)
-se.bands &lt;-<span class="st"> </span><span class="dv">1</span> <span class="op">/</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">+</span><span class="st"> </span><span class="kw">exp</span>(<span class="op">-</span>se.bands.logit))</code></pre>
+<div class="sourceCode" id="cb204"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb204-1" title="1"><span class="co"># predict latent y</span></a>
+<a class="sourceLine" id="cb204-2" title="2">preds &lt;-<span class="st"> </span><span class="kw">predict</span>(fit, <span class="dt">newdata =</span> <span class="kw">list</span>(<span class="dt">age =</span> age.grid), <span class="dt">se =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb204-3" title="3"></a>
+<a class="sourceLine" id="cb204-4" title="4"><span class="co"># send latent y through the link function</span></a>
+<a class="sourceLine" id="cb204-5" title="5">pfit &lt;-<span class="st"> </span><span class="dv">1</span> <span class="op">/</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">+</span><span class="st"> </span><span class="kw">exp</span>(<span class="op">-</span>preds<span class="op">$</span>fit))</a>
+<a class="sourceLine" id="cb204-6" title="6"></a>
+<a class="sourceLine" id="cb204-7" title="7"><span class="co"># error bands calculate on the latent y</span></a>
+<a class="sourceLine" id="cb204-8" title="8">se.bands.logit &lt;-<span class="st"> </span><span class="kw">cbind</span>(preds<span class="op">$</span>fit <span class="op">+</span><span class="st"> </span><span class="dv">2</span> <span class="op">*</span><span class="st"> </span>preds<span class="op">$</span>se.fit, preds<span class="op">$</span>fit <span class="op">-</span><span class="st"> </span><span class="dv">2</span> <span class="op">*</span><span class="st"> </span>preds<span class="op">$</span>se.fit)</a>
+<a class="sourceLine" id="cb204-9" title="9">se.bands &lt;-<span class="st"> </span><span class="dv">1</span> <span class="op">/</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">+</span><span class="st"> </span><span class="kw">exp</span>(<span class="op">-</span>se.bands.logit))</a></code></pre></div>
 <p>We add the results next to the plot where wage is continuous. With the <code>points()</code> function we add the actual data to the plot. The argument <code>pch="|"</code> draws a bar as the symbol for each point. Also notice the y-coordinate of each point. In the <code>plot()</code> function we set the range of the y-axis with <code>ylim = c(0, 0.2)</code> to range from <span class="math inline">\(0\)</span> to <span class="math inline">\(0.2\)</span>. If the true outcome is <span class="math inline">\(1\)</span> we want to draw the | at <span class="math inline">\(y=0.2\)</span> and otherwhise at <span class="math inline">\(y=0\)</span>. We achieve this with <code>I((wage &gt; 250)/5)</code>. Play around to see why.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(<span class="kw">I</span>(wage <span class="op">&gt;</span><span class="st"> </span><span class="dv">250</span>) <span class="op">~</span><span class="st"> </span>age, <span class="dt">xlim =</span> agelims, <span class="dt">type =</span> <span class="st">&quot;n&quot;</span>, <span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="fl">0.2</span>))
-<span class="co"># add data to the plot</span>
-<span class="kw">points</span>(<span class="kw">jitter</span>(age), <span class="kw">I</span>((wage <span class="op">&gt;</span><span class="st"> </span><span class="dv">250</span>)<span class="op">/</span><span class="dv">5</span>) , <span class="dt">cex =</span> <span class="dv">1</span>, <span class="dt">pch =</span> <span class="st">&quot;|&quot;</span>, <span class="dt">col =</span> <span class="st">&quot; darkgrey &quot;</span>)
-<span class="co"># mean estimate</span>
-<span class="kw">lines</span>(age.grid, pfit, <span class="dt">lwd =</span> <span class="dv">2</span>, <span class="dt">col =</span> <span class="st">&quot;blue&quot;</span>)
-<span class="co"># 95 ci</span>
-<span class="kw">matlines</span>(age.grid, se.bands, <span class="dt">lwd =</span> <span class="dv">2</span>, <span class="dt">col =</span> <span class="st">&quot;blue&quot;</span>, <span class="dt">lty =</span> <span class="dv">3</span>)</code></pre>
+<div class="sourceCode" id="cb205"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb205-1" title="1"><span class="kw">plot</span>(<span class="kw">I</span>(wage <span class="op">&gt;</span><span class="st"> </span><span class="dv">250</span>) <span class="op">~</span><span class="st"> </span>age, <span class="dt">xlim =</span> agelims, <span class="dt">type =</span> <span class="st">&quot;n&quot;</span>, <span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="fl">0.2</span>))</a>
+<a class="sourceLine" id="cb205-2" title="2"><span class="co"># add data to the plot</span></a>
+<a class="sourceLine" id="cb205-3" title="3"><span class="kw">points</span>(<span class="kw">jitter</span>(age), <span class="kw">I</span>((wage <span class="op">&gt;</span><span class="st"> </span><span class="dv">250</span>)<span class="op">/</span><span class="dv">5</span>) , <span class="dt">cex =</span> <span class="dv">1</span>, <span class="dt">pch =</span> <span class="st">&quot;|&quot;</span>, <span class="dt">col =</span> <span class="st">&quot; darkgrey &quot;</span>)</a>
+<a class="sourceLine" id="cb205-4" title="4"><span class="co"># mean estimate</span></a>
+<a class="sourceLine" id="cb205-5" title="5"><span class="kw">lines</span>(age.grid, pfit, <span class="dt">lwd =</span> <span class="dv">2</span>, <span class="dt">col =</span> <span class="st">&quot;blue&quot;</span>)</a>
+<a class="sourceLine" id="cb205-6" title="6"><span class="co"># 95 ci</span></a>
+<a class="sourceLine" id="cb205-7" title="7"><span class="kw">matlines</span>(age.grid, se.bands, <span class="dt">lwd =</span> <span class="dv">2</span>, <span class="dt">col =</span> <span class="st">&quot;blue&quot;</span>, <span class="dt">lty =</span> <span class="dv">3</span>)</a></code></pre></div>
 <p><img src="ml101_files/figure-html/unnamed-chunk-125-1.png" width="672" /></p>
 <p>Notice, that the confidence interval becomes very large in the range of the data where we have few data and no <span class="math inline">\(1\)</span>’s.</p>
 </div>
@@ -352,15 +351,15 @@ se.bands &lt;-<span class="st"> </span><span class="dv">1</span> <span class="op
 <h3><span class="header-section-number">6.1.2</span> Step Functions</h3>
 <p>Instead of using polynomials to create a non-linear prediction, we could also use step functions. With step functions we fit different lines for different data ranges.</p>
 <p>We use the <code>cut()</code> function to create equally spaced cutpoints in our data. We use the now categorical variable age as predictor in our linear model.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># four equally spaced intervals of age</span>
-<span class="kw">table</span>(<span class="kw">cut</span>(age, <span class="dv">4</span>))</code></pre>
+<div class="sourceCode" id="cb206"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb206-1" title="1"><span class="co"># four equally spaced intervals of age</span></a>
+<a class="sourceLine" id="cb206-2" title="2"><span class="kw">table</span>(<span class="kw">cut</span>(age, <span class="dv">4</span>))</a></code></pre></div>
 <pre><code>
 (17.9,33.5]   (33.5,49]   (49,64.5] (64.5,80.1] 
         750        1399         779          72 </code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># fit the linear regression with the factor variable age that has four categories</span>
-fit &lt;-<span class="st"> </span><span class="kw">lm</span>(wage <span class="op">~</span><span class="st"> </span><span class="kw">cut</span>(age, <span class="dv">4</span>), <span class="dt">data =</span> Wage)
-<span class="co"># the first category is the baseline.</span>
-<span class="kw">coef</span>(<span class="kw">summary</span>(fit))</code></pre>
+<div class="sourceCode" id="cb208"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb208-1" title="1"><span class="co"># fit the linear regression with the factor variable age that has four categories</span></a>
+<a class="sourceLine" id="cb208-2" title="2">fit &lt;-<span class="st"> </span><span class="kw">lm</span>(wage <span class="op">~</span><span class="st"> </span><span class="kw">cut</span>(age, <span class="dv">4</span>), <span class="dt">data =</span> Wage)</a>
+<a class="sourceLine" id="cb208-3" title="3"><span class="co"># the first category is the baseline.</span></a>
+<a class="sourceLine" id="cb208-4" title="4"><span class="kw">coef</span>(<span class="kw">summary</span>(fit))</a></code></pre></div>
 <pre><code>                        Estimate Std. Error   t value     Pr(&gt;|t|)
 (Intercept)            94.158392   1.476069 63.789970 0.000000e+00
 cut(age, 4)(33.5,49]   24.053491   1.829431 13.148074 1.982315e-38
@@ -370,15 +369,15 @@ cut(age, 4)(64.5,80.1]  7.640592   4.987424  1.531972 1.256350e-01</code></pre>
 <div id="splines" class="section level3">
 <h3><span class="header-section-number">6.1.3</span> Splines</h3>
 <p>We use the <code>splines</code> package to fit splines.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(splines)</code></pre>
+<div class="sourceCode" id="cb210"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb210-1" title="1"><span class="kw">library</span>(splines)</a></code></pre></div>
 <p>We first use <code>bs()</code> to generate a basis matrix for a polynomial spline and fit a model with knots at age 25, 40 and 60. <code>bs</code> will by default fit a cubic spline with the specified number of knots. To deviate from a cubic spline, change the argument <code>degree</code> to some other value.</p>
-<pre class="sourceCode r"><code class="sourceCode r">fit &lt;-<span class="st"> </span><span class="kw">lm</span>(wage <span class="op">~</span><span class="st"> </span><span class="kw">bs</span>(age, <span class="dt">knots =</span> <span class="kw">c</span>(<span class="dv">25</span>, <span class="dv">40</span>, <span class="dv">60</span>)), <span class="dt">data =</span> Wage)
-pred &lt;-<span class="st"> </span><span class="kw">predict</span>(fit, <span class="dt">newdata =</span> <span class="kw">list</span>(<span class="dt">age =</span> age.grid), <span class="dt">se =</span> <span class="ot">TRUE</span>)
-<span class="kw">par</span>( <span class="dt">mfrow =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">1</span>))
-<span class="kw">plot</span>(<span class="kw">jitter</span>(age,<span class="dv">2</span>), wage, <span class="dt">col =</span> <span class="st">&quot;gray&quot;</span>, <span class="dt">xlab =</span> <span class="st">&quot;age&quot;</span>, <span class="dt">bty =</span> <span class="st">&quot;n&quot;</span>)
-<span class="kw">lines</span>(age.grid, pred<span class="op">$</span>fit, <span class="dt">lwd =</span> <span class="dv">2</span>)
-<span class="kw">lines</span>(age.grid, pred<span class="op">$</span>fit <span class="op">+</span><span class="st"> </span><span class="dv">2</span> <span class="op">*</span><span class="st"> </span>pred<span class="op">$</span>se, <span class="dt">lty =</span> <span class="st">&quot;dashed&quot;</span>, <span class="dt">lwd =</span> <span class="dv">2</span>)
-<span class="kw">lines</span>(age.grid, pred<span class="op">$</span>fit <span class="op">-</span><span class="st"> </span><span class="dv">2</span> <span class="op">*</span><span class="st"> </span>pred<span class="op">$</span>se, <span class="dt">lty =</span> <span class="st">&quot;dashed&quot;</span>, <span class="dt">lwd =</span> <span class="dv">2</span>)</code></pre>
+<div class="sourceCode" id="cb211"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb211-1" title="1">fit &lt;-<span class="st"> </span><span class="kw">lm</span>(wage <span class="op">~</span><span class="st"> </span><span class="kw">bs</span>(age, <span class="dt">knots =</span> <span class="kw">c</span>(<span class="dv">25</span>, <span class="dv">40</span>, <span class="dv">60</span>)), <span class="dt">data =</span> Wage)</a>
+<a class="sourceLine" id="cb211-2" title="2">pred &lt;-<span class="st"> </span><span class="kw">predict</span>(fit, <span class="dt">newdata =</span> <span class="kw">list</span>(<span class="dt">age =</span> age.grid), <span class="dt">se =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb211-3" title="3"><span class="kw">par</span>( <span class="dt">mfrow =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">1</span>))</a>
+<a class="sourceLine" id="cb211-4" title="4"><span class="kw">plot</span>(<span class="kw">jitter</span>(age,<span class="dv">2</span>), wage, <span class="dt">col =</span> <span class="st">&quot;gray&quot;</span>, <span class="dt">xlab =</span> <span class="st">&quot;age&quot;</span>, <span class="dt">bty =</span> <span class="st">&quot;n&quot;</span>)</a>
+<a class="sourceLine" id="cb211-5" title="5"><span class="kw">lines</span>(age.grid, pred<span class="op">$</span>fit, <span class="dt">lwd =</span> <span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb211-6" title="6"><span class="kw">lines</span>(age.grid, pred<span class="op">$</span>fit <span class="op">+</span><span class="st"> </span><span class="dv">2</span> <span class="op">*</span><span class="st"> </span>pred<span class="op">$</span>se, <span class="dt">lty =</span> <span class="st">&quot;dashed&quot;</span>, <span class="dt">lwd =</span> <span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb211-7" title="7"><span class="kw">lines</span>(age.grid, pred<span class="op">$</span>fit <span class="op">-</span><span class="st"> </span><span class="dv">2</span> <span class="op">*</span><span class="st"> </span>pred<span class="op">$</span>se, <span class="dt">lty =</span> <span class="st">&quot;dashed&quot;</span>, <span class="dt">lwd =</span> <span class="dv">2</span>)</a></code></pre></div>
 <p><img src="ml101_files/figure-html/unnamed-chunk-128-1.png" width="672" /></p>
 
 </div>

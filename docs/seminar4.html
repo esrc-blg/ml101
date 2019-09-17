@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Chapter 4 Subset Selection | Introduction to Data Science</title>
   <meta name="description" content="Chapter 4 Subset Selection | Introduction to Data Science" />
-  <meta name="generator" content="bookdown 0.11 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Chapter 4 Subset Selection | Introduction to Data Science" />
   <meta property="og:type" content="book" />
@@ -62,7 +62,6 @@ a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
 a.sourceLine:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
-div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
@@ -210,8 +209,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">4.1</span> Seminar</h2>
 <p>In this exercise, we learn how to select the best predictors out of a set of variables. This is sometimes referred to as a variable selection model (the Lasso which we introduce later falls into the same category).</p>
 <p>We start by clearing our workspace.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># clear workspace</span>
-<span class="kw">rm</span>( <span class="dt">list =</span> <span class="kw">ls</span>() )</code></pre>
+<div class="sourceCode" id="cb93"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb93-1" title="1"><span class="co"># clear workspace</span></a>
+<a class="sourceLine" id="cb93-2" title="2"><span class="kw">rm</span>( <span class="dt">list =</span> <span class="kw">ls</span>() )</a></code></pre></div>
 <div id="subset-selection-methods" class="section level3">
 <h3><span class="header-section-number">4.1.1</span> Subset Selection Methods</h3>
 <p>We use a modified data set on non-western immigrants (we inserted some missings). Download the data <a href="http://philippbroniecki.github.io/ML2017.io/data/BSAS_manip_missings.RData">here</a>.</p>
@@ -282,11 +281,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </tr>
 </tbody>
 </table>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># load foreigners data</span>
-<span class="kw">load</span>(<span class="st">&quot;your directory/BSAS_manip_missings.RData&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb94"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb94-1" title="1"><span class="co"># load foreigners data</span></a>
+<a class="sourceLine" id="cb94-2" title="2"><span class="kw">load</span>(<span class="st">&quot;your directory/BSAS_manip_missings.RData&quot;</span>)</a></code></pre></div>
 <p>We check our dataset for missing values variable by variable using <code>apply()</code>, <code>is.na()</code>, and <code>table()</code>.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># check for missing values</span>
-<span class="kw">apply</span>(df, <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="kw">table</span>(<span class="kw">is.na</span>(x))[<span class="st">&quot;TRUE&quot;</span>] )</code></pre>
+<div class="sourceCode" id="cb95"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb95-1" title="1"><span class="co"># check for missing values</span></a>
+<a class="sourceLine" id="cb95-2" title="2"><span class="kw">apply</span>(df, <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="kw">table</span>(<span class="kw">is.na</span>(x))[<span class="st">&quot;TRUE&quot;</span>] )</a></code></pre></div>
 <pre><code>      IMMBRIT over.estimate          RSex          RAge      Househld 
             8            NA            NA            NA            NA 
          Cons           Lab           SNP          Ukip           BNP 
@@ -296,27 +295,27 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
  employMonths         urban   health.good         HHInc 
            NA            NA            NA            NA </code></pre>
 <p>We next drop variables from the dataset.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># we drop missings in IMMBRIT</span>
-df &lt;-<span class="st"> </span>df[ <span class="op">!</span><span class="kw">is.na</span>(df<span class="op">$</span>IMMBRIT), ]</code></pre>
+<div class="sourceCode" id="cb97"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb97-1" title="1"><span class="co"># we drop missings in IMMBRIT</span></a>
+<a class="sourceLine" id="cb97-2" title="2">df &lt;-<span class="st"> </span>df[ <span class="op">!</span><span class="kw">is.na</span>(df<span class="op">$</span>IMMBRIT), ]</a></code></pre></div>
 <p>If you ever want to drop variables on an entire dataset you can run <code>df &lt;- na.omit(df)</code>. If you want to use the same method for dropping a few variables, you can run <code>df[, c("some var", "some other var")] &lt;- na.omit(df[, c("some var", "some other var")])</code>.</p>
 <p>We now declare the categorical variables to be factors and create a copy of the main data set that excludes <code>over.estimate</code>.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># declare factor variables</span>
-df<span class="op">$</span>urban &lt;-<span class="st"> </span><span class="kw">factor</span>(df<span class="op">$</span>urban, <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;rural&quot;</span>, <span class="st">&quot;more rural&quot;</span>, <span class="st">&quot;more urban&quot;</span>, <span class="st">&quot;urban&quot;</span>))
-df<span class="op">$</span>RSex &lt;-<span class="st"> </span><span class="kw">factor</span>(df<span class="op">$</span>RSex, <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;Male&quot;</span>, <span class="st">&quot;Female&quot;</span>))
-df<span class="op">$</span>health.good &lt;-<span class="st"> </span><span class="kw">factor</span>(df<span class="op">$</span>health.good, <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;bad&quot;</span>, <span class="st">&quot;fair&quot;</span>, <span class="st">&quot;fairly good&quot;</span>, <span class="st">&quot;good&quot;</span>) )
-
-<span class="co"># drop the binary response coded 1 if IMMBRIT &gt; 10.7 </span>
-df<span class="op">$</span>over.estimate &lt;-<span class="st"> </span><span class="ot">NULL</span>
-df<span class="op">$</span>Cons &lt;-<span class="st"> </span><span class="ot">NULL</span></code></pre>
+<div class="sourceCode" id="cb98"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb98-1" title="1"><span class="co"># declare factor variables</span></a>
+<a class="sourceLine" id="cb98-2" title="2">df<span class="op">$</span>urban &lt;-<span class="st"> </span><span class="kw">factor</span>(df<span class="op">$</span>urban, <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;rural&quot;</span>, <span class="st">&quot;more rural&quot;</span>, <span class="st">&quot;more urban&quot;</span>, <span class="st">&quot;urban&quot;</span>))</a>
+<a class="sourceLine" id="cb98-3" title="3">df<span class="op">$</span>RSex &lt;-<span class="st"> </span><span class="kw">factor</span>(df<span class="op">$</span>RSex, <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;Male&quot;</span>, <span class="st">&quot;Female&quot;</span>))</a>
+<a class="sourceLine" id="cb98-4" title="4">df<span class="op">$</span>health.good &lt;-<span class="st"> </span><span class="kw">factor</span>(df<span class="op">$</span>health.good, <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;bad&quot;</span>, <span class="st">&quot;fair&quot;</span>, <span class="st">&quot;fairly good&quot;</span>, <span class="st">&quot;good&quot;</span>) )</a>
+<a class="sourceLine" id="cb98-5" title="5"></a>
+<a class="sourceLine" id="cb98-6" title="6"><span class="co"># drop the binary response coded 1 if IMMBRIT &gt; 10.7 </span></a>
+<a class="sourceLine" id="cb98-7" title="7">df<span class="op">$</span>over.estimate &lt;-<span class="st"> </span><span class="ot">NULL</span></a>
+<a class="sourceLine" id="cb98-8" title="8">df<span class="op">$</span>Cons &lt;-<span class="st"> </span><span class="ot">NULL</span></a></code></pre></div>
 </div>
 <div id="best-subset-selection" class="section level3">
 <h3><span class="header-section-number">4.1.2</span> Best Subset Selection</h3>
 <p>We use the <code>regsubsets()</code> function to identify the best model based on subset selection quantified by the residual sum of squares (RSS) for each model. The function is included in the <code>leaps</code> package which we need to install if it is not already like so: <code>install.packages("leaps")</code>.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(leaps)
-
-<span class="co"># run best subset selection</span>
-regfit.full &lt;-<span class="st"> </span><span class="kw">regsubsets</span>(IMMBRIT <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> df)
-<span class="kw">summary</span>(regfit.full)</code></pre>
+<div class="sourceCode" id="cb99"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb99-1" title="1"><span class="kw">library</span>(leaps)</a>
+<a class="sourceLine" id="cb99-2" title="2"></a>
+<a class="sourceLine" id="cb99-3" title="3"><span class="co"># run best subset selection</span></a>
+<a class="sourceLine" id="cb99-4" title="4">regfit.full &lt;-<span class="st"> </span><span class="kw">regsubsets</span>(IMMBRIT <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> df)</a>
+<a class="sourceLine" id="cb99-5" title="5"><span class="kw">summary</span>(regfit.full)</a></code></pre></div>
 <pre><code>Subset selection object
 Call: regsubsets.formula(IMMBRIT ~ ., data = df)
 20 Variables  (and intercept)
@@ -380,53 +379,53 @@ Selection Algorithm: exhaustive
 7  ( 1 ) &quot;*&quot;  
 8  ( 1 ) &quot;*&quot;  </code></pre>
 <p>In the regression output, variables with a star were selected for the model. Here, we see 8 different models from 1 to 8 variables. With the <code>nvmax</code> parameter we control the number of variables in the model. The default used by <code>regsubsets()</code> is 8.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># increase the max number of variables</span>
-regfit.full &lt;-<span class="st"> </span><span class="kw">regsubsets</span>(IMMBRIT <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> df, <span class="dt">nvmax =</span> <span class="dv">16</span>)
-reg.summary &lt;-<span class="st"> </span><span class="kw">summary</span>(regfit.full)</code></pre>
+<div class="sourceCode" id="cb101"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb101-1" title="1"><span class="co"># increase the max number of variables</span></a>
+<a class="sourceLine" id="cb101-2" title="2">regfit.full &lt;-<span class="st"> </span><span class="kw">regsubsets</span>(IMMBRIT <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> df, <span class="dt">nvmax =</span> <span class="dv">16</span>)</a>
+<a class="sourceLine" id="cb101-3" title="3">reg.summary &lt;-<span class="st"> </span><span class="kw">summary</span>(regfit.full)</a></code></pre></div>
 <p>We can look at the components of the <code>reg.summary</code> object using the <code>names()</code> function and examine the <span class="math inline">\(R^2\)</span> statistic stored in <code>rsq</code>.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">names</span>(reg.summary)</code></pre>
+<div class="sourceCode" id="cb102"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb102-1" title="1"><span class="kw">names</span>(reg.summary)</a></code></pre></div>
 <pre><code>[1] &quot;which&quot;  &quot;rsq&quot;    &quot;rss&quot;    &quot;adjr2&quot;  &quot;cp&quot;     &quot;bic&quot;    &quot;outmat&quot; &quot;obj&quot;   </code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">reg.summary<span class="op">$</span>rsq</code></pre>
+<div class="sourceCode" id="cb104"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb104-1" title="1">reg.summary<span class="op">$</span>rsq</a></code></pre></div>
 <pre><code> [1] 0.1040145 0.1316228 0.1469748 0.1546376 0.1595363 0.1621379 0.1650727
  [8] 0.1672137 0.1689371 0.1699393 0.1708328 0.1717100 0.1721041 0.1723151
 [15] 0.1725153 0.1726176</code></pre>
 <p>Next, we plot the <span class="math inline">\(RSS\)</span> and adjusted <span class="math inline">\(R^2\)</span> and add a point where <span class="math inline">\(R^2\)</span> is at its maximum using the <code>which.max()</code> function.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">par</span>( <span class="dt">mfrow =</span>  <span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">2</span>) ) <span class="co"># 2 row, 2 columns in plot window</span>
-<span class="kw">plot</span>(reg.summary<span class="op">$</span>rss, <span class="dt">xlab =</span> <span class="st">&quot;Number of Variables&quot;</span>, <span class="dt">ylab =</span> <span class="st">&quot;Residual Sum of Squares&quot;</span>, <span class="dt">type =</span> <span class="st">&quot;l&quot;</span>)
-<span class="kw">plot</span>(reg.summary<span class="op">$</span>adjr2, <span class="dt">xlab =</span> <span class="st">&quot;Number of Variables&quot;</span>, <span class="dt">ylab =</span> <span class="st">&quot;Adjusted R^2&quot;</span>, <span class="dt">type =</span> <span class="st">&quot;l&quot;</span>)
-
-<span class="co"># find the peak of adj. R^2</span>
-adjr2.max &lt;-<span class="st"> </span><span class="kw">which.max</span>( reg.summary<span class="op">$</span>adjr2 )
-<span class="kw">points</span>(adjr2.max, reg.summary<span class="op">$</span>adjr2[adjr2.max], <span class="dt">col =</span> <span class="st">&quot;red&quot;</span>, <span class="dt">pch =</span> <span class="dv">20</span>, <span class="dt">cex =</span> <span class="dv">2</span>)</code></pre>
+<div class="sourceCode" id="cb106"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb106-1" title="1"><span class="kw">par</span>( <span class="dt">mfrow =</span>  <span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">2</span>) ) <span class="co"># 2 row, 2 columns in plot window</span></a>
+<a class="sourceLine" id="cb106-2" title="2"><span class="kw">plot</span>(reg.summary<span class="op">$</span>rss, <span class="dt">xlab =</span> <span class="st">&quot;Number of Variables&quot;</span>, <span class="dt">ylab =</span> <span class="st">&quot;Residual Sum of Squares&quot;</span>, <span class="dt">type =</span> <span class="st">&quot;l&quot;</span>)</a>
+<a class="sourceLine" id="cb106-3" title="3"><span class="kw">plot</span>(reg.summary<span class="op">$</span>adjr2, <span class="dt">xlab =</span> <span class="st">&quot;Number of Variables&quot;</span>, <span class="dt">ylab =</span> <span class="st">&quot;Adjusted R^2&quot;</span>, <span class="dt">type =</span> <span class="st">&quot;l&quot;</span>)</a>
+<a class="sourceLine" id="cb106-4" title="4"></a>
+<a class="sourceLine" id="cb106-5" title="5"><span class="co"># find the peak of adj. R^2</span></a>
+<a class="sourceLine" id="cb106-6" title="6">adjr2.max &lt;-<span class="st"> </span><span class="kw">which.max</span>( reg.summary<span class="op">$</span>adjr2 )</a>
+<a class="sourceLine" id="cb106-7" title="7"><span class="kw">points</span>(adjr2.max, reg.summary<span class="op">$</span>adjr2[adjr2.max], <span class="dt">col =</span> <span class="st">&quot;red&quot;</span>, <span class="dt">pch =</span> <span class="dv">20</span>, <span class="dt">cex =</span> <span class="dv">2</span>)</a></code></pre></div>
 <p><img src="ml101_files/figure-html/unnamed-chunk-72-1.png" width="672" /></p>
 <p>We can also plot the <span class="math inline">\(C_{p}\)</span> statistic and <span class="math inline">\(BIC\)</span> and identify the minimum points for each statistic using the <span class="math inline">\(which.min()\)</span> function.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># cp</span>
-<span class="kw">plot</span>(reg.summary<span class="op">$</span>cp, <span class="dt">xlab =</span> <span class="st">&quot;Number of Variables&quot;</span>, <span class="dt">ylab =</span> <span class="st">&quot;Cp&quot;</span>, <span class="dt">type =</span> <span class="st">&quot;l&quot;</span>)
-cp.min &lt;-<span class="st"> </span><span class="kw">which.min</span>(reg.summary<span class="op">$</span>cp)
-<span class="kw">points</span>(cp.min, reg.summary<span class="op">$</span>cp[cp.min], <span class="dt">col =</span> <span class="st">&quot;red&quot;</span>, <span class="dt">cex =</span> <span class="dv">2</span>, <span class="dt">pch =</span> <span class="dv">20</span>)
-
-<span class="co"># bic</span>
-bic.min &lt;-<span class="st"> </span><span class="kw">which.min</span>(reg.summary<span class="op">$</span>bic)
-<span class="kw">plot</span>(reg.summary<span class="op">$</span>bic, <span class="dt">xlab =</span> <span class="st">&quot;Number of Variables&quot;</span>, <span class="dt">ylab =</span> <span class="st">&quot;BIC&quot;</span>, <span class="dt">type =</span> <span class="st">&quot;l&quot;</span>)
-<span class="kw">points</span>(bic.min, reg.summary<span class="op">$</span>bic[bic.min], <span class="dt">col =</span> <span class="st">&quot;red&quot;</span>, <span class="dt">cex =</span> <span class="dv">2</span>, <span class="dt">pch =</span> <span class="dv">20</span>)</code></pre>
+<div class="sourceCode" id="cb107"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb107-1" title="1"><span class="co"># cp</span></a>
+<a class="sourceLine" id="cb107-2" title="2"><span class="kw">plot</span>(reg.summary<span class="op">$</span>cp, <span class="dt">xlab =</span> <span class="st">&quot;Number of Variables&quot;</span>, <span class="dt">ylab =</span> <span class="st">&quot;Cp&quot;</span>, <span class="dt">type =</span> <span class="st">&quot;l&quot;</span>)</a>
+<a class="sourceLine" id="cb107-3" title="3">cp.min &lt;-<span class="st"> </span><span class="kw">which.min</span>(reg.summary<span class="op">$</span>cp)</a>
+<a class="sourceLine" id="cb107-4" title="4"><span class="kw">points</span>(cp.min, reg.summary<span class="op">$</span>cp[cp.min], <span class="dt">col =</span> <span class="st">&quot;red&quot;</span>, <span class="dt">cex =</span> <span class="dv">2</span>, <span class="dt">pch =</span> <span class="dv">20</span>)</a>
+<a class="sourceLine" id="cb107-5" title="5"></a>
+<a class="sourceLine" id="cb107-6" title="6"><span class="co"># bic</span></a>
+<a class="sourceLine" id="cb107-7" title="7">bic.min &lt;-<span class="st"> </span><span class="kw">which.min</span>(reg.summary<span class="op">$</span>bic)</a>
+<a class="sourceLine" id="cb107-8" title="8"><span class="kw">plot</span>(reg.summary<span class="op">$</span>bic, <span class="dt">xlab =</span> <span class="st">&quot;Number of Variables&quot;</span>, <span class="dt">ylab =</span> <span class="st">&quot;BIC&quot;</span>, <span class="dt">type =</span> <span class="st">&quot;l&quot;</span>)</a>
+<a class="sourceLine" id="cb107-9" title="9"><span class="kw">points</span>(bic.min, reg.summary<span class="op">$</span>bic[bic.min], <span class="dt">col =</span> <span class="st">&quot;red&quot;</span>, <span class="dt">cex =</span> <span class="dv">2</span>, <span class="dt">pch =</span> <span class="dv">20</span>)</a></code></pre></div>
 <p><img src="ml101_files/figure-html/unnamed-chunk-74-1.png" width="672" /></p>
 <p>The estimated models from <code>regsubsets()</code> can be directly plotted to compare the differences based on the values of <span class="math inline">\(R^2\)</span>, adjusted <span class="math inline">\(R^2\)</span>, <span class="math inline">\(C_{p}\)</span> and <span class="math inline">\(BIC\)</span> statistics.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">par</span>( <span class="dt">mfrow =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">1</span>), <span class="dt">oma =</span> <span class="kw">c</span>(<span class="dv">3</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>))
-
-<span class="co"># plot model comparison based on R^2</span>
-<span class="kw">plot</span>(regfit.full, <span class="dt">scale =</span> <span class="st">&quot;r2&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb108"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb108-1" title="1"><span class="kw">par</span>( <span class="dt">mfrow =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">1</span>), <span class="dt">oma =</span> <span class="kw">c</span>(<span class="dv">3</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>))</a>
+<a class="sourceLine" id="cb108-2" title="2"></a>
+<a class="sourceLine" id="cb108-3" title="3"><span class="co"># plot model comparison based on R^2</span></a>
+<a class="sourceLine" id="cb108-4" title="4"><span class="kw">plot</span>(regfit.full, <span class="dt">scale =</span> <span class="st">&quot;r2&quot;</span>)</a></code></pre></div>
 <p><img src="ml101_files/figure-html/unnamed-chunk-75-1.png" width="672" /></p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># plot model comparison based on adjusted R^2</span>
-<span class="kw">plot</span>(regfit.full, <span class="dt">scale =</span> <span class="st">&quot;adjr2&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb109"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb109-1" title="1"><span class="co"># plot model comparison based on adjusted R^2</span></a>
+<a class="sourceLine" id="cb109-2" title="2"><span class="kw">plot</span>(regfit.full, <span class="dt">scale =</span> <span class="st">&quot;adjr2&quot;</span>)</a></code></pre></div>
 <p><img src="ml101_files/figure-html/unnamed-chunk-75-2.png" width="672" /></p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># plot model comparison based on adjusted CP</span>
-<span class="kw">plot</span>(regfit.full, <span class="dt">scale =</span> <span class="st">&quot;Cp&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb110"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb110-1" title="1"><span class="co"># plot model comparison based on adjusted CP</span></a>
+<a class="sourceLine" id="cb110-2" title="2"><span class="kw">plot</span>(regfit.full, <span class="dt">scale =</span> <span class="st">&quot;Cp&quot;</span>)</a></code></pre></div>
 <p><img src="ml101_files/figure-html/unnamed-chunk-75-3.png" width="672" /></p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># plot model comparison based on adjusted BIC</span>
-<span class="kw">plot</span>(regfit.full, <span class="dt">scale =</span> <span class="st">&quot;bic&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb111"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb111-1" title="1"><span class="co"># plot model comparison based on adjusted BIC</span></a>
+<a class="sourceLine" id="cb111-2" title="2"><span class="kw">plot</span>(regfit.full, <span class="dt">scale =</span> <span class="st">&quot;bic&quot;</span>)</a></code></pre></div>
 <p><img src="ml101_files/figure-html/unnamed-chunk-75-4.png" width="672" /></p>
 <p>To show the coefficients associated with the model with the lowest <span class="math inline">\(BIC\)</span>, we use the <code>coef()</code> function.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">coef</span>(regfit.full, bic.min)</code></pre>
+<div class="sourceCode" id="cb112"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb112-1" title="1"><span class="kw">coef</span>(regfit.full, bic.min)</a></code></pre></div>
 <pre><code>(Intercept)  RSexFemale    Househld         BNP       HHInc 
   34.576036    6.970692    2.000771   10.830195   -1.511176 </code></pre>
 </div>
@@ -434,9 +433,9 @@ bic.min &lt;-<span class="st"> </span><span class="kw">which.min</span>(reg.summ
 <h3><span class="header-section-number">4.1.3</span> Forward and Backward Stepwise Selection</h3>
 <p>The default method used by <code>regsubsets()</code> is exhaustive but we can change it to forward or backward and compare the results. Best subset selection will take very long with many variables because the number of models to estimate grows exponentially. In thse cases, we will want to use forward and backward selection instead.</p>
 <p>Let’s carry out forward selection.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># run forward selection</span>
-regfit.fwd &lt;-<span class="st"> </span><span class="kw">regsubsets</span>(IMMBRIT <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> df, <span class="dt">nvmax =</span> <span class="dv">16</span>, <span class="dt">method =</span> <span class="st">&quot;forward&quot;</span>)
-<span class="kw">summary</span>(regfit.fwd)</code></pre>
+<div class="sourceCode" id="cb114"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb114-1" title="1"><span class="co"># run forward selection</span></a>
+<a class="sourceLine" id="cb114-2" title="2">regfit.fwd &lt;-<span class="st"> </span><span class="kw">regsubsets</span>(IMMBRIT <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> df, <span class="dt">nvmax =</span> <span class="dv">16</span>, <span class="dt">method =</span> <span class="st">&quot;forward&quot;</span>)</a>
+<a class="sourceLine" id="cb114-3" title="3"><span class="kw">summary</span>(regfit.fwd)</a></code></pre></div>
 <pre><code>Subset selection object
 Call: regsubsets.formula(IMMBRIT ~ ., data = df, nvmax = 16, method = &quot;forward&quot;)
 20 Variables  (and intercept)
@@ -532,9 +531,9 @@ Selection Algorithm: forward
 15  ( 1 ) &quot; &quot;                    &quot;*&quot;             &quot;*&quot;  
 16  ( 1 ) &quot; &quot;                    &quot;*&quot;             &quot;*&quot;  </code></pre>
 <p>Let’s carry out backwards selection next.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># run backward selection</span>
-regfit.bwd &lt;-<span class="st"> </span><span class="kw">regsubsets</span>(IMMBRIT <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> df, <span class="dt">nvmax =</span> <span class="dv">16</span>, <span class="dt">method =</span> <span class="st">&quot;backward&quot;</span>)
-<span class="kw">summary</span>(regfit.bwd)</code></pre>
+<div class="sourceCode" id="cb116"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb116-1" title="1"><span class="co"># run backward selection</span></a>
+<a class="sourceLine" id="cb116-2" title="2">regfit.bwd &lt;-<span class="st"> </span><span class="kw">regsubsets</span>(IMMBRIT <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> df, <span class="dt">nvmax =</span> <span class="dv">16</span>, <span class="dt">method =</span> <span class="st">&quot;backward&quot;</span>)</a>
+<a class="sourceLine" id="cb116-3" title="3"><span class="kw">summary</span>(regfit.bwd)</a></code></pre></div>
 <pre><code>Subset selection object
 Call: regsubsets.formula(IMMBRIT ~ ., data = df, nvmax = 16, method = &quot;backward&quot;)
 20 Variables  (and intercept)
@@ -630,18 +629,18 @@ Selection Algorithm: backward
 15  ( 1 ) &quot; &quot;                    &quot;*&quot;             &quot;*&quot;  
 16  ( 1 ) &quot; &quot;                    &quot;*&quot;             &quot;*&quot;  </code></pre>
 <p>Then we compare the models.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># model coefficients of best 7-variable models</span>
-<span class="kw">coef</span>(regfit.full, <span class="dv">7</span>)</code></pre>
+<div class="sourceCode" id="cb118"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb118-1" title="1"><span class="co"># model coefficients of best 7-variable models</span></a>
+<a class="sourceLine" id="cb118-2" title="2"><span class="kw">coef</span>(regfit.full, <span class="dv">7</span>)</a></code></pre></div>
 <pre><code>(Intercept)  RSexFemale        RAge    Househld         Lab         BNP 
 40.02553709  7.14423868 -0.08205116  1.70838328 -3.34664442  9.11326764 
       paper       HHInc 
  2.37633989 -1.60436490 </code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">coef</span>(regfit.fwd, <span class="dv">7</span>)</code></pre>
+<div class="sourceCode" id="cb120"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb120-1" title="1"><span class="kw">coef</span>(regfit.fwd, <span class="dv">7</span>)</a></code></pre></div>
 <pre><code>(Intercept)  RSexFemale        RAge    Househld         Lab         BNP 
 40.02553709  7.14423868 -0.08205116  1.70838328 -3.34664442  9.11326764 
       paper       HHInc 
  2.37633989 -1.60436490 </code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">coef</span>(regfit.bwd, <span class="dv">7</span>)</code></pre>
+<div class="sourceCode" id="cb122"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb122-1" title="1"><span class="kw">coef</span>(regfit.bwd, <span class="dv">7</span>)</a></code></pre></div>
 <pre><code>(Intercept)  RSexFemale        RAge    Househld         Lab         BNP 
 40.02553709  7.14423868 -0.08205116  1.70838328 -3.34664442  9.11326764 
       paper       HHInc 
@@ -650,86 +649,86 @@ Selection Algorithm: backward
 <div id="choosing-among-models-using-the-validation-set-approach-and-cross-validation" class="section level4">
 <h4><span class="header-section-number">4.1.3.1</span> Choosing Among Models Using the Validation Set Approach and Cross-Validation</h4>
 <p>For validation set approach, we split the dataset into a training subset and a test subset. In order to ensure that the results are consistent over multiple iterations, we set the random seed with <code>set.seed()</code> before calling <code>sample()</code>.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">set.seed</span>(<span class="dv">1</span>)
-
-<span class="co"># sample true or false for each observation</span>
-train &lt;-<span class="st"> </span><span class="kw">sample</span>( <span class="kw">c</span>(<span class="ot">TRUE</span>, <span class="ot">FALSE</span>), <span class="dt">size =</span> <span class="kw">nrow</span>(df), <span class="dt">replace =</span> <span class="ot">TRUE</span> )
-<span class="co"># the complement</span>
-test &lt;-<span class="st"> </span>(<span class="op">!</span>train)</code></pre>
+<div class="sourceCode" id="cb124"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb124-1" title="1"><span class="kw">set.seed</span>(<span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb124-2" title="2"></a>
+<a class="sourceLine" id="cb124-3" title="3"><span class="co"># sample true or false for each observation</span></a>
+<a class="sourceLine" id="cb124-4" title="4">train &lt;-<span class="st"> </span><span class="kw">sample</span>( <span class="kw">c</span>(<span class="ot">TRUE</span>, <span class="ot">FALSE</span>), <span class="dt">size =</span> <span class="kw">nrow</span>(df), <span class="dt">replace =</span> <span class="ot">TRUE</span> )</a>
+<a class="sourceLine" id="cb124-5" title="5"><span class="co"># the complement</span></a>
+<a class="sourceLine" id="cb124-6" title="6">test &lt;-<span class="st"> </span>(<span class="op">!</span>train)</a></code></pre></div>
 <p>We use <code>regsubsets()</code> as we did in the last section, but limit the estimation to the training subset.</p>
-<pre class="sourceCode r"><code class="sourceCode r">regfit.best &lt;-<span class="st"> </span><span class="kw">regsubsets</span>(IMMBRIT <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> df[train, ], <span class="dt">nvmax =</span> <span class="dv">16</span>)</code></pre>
+<div class="sourceCode" id="cb125"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb125-1" title="1">regfit.best &lt;-<span class="st"> </span><span class="kw">regsubsets</span>(IMMBRIT <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> df[train, ], <span class="dt">nvmax =</span> <span class="dv">16</span>)</a></code></pre></div>
 <p>We create a matrix from the test subset using <code>model.matrix()</code>. Model matrix takes the dependent variable out of the data and adds an intercept to it.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># test data</span>
-test.mat &lt;-<span class="st"> </span><span class="kw">model.matrix</span>(IMMBRIT <span class="op">~</span>., <span class="dt">data =</span> df[test, ])</code></pre>
+<div class="sourceCode" id="cb126"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb126-1" title="1"><span class="co"># test data</span></a>
+<a class="sourceLine" id="cb126-2" title="2">test.mat &lt;-<span class="st"> </span><span class="kw">model.matrix</span>(IMMBRIT <span class="op">~</span>., <span class="dt">data =</span> df[test, ])</a></code></pre></div>
 <p>Next, we compute the validation error for each model.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># validation error for each model</span>
-val.errors &lt;-<span class="st"> </span><span class="ot">NA</span>
-<span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">16</span> ){
-  
-  coefi &lt;-<span class="st"> </span><span class="kw">coef</span>(regfit.best, <span class="dt">id =</span> i)
-  <span class="co"># this prediction without the predict function for a linear model</span>
-  <span class="co"># here we use linear algebra operations were we multiply the data matrix</span>
-  <span class="co"># with the coefficient vector</span>
-  y_hat &lt;-<span class="st"> </span>test.mat[, <span class="kw">names</span>(coefi)] <span class="op">%*%</span><span class="st"> </span>coefi
-  
-  <span class="co"># we compute the test set MSE for each model</span>
-  val.errors[i] &lt;-<span class="st"> </span><span class="kw">mean</span>(  (df<span class="op">$</span>IMMBRIT[test] <span class="op">-</span><span class="st"> </span>y_hat)<span class="op">^</span><span class="dv">2</span>   )
-}</code></pre>
+<div class="sourceCode" id="cb127"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb127-1" title="1"><span class="co"># validation error for each model</span></a>
+<a class="sourceLine" id="cb127-2" title="2">val.errors &lt;-<span class="st"> </span><span class="ot">NA</span></a>
+<a class="sourceLine" id="cb127-3" title="3"><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">16</span> ){</a>
+<a class="sourceLine" id="cb127-4" title="4">  </a>
+<a class="sourceLine" id="cb127-5" title="5">  coefi &lt;-<span class="st"> </span><span class="kw">coef</span>(regfit.best, <span class="dt">id =</span> i)</a>
+<a class="sourceLine" id="cb127-6" title="6">  <span class="co"># this prediction without the predict function for a linear model</span></a>
+<a class="sourceLine" id="cb127-7" title="7">  <span class="co"># here we use linear algebra operations were we multiply the data matrix</span></a>
+<a class="sourceLine" id="cb127-8" title="8">  <span class="co"># with the coefficient vector</span></a>
+<a class="sourceLine" id="cb127-9" title="9">  y_hat &lt;-<span class="st"> </span>test.mat[, <span class="kw">names</span>(coefi)] <span class="op">%*%</span><span class="st"> </span>coefi</a>
+<a class="sourceLine" id="cb127-10" title="10">  </a>
+<a class="sourceLine" id="cb127-11" title="11">  <span class="co"># we compute the test set MSE for each model</span></a>
+<a class="sourceLine" id="cb127-12" title="12">  val.errors[i] &lt;-<span class="st"> </span><span class="kw">mean</span>(  (df<span class="op">$</span>IMMBRIT[test] <span class="op">-</span><span class="st"> </span>y_hat)<span class="op">^</span><span class="dv">2</span>   )</a>
+<a class="sourceLine" id="cb127-13" title="13">}</a></code></pre></div>
 <p>We examine the validation error for each model and identify the best model with the lowest error.</p>
-<pre class="sourceCode r"><code class="sourceCode r">val.errors</code></pre>
+<div class="sourceCode" id="cb128"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb128-1" title="1">val.errors</a></code></pre></div>
 <pre><code> [1] 422.6788 433.3656 422.1876 423.2052 419.1279 428.0234 425.6056
  [8] 424.7795 425.5773 427.3771 428.2082 427.7471 426.4746 427.7618
 [15] 426.7668 426.3854</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># which model has smallest error</span>
-min.val.errors &lt;-<span class="st"> </span><span class="kw">which.min</span>(val.errors)
-
-<span class="co"># coefficients of that model</span>
-<span class="kw">coef</span>( regfit.best, min.val.errors )</code></pre>
+<div class="sourceCode" id="cb130"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb130-1" title="1"><span class="co"># which model has smallest error</span></a>
+<a class="sourceLine" id="cb130-2" title="2">min.val.errors &lt;-<span class="st"> </span><span class="kw">which.min</span>(val.errors)</a>
+<a class="sourceLine" id="cb130-3" title="3"></a>
+<a class="sourceLine" id="cb130-4" title="4"><span class="co"># coefficients of that model</span></a>
+<a class="sourceLine" id="cb130-5" title="5"><span class="kw">coef</span>( regfit.best, min.val.errors )</a></code></pre></div>
 <pre><code>(Intercept)  RSexFemale        RAge    Househld         Lab       HHInc 
  47.9382527   6.2858758  -0.1880005   1.5486251  -5.1619813  -1.7403107 </code></pre>
 <p>We can combine these steps into a function that can be called repeatedly when running k-fold cross-validation.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># predict function for repeatedly choosing model with lowest test error</span>
-predict.regsubsets &lt;-<span class="st"> </span><span class="cf">function</span>( object, newdata, id, ... ){
-  <span class="co"># get the formula from the model</span>
-  m.formula &lt;-<span class="st"> </span><span class="kw">as.formula</span>( object<span class="op">$</span>call[[<span class="dv">2</span>]] )
-  <span class="co"># use that formula to create the model matrix for some new data</span>
-  mat &lt;-<span class="st"> </span><span class="kw">model.matrix</span>( m.formula, newdata )
-  <span class="co"># get coeffiecients where id is the number of variables</span>
-  coefi &lt;-<span class="st"> </span><span class="kw">coef</span>( object, <span class="dt">id =</span> id )
-  <span class="co"># get the variable names of current model</span>
-  xvars &lt;-<span class="st"> </span><span class="kw">names</span>( coefi )
-  <span class="co"># multiply data with coefficients</span>
-  mat[ , xvars ] <span class="op">%*%</span><span class="st"> </span>coefi
-}</code></pre>
+<div class="sourceCode" id="cb132"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb132-1" title="1"><span class="co"># predict function for repeatedly choosing model with lowest test error</span></a>
+<a class="sourceLine" id="cb132-2" title="2">predict.regsubsets &lt;-<span class="st"> </span><span class="cf">function</span>( object, newdata, id, ... ){</a>
+<a class="sourceLine" id="cb132-3" title="3">  <span class="co"># get the formula from the model</span></a>
+<a class="sourceLine" id="cb132-4" title="4">  m.formula &lt;-<span class="st"> </span><span class="kw">as.formula</span>( object<span class="op">$</span>call[[<span class="dv">2</span>]] )</a>
+<a class="sourceLine" id="cb132-5" title="5">  <span class="co"># use that formula to create the model matrix for some new data</span></a>
+<a class="sourceLine" id="cb132-6" title="6">  mat &lt;-<span class="st"> </span><span class="kw">model.matrix</span>( m.formula, newdata )</a>
+<a class="sourceLine" id="cb132-7" title="7">  <span class="co"># get coeffiecients where id is the number of variables</span></a>
+<a class="sourceLine" id="cb132-8" title="8">  coefi &lt;-<span class="st"> </span><span class="kw">coef</span>( object, <span class="dt">id =</span> id )</a>
+<a class="sourceLine" id="cb132-9" title="9">  <span class="co"># get the variable names of current model</span></a>
+<a class="sourceLine" id="cb132-10" title="10">  xvars &lt;-<span class="st"> </span><span class="kw">names</span>( coefi )</a>
+<a class="sourceLine" id="cb132-11" title="11">  <span class="co"># multiply data with coefficients</span></a>
+<a class="sourceLine" id="cb132-12" title="12">  mat[ , xvars ] <span class="op">%*%</span><span class="st"> </span>coefi</a>
+<a class="sourceLine" id="cb132-13" title="13">}</a></code></pre></div>
 <p>We run <code>regsubsets()</code> on the full dataset and examine the coefficients associated with the model that has the lower validation error.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># best subset on full data set</span>
-regfit.best &lt;-<span class="st"> </span><span class="kw">regsubsets</span>( IMMBRIT <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> df, <span class="dt">nvmax =</span> <span class="dv">16</span> )
-
-<span class="co"># examine coefficients of the model that had the lowest validation error</span>
-<span class="kw">coef</span>( regfit.best, min.val.errors )</code></pre>
+<div class="sourceCode" id="cb133"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb133-1" title="1"><span class="co"># best subset on full data set</span></a>
+<a class="sourceLine" id="cb133-2" title="2">regfit.best &lt;-<span class="st"> </span><span class="kw">regsubsets</span>( IMMBRIT <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> df, <span class="dt">nvmax =</span> <span class="dv">16</span> )</a>
+<a class="sourceLine" id="cb133-3" title="3"></a>
+<a class="sourceLine" id="cb133-4" title="4"><span class="co"># examine coefficients of the model that had the lowest validation error</span></a>
+<a class="sourceLine" id="cb133-5" title="5"><span class="kw">coef</span>( regfit.best, min.val.errors )</a></code></pre></div>
 <pre><code>(Intercept)  RSexFemale    Househld         Lab         BNP       HHInc 
   35.920518    6.886259    2.062351   -3.394188    9.708402   -1.563859 </code></pre>
 </div>
 <div id="k-fold-cross-validation-1" class="section level4">
 <h4><span class="header-section-number">4.1.3.2</span> k-fold cross-validation</h4>
 <p>For cross-validation, we create the number of folds needed (10, in this case) and allocate a matrix for storing the results.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># number of folds</span>
-k &lt;-<span class="st"> </span><span class="dv">10</span>
-<span class="kw">set.seed</span>(<span class="dv">1</span>)
-
-<span class="co"># fold assignment for each observation</span>
-folds &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="dv">1</span><span class="op">:</span>k, <span class="kw">nrow</span>(df), <span class="dt">replace =</span> <span class="ot">TRUE</span>)
-
-<span class="co"># frequency table of fold assignment (should be relatively balanced)</span>
-<span class="kw">table</span>(folds)</code></pre>
+<div class="sourceCode" id="cb135"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb135-1" title="1"><span class="co"># number of folds</span></a>
+<a class="sourceLine" id="cb135-2" title="2">k &lt;-<span class="st"> </span><span class="dv">10</span></a>
+<a class="sourceLine" id="cb135-3" title="3"><span class="kw">set.seed</span>(<span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb135-4" title="4"></a>
+<a class="sourceLine" id="cb135-5" title="5"><span class="co"># fold assignment for each observation</span></a>
+<a class="sourceLine" id="cb135-6" title="6">folds &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="dv">1</span><span class="op">:</span>k, <span class="kw">nrow</span>(df), <span class="dt">replace =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb135-7" title="7"></a>
+<a class="sourceLine" id="cb135-8" title="8"><span class="co"># frequency table of fold assignment (should be relatively balanced)</span></a>
+<a class="sourceLine" id="cb135-9" title="9"><span class="kw">table</span>(folds)</a></code></pre></div>
 <pre><code>folds
   1   2   3   4   5   6   7   8   9  10 
  99  83 104 106 110 101 112 100 114 112 </code></pre>
 <p>Let’s create an object that will store errors for cross-validation and we then look at that.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># container for cross-validation errors</span>
-cv.errors &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="ot">NA</span>, <span class="dt">nrow =</span> k, <span class="dt">ncol =</span> <span class="dv">16</span>, <span class="dt">dimnames =</span> <span class="kw">list</span>(<span class="ot">NULL</span>, <span class="kw">paste</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">16</span>)))
-<span class="co"># have a look at the matrix</span>
-cv.errors</code></pre>
+<div class="sourceCode" id="cb137"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb137-1" title="1"><span class="co"># container for cross-validation errors</span></a>
+<a class="sourceLine" id="cb137-2" title="2">cv.errors &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="ot">NA</span>, <span class="dt">nrow =</span> k, <span class="dt">ncol =</span> <span class="dv">16</span>, <span class="dt">dimnames =</span> <span class="kw">list</span>(<span class="ot">NULL</span>, <span class="kw">paste</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">16</span>)))</a>
+<a class="sourceLine" id="cb137-3" title="3"><span class="co"># have a look at the matrix</span></a>
+<a class="sourceLine" id="cb137-4" title="4">cv.errors</a></code></pre></div>
 <pre><code>       1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16
  [1,] NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA
  [2,] NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA
@@ -742,25 +741,25 @@ cv.errors</code></pre>
  [9,] NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA
 [10,] NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA</code></pre>
 <p>We then run through each fold in a <code>for()</code> loop and predict the salary using our predict function. We then calculate the validation error for each fold and save them in the matrix created above.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># loop over folds</span>
-<span class="cf">for</span> (a <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>k){
-  
-  <span class="co"># best subset selection on training data</span>
-  best.fit &lt;-<span class="st"> </span><span class="kw">regsubsets</span>(IMMBRIT <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> df[ folds <span class="op">!=</span><span class="st"> </span>a, ], <span class="dt">nvmax =</span> <span class="dv">16</span>)
-  
-  <span class="co"># loop over the 16 subsets</span>
-  <span class="cf">for</span> (b <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">16</span>){
-    
-    <span class="co"># predict response for test set for current subset</span>
-    pred &lt;-<span class="st"> </span><span class="kw">predict</span>(best.fit, df[ folds <span class="op">==</span><span class="st"> </span>a ,], <span class="dt">id =</span> b )
-    
-    <span class="co"># MSE into container; rows are folds; columns are subsets</span>
-    cv.errors[a, b] &lt;-<span class="st"> </span><span class="kw">mean</span>( (df<span class="op">$</span>IMMBRIT[folds<span class="op">==</span>a] <span class="op">-</span><span class="st"> </span>pred)<span class="op">^</span><span class="dv">2</span> )
-    
-  } <span class="co"># end of loop over the 16 subsets</span>
-} <span class="co"># end of loop over folds</span>
-<span class="co"># the cross-validation error matrix</span>
-cv.errors</code></pre>
+<div class="sourceCode" id="cb139"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb139-1" title="1"><span class="co"># loop over folds</span></a>
+<a class="sourceLine" id="cb139-2" title="2"><span class="cf">for</span> (a <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>k){</a>
+<a class="sourceLine" id="cb139-3" title="3">  </a>
+<a class="sourceLine" id="cb139-4" title="4">  <span class="co"># best subset selection on training data</span></a>
+<a class="sourceLine" id="cb139-5" title="5">  best.fit &lt;-<span class="st"> </span><span class="kw">regsubsets</span>(IMMBRIT <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> df[ folds <span class="op">!=</span><span class="st"> </span>a, ], <span class="dt">nvmax =</span> <span class="dv">16</span>)</a>
+<a class="sourceLine" id="cb139-6" title="6">  </a>
+<a class="sourceLine" id="cb139-7" title="7">  <span class="co"># loop over the 16 subsets</span></a>
+<a class="sourceLine" id="cb139-8" title="8">  <span class="cf">for</span> (b <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">16</span>){</a>
+<a class="sourceLine" id="cb139-9" title="9">    </a>
+<a class="sourceLine" id="cb139-10" title="10">    <span class="co"># predict response for test set for current subset</span></a>
+<a class="sourceLine" id="cb139-11" title="11">    pred &lt;-<span class="st"> </span><span class="kw">predict</span>(best.fit, df[ folds <span class="op">==</span><span class="st"> </span>a ,], <span class="dt">id =</span> b )</a>
+<a class="sourceLine" id="cb139-12" title="12">    </a>
+<a class="sourceLine" id="cb139-13" title="13">    <span class="co"># MSE into container; rows are folds; columns are subsets</span></a>
+<a class="sourceLine" id="cb139-14" title="14">    cv.errors[a, b] &lt;-<span class="st"> </span><span class="kw">mean</span>( (df<span class="op">$</span>IMMBRIT[folds<span class="op">==</span>a] <span class="op">-</span><span class="st"> </span>pred)<span class="op">^</span><span class="dv">2</span> )</a>
+<a class="sourceLine" id="cb139-15" title="15">    </a>
+<a class="sourceLine" id="cb139-16" title="16">  } <span class="co"># end of loop over the 16 subsets</span></a>
+<a class="sourceLine" id="cb139-17" title="17">} <span class="co"># end of loop over folds</span></a>
+<a class="sourceLine" id="cb139-18" title="18"><span class="co"># the cross-validation error matrix</span></a>
+<a class="sourceLine" id="cb139-19" title="19">cv.errors</a></code></pre></div>
 <pre><code>             1        2        3        4        5        6        7
  [1,] 340.6348 360.4143 354.1625 361.5282 354.2123 357.4392 352.4973
  [2,] 452.1263 416.6181 421.1696 423.3392 412.5419 416.3733 415.5115
@@ -795,23 +794,23 @@ cv.errors</code></pre>
  [9,] 352.7259 354.9532
 [10,] 351.3258 351.4992</code></pre>
 <p>We calculate the mean error for all subsets by applying mean to each column using the <code>apply()</code> function.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># average cross-validation errors over the folds</span>
-mean.cv.errors &lt;-<span class="st"> </span><span class="kw">apply</span>(cv.errors, <span class="dv">2</span>, mean)
-mean.cv.errors</code></pre>
+<div class="sourceCode" id="cb141"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb141-1" title="1"><span class="co"># average cross-validation errors over the folds</span></a>
+<a class="sourceLine" id="cb141-2" title="2">mean.cv.errors &lt;-<span class="st"> </span><span class="kw">apply</span>(cv.errors, <span class="dv">2</span>, mean)</a>
+<a class="sourceLine" id="cb141-3" title="3">mean.cv.errors</a></code></pre></div>
 <pre><code>       1        2        3        4        5        6        7        8 
 400.4651 389.3084 385.9240 388.9074 384.1876 386.8666 385.9788 384.0273 
        9       10       11       12       13       14       15       16 
 384.7580 385.1935 384.4806 384.8721 384.5624 384.6850 384.9264 384.9445 </code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># visualize</span>
-<span class="kw">par</span>( <span class="dt">mfrow =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">1</span>) , <span class="dt">oma =</span> <span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>))
-<span class="kw">plot</span>( mean.cv.errors, <span class="dt">type =</span> <span class="st">&quot;b&quot;</span> )</code></pre>
+<div class="sourceCode" id="cb143"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb143-1" title="1"><span class="co"># visualize</span></a>
+<a class="sourceLine" id="cb143-2" title="2"><span class="kw">par</span>( <span class="dt">mfrow =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">1</span>) , <span class="dt">oma =</span> <span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>))</a>
+<a class="sourceLine" id="cb143-3" title="3"><span class="kw">plot</span>( mean.cv.errors, <span class="dt">type =</span> <span class="st">&quot;b&quot;</span> )</a></code></pre></div>
 <p><img src="ml101_files/figure-html/unnamed-chunk-90-1.png" width="672" /></p>
 <p>Finally, we run <code>regsubsets()</code> on the full dataset and show the coefficients for the best performing model which we picked using 10-fold cross-validation.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># run regsubsets on full data set</span>
-reg.best &lt;-<span class="st"> </span><span class="kw">regsubsets</span>(IMMBRIT <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> df, <span class="dt">nvmax =</span> <span class="dv">16</span>)
-
-<span class="co"># coefficients of subset which minimized test error</span>
-<span class="kw">coef</span>(reg.best, <span class="kw">which.min</span>(mean.cv.errors))</code></pre>
+<div class="sourceCode" id="cb144"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb144-1" title="1"><span class="co"># run regsubsets on full data set</span></a>
+<a class="sourceLine" id="cb144-2" title="2">reg.best &lt;-<span class="st"> </span><span class="kw">regsubsets</span>(IMMBRIT <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> df, <span class="dt">nvmax =</span> <span class="dv">16</span>)</a>
+<a class="sourceLine" id="cb144-3" title="3"></a>
+<a class="sourceLine" id="cb144-4" title="4"><span class="co"># coefficients of subset which minimized test error</span></a>
+<a class="sourceLine" id="cb144-5" title="5"><span class="kw">coef</span>(reg.best, <span class="kw">which.min</span>(mean.cv.errors))</a></code></pre></div>
 <pre><code>(Intercept)  RSexFemale        RAge    Househld         Lab        Ukip 
 40.45488881  7.04808104 -0.08129894  1.67265081 -3.60995595 -5.90702725 
         BNP       paper       HHInc 
