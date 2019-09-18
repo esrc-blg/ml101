@@ -184,7 +184,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="8" data-path="seminar8.html"><a href="seminar8.html"><i class="fa fa-check"></i><b>8</b> Simulation and Monte Carlos</a><ul>
-<li class="chapter" data-level="8.1" data-path="seminar8.html"><a href="seminar8.html#seminar-6"><i class="fa fa-check"></i><b>8.1</b> Seminar</a></li>
+<li class="chapter" data-level="8.1" data-path="seminar8.html"><a href="seminar8.html#seminar-6"><i class="fa fa-check"></i><b>8.1</b> Seminar</a><ul>
+<li class="chapter" data-level="8.1.1" data-path="seminar8.html"><a href="seminar8.html#monte-carlo-simulation"><i class="fa fa-check"></i><b>8.1.1</b> Monte Carlo simulation</a></li>
+<li class="chapter" data-level="8.1.2" data-path="seminar8.html"><a href="seminar8.html#simulation-approach-to-uncertainty"><i class="fa fa-check"></i><b>8.1.2</b> Simulation approach to uncertainty</a></li>
+</ul></li>
 </ul></li>
 </ul>
 
@@ -349,10 +352,10 @@ prediction   0   1
 <div class="sourceCode" id="cb235"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb235-1" title="1"><span class="co"># Brier score</span></a>
 <a class="sourceLine" id="cb235-2" title="2">t2.pred &lt;-<span class="st"> </span><span class="kw">predict</span>(t2, <span class="dt">newdata =</span> bes.test, <span class="dt">type =</span> <span class="st">&quot;vector&quot;</span>)[,<span class="dv">2</span>]</a>
 <a class="sourceLine" id="cb235-3" title="3">mse.pruned &lt;-<span class="st"> </span><span class="kw">mean</span>( (t2.pred <span class="op">-</span><span class="st"> </span>turnout.test)<span class="op">^</span><span class="dv">2</span> ) </a></code></pre></div>
-<p>We still correctly classify 0.1338879% of the observations and the brier score remained stable. In the previous plots, we saw that we should do worse if we prune back the tree to have less than 4 terminal nodes. We examine what happens if we overdo it.</p>
+<p>We still correctly classify 0<span class="math inline">\(\%\)</span> of the observations and the brier score remained stable. In the previous plots, we saw that we should do worse if we prune back the tree to have less than 4 terminal nodes. We examine what happens if we overdo it.</p>
 <div class="sourceCode" id="cb236"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb236-1" title="1"><span class="co"># using &quot;wrong&quot; value for pruning (where the error rate does increase)</span></a>
 <a class="sourceLine" id="cb236-2" title="2">prune.t2 &lt;-<span class="st"> </span><span class="kw">prune.misclass</span>(t2, <span class="dt">best =</span> <span class="dv">2</span>)</a>
-<a class="sourceLine" id="cb236-3" title="3"><span class="kw">plot</span>(prune.t2)</a>
+<a class="sourceLine" id="cb236-3" title="3"><span class="kw">plot</span>(prune.t2, <span class="dt">bty =</span> <span class="st">&quot;n&quot;</span>)</a>
 <a class="sourceLine" id="cb236-4" title="4"><span class="kw">text</span>(prune.t2, <span class="dt">pretty =</span> <span class="dv">0</span>)</a></code></pre></div>
 <p><img src="ml101_files/figure-html/unnamed-chunk-146-1.png" width="672" /></p>
 <p>We now predict outcomes based on the tree that is too small.</p>
@@ -464,7 +467,7 @@ No. of variables tried at each split: 19
 <a class="sourceLine" id="cb257-3" title="3"><span class="co"># reduction of error</span></a>
 <a class="sourceLine" id="cb257-4" title="4">(mse.bag <span class="op">-</span><span class="st"> </span>mse.tree) <span class="op">/</span><span class="st"> </span>mse.tree</a></code></pre></div>
 <pre><code>[1] -0.05762335</code></pre>
-<p>We reduce the error rate by 5.76<span class="math inline">\(%\)</span> by using bagging. We examine what happens when we reduce the number of trees we grow. The default is 500.</p>
+<p>We reduce the error rate by 5.76<span class="math inline">\(\%\)</span> by using bagging. We examine what happens when we reduce the number of trees we grow. The default is 500.</p>
 <div class="sourceCode" id="cb259"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb259-1" title="1"><span class="co"># dcrease the number of trees (defaults to 500)</span></a>
 <a class="sourceLine" id="cb259-2" title="2">bag2 &lt;-<span class="st"> </span><span class="kw">randomForest</span>(Income <span class="op">~</span><span class="st"> </span>., <span class="dt">mtry =</span> <span class="dv">19</span>, <span class="dt">data =</span> bes, <span class="dt">subset =</span> train, <span class="dt">ntree =</span> <span class="dv">25</span>, <span class="dt">importance =</span> <span class="ot">TRUE</span>)</a>
 <a class="sourceLine" id="cb259-3" title="3"></a>
@@ -652,7 +655,8 @@ evaluating in sample data...done</code></pre>
 <div class="sourceCode" id="cb291"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb291-1" title="1"><span class="co"># reduction in error</span></a>
 <a class="sourceLine" id="cb291-2" title="2">(mse.bart <span class="op">-</span><span class="st"> </span>mse.gb) <span class="op">/</span><span class="st"> </span>mse.gb</a></code></pre></div>
 <pre><code>[1] -0.01670494</code></pre>
-<p>We have reduced the error by another 1.67<span class="math inline">\(\%\)</span>. Not bad… However, keep in mind that we are usig the validation set approach here. A better evaluation would be based on cross-validation or a truly new dataset.</p>
+<p>We have reduced the error by another 1.67<span class="math inline">\(\%\)</span>. Not bad… However, keep in mind that we are usig the validation set approach here. A better evaluation would be based on cross-validation or a truly new dataset.
++</p>
 
 </div>
 </div>

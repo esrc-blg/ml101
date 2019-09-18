@@ -173,7 +173,7 @@ Participants are expected to have a solid understanding of linear regression mod
 
 \textbf{\emph{Acknowledgements}}
 
-The material in this course is based on the textbook: \href{http://faculty.marshall.usc.edu/gareth-james/ISL/ISLR\%20Seventh\%20Printing.pdf}{James Gareth, Daniela Witten, Trevor Hastie and Robert Tibshirani. 2013. An introduction to statistical learning. Springer}. In addition, the material is based on a machine learning class at the Essex Summer School with \href{https://lucasleemann.ch}{Lucas Leemann} and \href{https://philippbroniecki.com}{Philipp Broniecki}. The infrastracture for this website is in large parts adopted from work by UCL's \href{https://iris.ucl.ac.uk/iris/browse/profile?upi=ALIAX58}{Altaf Ali}, \href{https://www.jackblumenau.com/}{Jack Blumenau}, and \href{https://www.philippbroniecki.com/}{Philipp Broniecki}.
+The material in this course is based on the textbook: \href{http://faculty.marshall.usc.edu/gareth-james/ISL/ISLR\%20Seventh\%20Printing.pdf}{James Gareth, Daniela Witten, Trevor Hastie and Robert Tibshirani. 2013. An introduction to statistical learning. Springer}. In addition, the material is based on a machine learning class at the Essex Summer School with \href{https://lucasleemann.ch}{Lucas Leemann} and \href{https://philippbroniecki.com}{Philipp Broniecki}. The infrastracture for this website is in large parts adopted from work by UCL's \href{https://iris.ucl.ac.uk/iris/browse/profile?upi=ALIAX58}{Altaf Ali}, \href{https://www.jackblumenau.com/}{Jack Blumenau}, \href{https://lucasleemann.ch}{Lucas Leemann}, \href{https://sjankin.com/}{Slava Jankin Mikhaylov}, and \href{https://www.philippbroniecki.com/}{Philipp Broniecki}.
 
 \begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
 
@@ -3902,7 +3902,262 @@ We have reduced the error by another 1.67\(\%\). Not bad\ldots{} However, keep i
 \hypertarget{seminar-6}{%
 \subsection{Seminar}\label{seminar-6}}
 
-Placeholder
+In this exercise, we introduce a simulation approach to quantifying uncertainty and Monte Carlo simulation.
+
+\hypertarget{monte-carlo-simulation}{%
+\subsubsection{Monte Carlo simulation}\label{monte-carlo-simulation}}
+
+In Monte Carlo simulation we create a fake data set were we define a causal model of the outcome directly. That way, we know what the true outcome has to be. We can then keep everything constant but make on change to our estimation to assess the effect of that change on our prediction accuarcy. We could, for instance, be interested in finding out whether our prediction accuracy suffers when independent variables are highly correlated.
+
+So, we set up an MC analysis to see whether problems of multicollinearity (high correlation between explanatory variables) go away as the sample size increases. The goal is to see how well we are able to retrieve the true value of \(\beta_{1}\) for varying strengths of correlation and sample sizes.
+
+The basic setup of the simulation is as follows:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# the number of runs (simulations)}
+\NormalTok{sim.n <-}\StringTok{ }\DecValTok{1000}
+
+\CommentTok{# sequence of low to high correlation}
+\NormalTok{Rho <-}\StringTok{ }\KeywordTok{seq}\NormalTok{(}\DataTypeTok{from =} \DecValTok{0}\NormalTok{, }\DataTypeTok{to =} \FloatTok{.9}\NormalTok{,}\DataTypeTok{length.out=}\DecValTok{10}\NormalTok{)}
+
+\CommentTok{# vector of sample sizes}
+\NormalTok{sample.N <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{100}\NormalTok{, }\DecValTok{500}\NormalTok{, }\DecValTok{1000}\NormalTok{, }\DecValTok{2000}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+We create a container \texttt{beta.catcher} that stores coefficient values for different simulations. The container is a 3-dimensional array where the first dimension is the number of simulations, the second is the sample size, the third is correlation.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# rows = simulations, columns = sample size, layers = correlation}
+\NormalTok{beta.catcher <-}\StringTok{ }\KeywordTok{array}\NormalTok{(}\OtherTok{NA}\NormalTok{, }\KeywordTok{c}\NormalTok{(sim.n, }\DecValTok{4}\NormalTok{, }\DecValTok{10}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+We start simulating. This will take a while because we are iterating through \(sim.n * Rho * sample.N\) iterations, i.e.~\(40,000\) iterations. Each time we regress \(y\) on our covariates.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# loop over the correlations}
+\ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\KeywordTok{length}\NormalTok{(Rho))\{}
+  
+  \CommentTok{# loop over sample sizes}
+  \ControlFlowTok{for}\NormalTok{ (j }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{4}\NormalTok{)\{}
+    
+    \CommentTok{# loop over the random draws (number of simulations)}
+    \ControlFlowTok{for}\NormalTok{ (k }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\NormalTok{sim.n)\{}
+      
+      \CommentTok{# current correlation}
+\NormalTok{      rho <-}\StringTok{ }\NormalTok{Rho[i]}
+      \CommentTok{# current sample size}
+\NormalTok{      sample.n <-}\StringTok{ }\NormalTok{sample.N[j] }
+      \CommentTok{# variance covariance matrix current corr on off-diagonal}
+\NormalTok{      varL <-}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\KeywordTok{c}\NormalTok{ (}\DecValTok{1}\NormalTok{,rho,rho,}\DecValTok{1}\NormalTok{) , }\DataTypeTok{nrow =} \DecValTok{2}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{2}\NormalTok{)}
+      \CommentTok{# random draw of covariates as many as sample size}
+\NormalTok{      XX <-}\StringTok{ }\NormalTok{MASS}\OperatorTok{::}\KeywordTok{mvrnorm}\NormalTok{(sample.n, }\KeywordTok{rep}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{2}\NormalTok{), varL) }
+      \CommentTok{# random noise}
+\NormalTok{      e <-}\StringTok{ }\KeywordTok{rnorm}\NormalTok{(sample.n)}
+      \CommentTok{# the true data generation process b1 = 1; b2 = 1}
+\NormalTok{      y <-}\StringTok{ }\NormalTok{XX  }\OperatorTok{%*%}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{) }\OperatorTok{+}\StringTok{ }\NormalTok{e}
+      \CommentTok{# we regress the true y on the covariates and extract beta 1}
+\NormalTok{      beta.catcher[k,j,i] <-}\StringTok{ }\KeywordTok{coef}\NormalTok{(}\KeywordTok{lm}\NormalTok{(y}\OperatorTok{~}\NormalTok{XX))[}\DecValTok{2}\NormalTok{]  }
+      
+\NormalTok{      \} }\CommentTok{# end of loop over number of sims}
+\NormalTok{    \} }\CommentTok{# end of loop over sample sizes}
+\NormalTok{  \} }\CommentTok{# end of loop over correlations}
+\end{Highlighting}
+\end{Shaded}
+
+You can have a look at the container by calling it with \texttt{beta.catcher}. We remind ourselves of the dimensions with:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{dim}\NormalTok{(beta.catcher)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 1000    4   10
+\end{verbatim}
+
+We take the MSE of each coefficient estimate in the container. This is an element-wise operation so the resulting object \texttt{error.sq} has the same dimensions as the container.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{error.sq <-}\StringTok{ }\NormalTok{(beta.catcher}\DecValTok{-1}\NormalTok{)}\OperatorTok{^}\DecValTok{2} 
+\end{Highlighting}
+\end{Shaded}
+
+We average over the simulations by taking the column means. This returns a matrix where the rows are now the different sample sizes (previously in the columns) and the columns are the correlations (previously in the layers). The \texttt{matrix\ mse.beta}, thus, has 4 rows and 10 columns.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mse.beta1 <-}\StringTok{ }\KeywordTok{colMeans}\NormalTok{(error.sq) }
+\end{Highlighting}
+\end{Shaded}
+
+To show the effect of multicollinearity for increasing levels of correlation and for increasing sample sizes, we plot correlation on the x-axis and the MSE on the y-axis in four plots where sample size increases by plot.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{par}\NormalTok{(}\DataTypeTok{mfrow=}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{4}\NormalTok{))}
+\KeywordTok{plot}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\DecValTok{0}\OperatorTok{:}\DecValTok{9}\NormalTok{)}\OperatorTok{/}\DecValTok{10}\NormalTok{,mse.beta1[}\DecValTok{1}\NormalTok{,], }\DataTypeTok{xlab=}\StringTok{"correlation"}\NormalTok{, }\DataTypeTok{ylab=}\StringTok{"Mean Squared Error"}\NormalTok{, }\DataTypeTok{type=}\StringTok{"o"}\NormalTok{, }\DataTypeTok{pch=}\DecValTok{19}\NormalTok{, }\DataTypeTok{bty=}\StringTok{"n"}\NormalTok{, }\DataTypeTok{main=}\StringTok{"N=100"}\NormalTok{, }\DataTypeTok{ylim=}\KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,.}\DecValTok{2}\NormalTok{))}
+\KeywordTok{plot}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\DecValTok{0}\OperatorTok{:}\DecValTok{9}\NormalTok{)}\OperatorTok{/}\DecValTok{10}\NormalTok{,mse.beta1[}\DecValTok{2}\NormalTok{,], }\DataTypeTok{xlab=}\StringTok{"correlation"}\NormalTok{, }\DataTypeTok{ylab=}\StringTok{"Mean Squared Error"}\NormalTok{, }\DataTypeTok{type=}\StringTok{"o"}\NormalTok{, }\DataTypeTok{pch=}\DecValTok{19}\NormalTok{, }\DataTypeTok{bty=}\StringTok{"n"}\NormalTok{, }\DataTypeTok{main=}\StringTok{"N=500"}\NormalTok{, }\DataTypeTok{ylim=}\KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,.}\DecValTok{2}\NormalTok{))}
+\KeywordTok{plot}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\DecValTok{0}\OperatorTok{:}\DecValTok{9}\NormalTok{)}\OperatorTok{/}\DecValTok{10}\NormalTok{,mse.beta1[}\DecValTok{3}\NormalTok{,], }\DataTypeTok{xlab=}\StringTok{"correlation"}\NormalTok{, }\DataTypeTok{ylab=}\StringTok{"Mean Squared Error"}\NormalTok{, }\DataTypeTok{type=}\StringTok{"o"}\NormalTok{, }\DataTypeTok{pch=}\DecValTok{19}\NormalTok{, }\DataTypeTok{bty=}\StringTok{"n"}\NormalTok{, }\DataTypeTok{main=}\StringTok{"N=1000"}\NormalTok{, }\DataTypeTok{ylim=}\KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,.}\DecValTok{2}\NormalTok{))}
+\KeywordTok{plot}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\DecValTok{0}\OperatorTok{:}\DecValTok{9}\NormalTok{)}\OperatorTok{/}\DecValTok{10}\NormalTok{,mse.beta1[}\DecValTok{4}\NormalTok{,], }\DataTypeTok{xlab=}\StringTok{"correlation"}\NormalTok{, }\DataTypeTok{ylab=}\StringTok{"Mean Squared Error"}\NormalTok{, }\DataTypeTok{type=}\StringTok{"o"}\NormalTok{, }\DataTypeTok{pch=}\DecValTok{19}\NormalTok{, }\DataTypeTok{bty=}\StringTok{"n"}\NormalTok{, }\DataTypeTok{main=}\StringTok{"N=2000"}\NormalTok{, }\DataTypeTok{ylim=}\KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,.}\DecValTok{2}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics{ml101_files/figure-latex/unnamed-chunk-178-1} \end{center}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{error.abs <-}\StringTok{ }\KeywordTok{abs}\NormalTok{(beta.catcher}\DecValTok{-1}\NormalTok{)}
+\NormalTok{mae.beta1 <-}\StringTok{ }\KeywordTok{colMeans}\NormalTok{(error.abs)}
+
+\KeywordTok{par}\NormalTok{(}\DataTypeTok{mfrow=}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{4}\NormalTok{))}
+\KeywordTok{plot}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\DecValTok{0}\OperatorTok{:}\DecValTok{9}\NormalTok{)}\OperatorTok{/}\DecValTok{10}\NormalTok{,mae.beta1[}\DecValTok{1}\NormalTok{,], }\DataTypeTok{xlab=}\StringTok{"correlation"}\NormalTok{, }\DataTypeTok{ylab=}\StringTok{"Means Absolute Error"}\NormalTok{, }\DataTypeTok{type=}\StringTok{"o"}\NormalTok{, }\DataTypeTok{pch=}\DecValTok{19}\NormalTok{, }\DataTypeTok{bty=}\StringTok{"n"}\NormalTok{, }\DataTypeTok{main=}\StringTok{"N=100"}\NormalTok{, }\DataTypeTok{ylim=}\KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,.}\DecValTok{2}\NormalTok{))}
+\KeywordTok{plot}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\DecValTok{0}\OperatorTok{:}\DecValTok{9}\NormalTok{)}\OperatorTok{/}\DecValTok{10}\NormalTok{,mae.beta1[}\DecValTok{2}\NormalTok{,], }\DataTypeTok{xlab=}\StringTok{"correlation"}\NormalTok{, }\DataTypeTok{ylab=}\StringTok{"Means Absolute Error"}\NormalTok{, }\DataTypeTok{type=}\StringTok{"o"}\NormalTok{, }\DataTypeTok{pch=}\DecValTok{19}\NormalTok{, }\DataTypeTok{bty=}\StringTok{"n"}\NormalTok{, }\DataTypeTok{main=}\StringTok{"N=500"}\NormalTok{, }\DataTypeTok{ylim=}\KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,.}\DecValTok{2}\NormalTok{))}
+\KeywordTok{plot}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\DecValTok{0}\OperatorTok{:}\DecValTok{9}\NormalTok{)}\OperatorTok{/}\DecValTok{10}\NormalTok{,mae.beta1[}\DecValTok{3}\NormalTok{,], }\DataTypeTok{xlab=}\StringTok{"correlation"}\NormalTok{, }\DataTypeTok{ylab=}\StringTok{"Means Absolute Error"}\NormalTok{, }\DataTypeTok{type=}\StringTok{"o"}\NormalTok{, }\DataTypeTok{pch=}\DecValTok{19}\NormalTok{, }\DataTypeTok{bty=}\StringTok{"n"}\NormalTok{, }\DataTypeTok{main=}\StringTok{"N=1000"}\NormalTok{, }\DataTypeTok{ylim=}\KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,.}\DecValTok{2}\NormalTok{))}
+\KeywordTok{plot}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\DecValTok{0}\OperatorTok{:}\DecValTok{9}\NormalTok{)}\OperatorTok{/}\DecValTok{10}\NormalTok{,mae.beta1[}\DecValTok{4}\NormalTok{,], }\DataTypeTok{xlab=}\StringTok{"correlation"}\NormalTok{, }\DataTypeTok{ylab=}\StringTok{"Means Absolute Error"}\NormalTok{, }\DataTypeTok{type=}\StringTok{"o"}\NormalTok{, }\DataTypeTok{pch=}\DecValTok{19}\NormalTok{, }\DataTypeTok{bty=}\StringTok{"n"}\NormalTok{, }\DataTypeTok{main=}\StringTok{"N=2000"}\NormalTok{, }\DataTypeTok{ylim=}\KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,.}\DecValTok{2}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics{ml101_files/figure-latex/unnamed-chunk-178-2} \end{center}
+
+The two take-aways are that (1) with increasing sample size the problem of multicollinearity decreases substantially and (2) bias increases exponentially with increasing levels of correlation.
+
+\hypertarget{simulation-approach-to-uncertainty}{%
+\subsubsection{Simulation approach to uncertainty}\label{simulation-approach-to-uncertainty}}
+
+Simulation is the Swiss army knife of statistics. Quantifying the uncertainty of an outcome can be tough or even impossible algebraically. Even for the linear model we need to consider the standard errors of all coefficients and their covariance. The formulas can be tedious\ldots{}
+
+\textbf{For simulation, the process is always the same regardless of the model.}
+
+We start by loading data and fitting a linear model on the unemployment rate.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# clear workspace}
+\KeywordTok{rm}\NormalTok{(}\DataTypeTok{list=}\KeywordTok{ls}\NormalTok{())}
+\CommentTok{# load data}
+\NormalTok{df <-}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{"http://philippbroniecki.github.io/ML2017.io/data/communities.csv"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{Simulation step 1:} Our coefficients each follow a sampling distribution. Jointly, they follow a multivariate distribution which is assumed to be multivariate normal.
+
+To characterize the shape of the distribution we need to know its mean and its variance. The mean is our vector of coefficient point estimates. We extract it using \texttt{coef(model\_name)}. The variance is the model uncertainty which lives in the variance-covariance matrix. We extract it with \texttt{vcov(model\_name)}.
+
+As we draw randomly from a distribution we want to set the random number generator with \texttt{set.seed()} to make our results replicable and we pick the number of coefficients to draw form the distribution (the number of simulations).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# run a model}
+\NormalTok{m1 <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(PctUnemployed }\OperatorTok{~}\StringTok{ }\NormalTok{pctUrban }\OperatorTok{+}\StringTok{ }\NormalTok{householdsize }\OperatorTok{+}\StringTok{ }\NormalTok{racePctWhite, }\DataTypeTok{data =}\NormalTok{ df)}
+
+\CommentTok{# set the random number generator to some value}
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{123}\NormalTok{)}
+
+\CommentTok{# pick how many coefficients you want to draw from the distribution}
+\NormalTok{n.sim <-}\StringTok{ }\DecValTok{1000}
+
+\CommentTok{# draw coefficients from the multivariate normal}
+\NormalTok{S <-}\StringTok{ }\NormalTok{MASS}\OperatorTok{::}\KeywordTok{mvrnorm}\NormalTok{(n.sim, }\KeywordTok{coef}\NormalTok{(m1), }\KeywordTok{vcov}\NormalTok{(m1))}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{Simulation step 2:} Choose a scenario for which you want to make a prediction. That means we have to set our covariates to some value. We will vary the percentage of the urban population and keep all other covariates constant. We also check the range of the variable of interest so that we don't extrapolate to something that is outside of our data range.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# choose a scenario to predict the outcome for}
+\KeywordTok{summary}\NormalTok{(df}\OperatorTok{$}\NormalTok{pctUrban)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ 0.0000  0.0000  1.0000  0.6963  1.0000  1.0000 
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# set the covariates (predictions for changes in pctUrban)}
+\NormalTok{X <-}\StringTok{ }\KeywordTok{cbind}\NormalTok{( }\DataTypeTok{constant =} \DecValTok{1}\NormalTok{,}
+            \DataTypeTok{urban =} \KeywordTok{seq}\NormalTok{(}\DataTypeTok{from =} \DecValTok{0}\NormalTok{, }\DataTypeTok{to =} \DecValTok{1}\NormalTok{, }\DataTypeTok{by =} \FloatTok{.1}\NormalTok{),}
+            \DataTypeTok{householdsize =} \KeywordTok{mean}\NormalTok{(df}\OperatorTok{$}\NormalTok{householdsize),}
+            \DataTypeTok{pctwhite =} \KeywordTok{mean}\NormalTok{(df}\OperatorTok{$}\NormalTok{racePctWhite))}
+
+\CommentTok{# check covariates}
+\NormalTok{X            }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+      constant urban householdsize  pctwhite
+ [1,]        1   0.0     0.4633952 0.7537161
+ [2,]        1   0.1     0.4633952 0.7537161
+ [3,]        1   0.2     0.4633952 0.7537161
+ [4,]        1   0.3     0.4633952 0.7537161
+ [5,]        1   0.4     0.4633952 0.7537161
+ [6,]        1   0.5     0.4633952 0.7537161
+ [7,]        1   0.6     0.4633952 0.7537161
+ [8,]        1   0.7     0.4633952 0.7537161
+ [9,]        1   0.8     0.4633952 0.7537161
+[10,]        1   0.9     0.4633952 0.7537161
+[11,]        1   1.0     0.4633952 0.7537161
+\end{verbatim}
+
+\textbf{Simulation step 3:} Predict the outcome. We have set our covariates and we have drawn our coefficients. This is all we need to predict \(y\). Depending on the flavour of generalized linear model, \(y\) may have to be sent through a link function. In logistic regression we would send latent \(y\) trough the logit link function: \(\frac{1}{1 + exp^{-y}}\) to get probabilities that \(y\) is 1. Here, we ran a simple linear model so in linear algebra notation our prediction is simply \(Y=X\beta\).
+
+We estimate \texttt{y\_hat} as a matrix where its rows are the number of simulations and its columns are the different covariate scenarios.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# predict outcome, ie betas * X for all scenarios}
+\NormalTok{y_hat <-}\StringTok{ }\NormalTok{S }\OperatorTok{%*%}\StringTok{ }\KeywordTok{t}\NormalTok{(}\KeywordTok{as.matrix}\NormalTok{(X))}
+\end{Highlighting}
+\end{Shaded}
+
+Finally, all that is left is the interpretation of the result. We can simply look at the numerical outcomes similar to using the \texttt{summary()} function on the Zelig simulation object.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# output like the zelig summary (including estimation uncertainty)}
+\KeywordTok{apply}\NormalTok{(y_hat, }\DecValTok{2}\NormalTok{, quantile, }\DataTypeTok{probs =} \KeywordTok{c}\NormalTok{(.}\DecValTok{025}\NormalTok{, }\FloatTok{.5}\NormalTok{, }\FloatTok{.975}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+           [,1]      [,2]      [,3]      [,4]      [,5]      [,6]
+2.5%  0.4316010 0.4214979 0.4105675 0.4000181 0.3893180 0.3784349
+50%   0.4450405 0.4332109 0.4215157 0.4097547 0.3981805 0.3864607
+97.5% 0.4584981 0.4454806 0.4327917 0.4198413 0.4070521 0.3945582
+           [,7]      [,8]      [,9]     [,10]     [,11]
+2.5%  0.3672170 0.3557150 0.3439413 0.3318641 0.3196062
+50%   0.3747705 0.3630690 0.3512949 0.3396307 0.3279723
+97.5% 0.3823658 0.3703668 0.3586515 0.3473086 0.3363178
+\end{verbatim}
+
+We can also draw a plot that shows our mean prediction and the uncertainty around in a few lines.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# plot like zelig's ci plot}
+\KeywordTok{par}\NormalTok{( }\DataTypeTok{mfrow =} \KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{))}
+\KeywordTok{plot}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DataTypeTok{bty =} \StringTok{"n"}\NormalTok{, }\DataTypeTok{xlab =} \StringTok{"Pct Urban"}\NormalTok{, }\DataTypeTok{ylab =} \StringTok{"Unemployment Rate"}\NormalTok{, }
+     \DataTypeTok{ylim =} \KeywordTok{c}\NormalTok{(}\FloatTok{0.3}\NormalTok{, }\FloatTok{0.5}\NormalTok{), }\DataTypeTok{xlim =} \KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{), }\DataTypeTok{pch =}\StringTok{""}\NormalTok{)}
+\NormalTok{ci <-}\StringTok{ }\KeywordTok{apply}\NormalTok{(y_hat, }\DecValTok{2}\NormalTok{, quantile, }\DataTypeTok{probs =} \KeywordTok{c}\NormalTok{(.}\DecValTok{025}\NormalTok{, }\FloatTok{.975}\NormalTok{))}
+\KeywordTok{polygon}\NormalTok{(}\DataTypeTok{x =}  \KeywordTok{c}\NormalTok{(}\KeywordTok{rev}\NormalTok{(X[,}\StringTok{"urban"}\NormalTok{]), X[,}\StringTok{"urban"}\NormalTok{]), }
+        \DataTypeTok{y =} \KeywordTok{c}\NormalTok{(}\KeywordTok{rev}\NormalTok{(}\KeywordTok{t}\NormalTok{(ci)[,}\DecValTok{2}\NormalTok{]), }\KeywordTok{t}\NormalTok{(ci)[,}\DecValTok{1}\NormalTok{]), }\DataTypeTok{border =} \OtherTok{NA}\NormalTok{,}
+        \DataTypeTok{col =} \StringTok{"lightblue"}\NormalTok{)}
+\KeywordTok{lines}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ X[,}\StringTok{"urban"}\NormalTok{], }\DataTypeTok{y =} \KeywordTok{apply}\NormalTok{(y_hat, }\DecValTok{2}\NormalTok{, quantile, }\DataTypeTok{probs =} \FloatTok{.5}\NormalTok{), }\DataTypeTok{lwd =} \DecValTok{1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ml101_files/figure-latex/unnamed-chunk-184-1.pdf}
 
 
 \end{document}
