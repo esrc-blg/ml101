@@ -189,7 +189,7 @@ coef(regfit.full, bic.min)
 
 ### Forward and Backward Stepwise Selection
 
-The default method used by `regsubsets()` is exhaustive but we can change it to forward or backward and compare the results. Best subset selection will take very long with many variables because the number of models to estimate grows exponentially. In thse cases, we will want to use forward and backward selection instead.
+The default method used by `regsubsets()` is exhaustive but we can change it to forward or backward and compare the results. Best subset selection will take very long with many variables because the number of models to estimate grows exponentially. In these cases, we will want to use forward and backward selection instead.
 
 Let's carry out forward selection.
 ```{r}

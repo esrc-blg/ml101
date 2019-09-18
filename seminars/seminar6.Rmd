@@ -6,9 +6,9 @@ par(bg = '#fdf6e3')
 
 ## Seminar
 
-In this exercise, we will learn how to model non-linearities in generalised linear models. This exercise is based on based on James et al. 2013. We begin by loading that `ISLR` package and attaching to the Wage dataset that we will be using throughout this exercise. When we attach a dataset, we do not need to write `dataset.name$variable.name` to access a variable but we can instead just write `variable.name` to access it.
+In this exercise, we will learn how to model non-linear relationships using generalized linear models. This exercise is based on based on James et al. 2013. We begin by loading that `ISLR` package and attaching to the Wage dataset that we will be using throughout this exercise. When we attach a dataset, we do not need to write `dataset.name$variable.name` to access a variable but we can instead just write `variable.name` to access it.
 
-Note: We need to install the `ISLR` package if it is not installed alread like so: `install.packages("ISLR")`
+Note: We need to install the `ISLR` package if it is not installed already like so: `install.packages("ISLR")`
 Note2: The `Wage` dataset is spelled with a capital W.
 
 ```{r, eval=FALSE}
@@ -38,7 +38,7 @@ fit <- lm(wage ~ poly(age, 4), data = Wage)
 coef(summary(fit))
 ```
 
-We can also obtain raw instead of orthogonal polynomials by passing the `raw = TRUE` argument to `poly()`. The coefficients will change the fit should be largely unaffected. It is not advisable to use the raw argument because it introduces unnecessary multicollinearity into the model.
+We can also obtain raw instead of orthogonal polynomials by passing the `raw = TRUE` argument to `poly()`. The coefficients will change the fit should be largely unaffected. It is not advisable to use the raw argument because it introduces unnecessary multicolinearity into the model.
 
 ```{r}
 fit2 <- lm(wage ~ poly(age, 4, raw = TRUE), data = Wage)
@@ -73,7 +73,7 @@ preds <- predict(fit, newdata = list(age = age.grid), se = TRUE)
 se.bands <- cbind(preds$fit + 2 * preds$se.fit, preds$fit - 2 * preds$se.fit)
 ```
 
-We can plot the data and add the fit from the degree-4 polynomial. We set the margins and outer margins in our plot the later plot a title that will be the overall title for two plots that we plot next to each other. The function `matlines()` lets us draw the lines fo the uncertainty bounds in one go.
+We can plot the data and add the fit from the degree-4 polynomial. We set the margins and outer margins in our plot the later plot a title that will be the overall title for two plots that we plot next to each other. The function `matlines()` lets us draw the lines for the uncertainty bounds in one go.
 
 ```{r, eval=FALSE}
 # set margins to plot title in margins
@@ -105,7 +105,7 @@ lines(age.grid, preds$fit, lwd = 2, col = "blue")
 matlines(age.grid, se.bands, lwd = 2, col = "blue", lty = 3)
 ```
 
-We compare the orthogonolized polynomials that we saved in the object called `fit` with the polynomials that plain polynomials sved in `fit2`. The difference will be close to $0$. We predict the outcome from the fit with the raw polynomials and take the diffence to the fit with the independent linear combinations of the powers of age.
+We compare the orthogonolized polynomials that we saved in the object called `fit` with the polynomials that plain polynomials saved in `fit2`. The difference will be close to $0$. We predict the outcome from the fit with the raw polynomials and take the difference to the fit with the independent linear combinations of the powers of age.
 
 ```{r}
 preds2 <- predict(fit2, newdata = list(age = age.grid), se = TRUE)
@@ -156,7 +156,7 @@ se.bands.logit <- cbind(preds$fit + 2 * preds$se.fit, preds$fit - 2 * preds$se.f
 se.bands <- 1 / (1 + exp(-se.bands.logit))
 ```
 
-We add the results next to the plot where wage is continuous. With the `points()` function we add the actual data to the plot. The argument `pch="|"` draws a bar as the symbol for each point. Also notice the y-coordinate of each point. In the `plot()` function we set the range of the y-axis with `ylim = c(0, 0.2)` to range from $0$ to $0.2$. If the true outcome is $1$ we want to draw the | at $y=0.2$ and otherwhise at $y=0$. We achieve this with `I((wage > 250)/5)`. Play around to see why.
+We add the results next to the plot where wage is continuous. With the `points()` function we add the actual data to the plot. The argument `pch="|"` draws a bar as the symbol for each point. Also notice the y-coordinate of each point. In the `plot()` function we set the range of the y-axis with `ylim = c(0, 0.2)` to range from $0$ to $0.2$. If the true outcome is $1$ we want to draw the | at $y=0.2$ and otherwise at $y=0$. We achieve this with `I((wage > 250)/5)`. Play around to see why.
 
 ```{r, eval = FALSE}
 plot(I(wage > 250) ~ age, xlim = agelims, type = "n", ylim = c(0, 0.2))
@@ -207,7 +207,7 @@ Notice, that the confidence interval becomes very large in the range of the data
 
 Instead of using polynomials to create a non-linear prediction, we could also use step functions. With step functions we fit different lines for different data ranges.
 
-We use the `cut()` function to create equally spaced cutpoints in our data. We use the now categorical variable age as predictor in our linear model.
+We use the `cut()` function to create equally spaced cut-points in our data. We use the now categorical variable age as predictor in our linear model.
 
 ```{r}
 # four equally spaced intervals of age

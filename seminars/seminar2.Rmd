@@ -53,9 +53,9 @@ fdata$partly.urban <- ifelse( fdata$urban == 3, yes = 1, no = 0)
 fdata$urban <- ifelse( fdata$urban == 4, yes = 1, no = 0)
 ```
 
-In our data manipulation, we first turned `RSex` into a factor variable. Factor is a variable type in R, that is handy because we declare that a variable is categorical. When we run models with a factor variable, R will handle them correctly, i.e. break them up into binary variables internaly.
+In our data manipulation, we first turned `RSex` into a factor variable. Factor is a variable type in R, that is handy because we declare that a variable is categorical. When we run models with a factor variable, R will handle them correctly, i.e. break them up into binary variables internally.
 
-Alternatively, with `urban`, we show how to break up such a variable into binary variables manually. We use the `ifelse()` function were the first argument is a logical condition such as `fdata$urban == 1` meaning "if the variable `urban` in `fdata` takes on the value 1. This condition is evaluated for every observation in the dataset and if it is met we asign a 1 (`yes = 1`) and if not we assign a 0 (`no = 0`).
+Alternatively, with `urban`, we show how to break up such a variable into binary variables manually. We use the `ifelse()` function were the first argument is a logical condition such as `fdata$urban == 1` meaning "if the variable `urban` in `fdata` takes on the value 1. This condition is evaluated for every observation in the dataset and if it is met we assign a 1 (`yes = 1`) and if not we assign a 0 (`no = 0`).
 
 ### Logistic Regression
 
@@ -77,17 +77,17 @@ c.vars <- c("IMMBRIT", "RAge", "Househld", "HHInc", "employMonths", "WWWhourspW"
 fdata[, c.vars] <- apply( X = fdata[, c.vars], MARGIN = 2, FUN = our.norm )
 ```
 
-First, we copied the variable IMMBRIT before normalising it. Don't worry about this now, it will become clear why we did this further down in the code. 
+First, we copied the variable IMMBRIT before normalizing it. Don't worry about this now, it will become clear why we did this further down in the code. 
 
-We then define our own function. A function takes some input which we called `x` and does something with that input. In case, x is a numeric variable. For every value of x, we substract the mean of x. Therefore, we centre the variable on 0, i.e. the new mean will be 0. We then divide by the standard deviation of the variable. This is necessary to make the variables comparable. The units of all variables are then represented in average deviations from their means.
+We then define our own function. A function takes some input which we called `x` and does something with that input. In case, x is a numeric variable. For every value of x, we subtract the mean of x. Therefore, we center the variable on 0, i.e. the new mean will be 0. We then divide by the standard deviation of the variable. This is necessary to make the variables comparable. The units of all variables are then represented in average deviations from their means.
 
-In the next step, we create a characer vector with the variable names of all variables that are continuous and lastly we normalise. We do this by subsetting our data with square brackets. So `fdata[ , c.vars]` is the part of our dataset that includes the continuous variables. The function `apply()` lets us carry out the same operation repeadetly for all the variables. The argument `X` is the data. The argument `MARGIN` says we want to apply our normalisation column-wise. The argument `FUN` means function. Here, we input our normlisation function.
+In the next step, we create a character vector with the variable names of all variables that are continuous and lastly we normalize. We do this by sub-setting our data with square brackets. So `fdata[ , c.vars]` is the part of our dataset that includes the continuous variables. The function `apply()` lets us carry out the same operation repeatedly for all the variables. The argument `X` is the data. The argument `MARGIN` says we want to apply our normalization column-wise. The argument `FUN` means function. Here, we input our normalization function.
 
 We now have a look at our dependent variable of interest. The variable `over.estimate` measures whether a respondent over estimates the number of non-western immigrants or not (yes = 1; no = 0). The actual percentage of non-western immigrants was 10.7 percent at the time of the survey. 
 
 #### The naive guess
 
-The naive guess is the best prediction without a model. Or put differently, the best prediction we could make without having any context information. Have a look at the variable `over.estimate` and decide on your own what you would do to maximise your predictive accuracy...
+The naive guess is the best prediction without a model. Or put differently, the best prediction we could make without having any context information. Have a look at the variable `over.estimate` and decide on your own what you would do to maximize your predictive accuracy...
 
 ```{r class.source="collapsible"}
 # proportion of people who over-estimate
@@ -210,7 +210,7 @@ table( prediction = exp.logit, truth = fdata.test$over.estimate)
 mean( exp.logit == fdata.test$over.estimate )
 ```
 
-The accuarcy of the model is slightly lower in the test dataset than in the training data. The difference is not big here but in practice it can be quite large.
+The accuracy of the model is slightly lower in the test dataset than in the training data. The difference is not big here but in practice it can be quite large.
 
 Let's try to improve the classification model by relying on the best predictors.
 
@@ -228,7 +228,7 @@ We improved our model by removing variables. This will never be the case if we a
 
 ### K-Nearest Neighbors
 
-Thera are many models for classification. One of the more simple ones is KNN. For it, we need to provide the data in a slightly different format and we need to install the `class` package.
+There are many models for classification. One of the more simple ones is KNN. For it, we need to provide the data in a slightly different format and we need to install the `class` package.
 
 ```{r}
 # training & test data set of predictor variables only
@@ -261,7 +261,7 @@ mean( knn.out == fdata.test$over.estimate )
 
 ### Model the Underlying Continuous Process
 
-We can try to model the underlying process and classify afterwards. By doing that, the depdendent variable provides more information. In effect we turn our classification problem into a regression problem.
+We can try to model the underlying process and classify afterwards. By doing that, the dependent variable provides more information. In effect we turn our classification problem into a regression problem.
 
 ```{r}
 # fit the linear model on the numer of immigrants per 100 Brits

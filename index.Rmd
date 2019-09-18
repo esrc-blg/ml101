@@ -14,11 +14,11 @@ site: bookdown::bookdown_site
 
 This course will introduce participants to a fascinating field of statistics. We will see how we can rely on statistical models to gain a deep understanding from data. This often involves finding optimal predictions and classifications. Machine Learning (also known as Statistical Learning) is quickly developing and is being applied in various fields such as business analytics, political science, sociology, and elsewhere.
 
-Machine learning can be divided into supervised learning and unsupervised learning. We cover supervised machine learning. Supervised learning involves models where we have a dependent variable - often referred to as labelled data. In unsupervised learning the outcome variable is not known - often referred to as unlabelled data.
+Machine learning can be divided into supervised learning and unsupervised learning. We cover supervised machine learning. Supervised learning involves models where we have a dependent variable - often referred to as labelled data. In unsupervised learning the outcome variable is not known - often referred to as unlabeled data.
 
 ***Course Objectives***
 
-This course aims to provide an introduction to the data science approach to the quantitative analysis of data using the methods of statistical learning, an approach blending classical statistical methods with recent advances in computational and machine learning. The course will cover the main analytical methods from this field focussing on hands-on applications using example datasets. This will allow participants to gain experience with and confidence in using the methods we cover.
+This course aims to provide an introduction to the data science approach to the quantitative analysis of data using the methods of statistical learning, an approach blending classical statistical methods with recent advances in computational and machine learning. The course will cover the main analytic methods from this field focusing on hands-on applications using example datasets. This will allow participants to gain experience with and confidence in using the methods we cover.
 
 
 ***Course Prerequisites***
@@ -38,10 +38,11 @@ Participants are expected to have a solid understanding of linear regression mod
 
 ***Acknowledgements***
 
-The material in this course is based on the textbook: [James Gareth, Daniela Witten, Trevor Hastie and Robert Tibshirani. 2013. An introduction to statistical learning. Springer](http://faculty.marshall.usc.edu/gareth-james/ISL/ISLR%20Seventh%20Printing.pdf). In addition, the material is based on a machine learning class at the Essex Summer School with [Lucas Leemann](https://lucasleemann.ch) and [Philipp Broniecki](https://philippbroniecki.com). The infrastracture for this website is in large parts adopted from work by UCL's [Altaf Ali](https://iris.ucl.ac.uk/iris/browse/profile?upi=ALIAX58), [Jack Blumenau](https://www.jackblumenau.com/), [Lucas Leemann](https://lucasleemann.ch), [Slava Jankin Mikhaylov](https://sjankin.com/), and [Philipp Broniecki](https://www.philippbroniecki.com/). 
+The material in this course is based on the textbook: [James Gareth, Daniela Witten, Trevor Hastie and Robert Tibshirani. 2013. An introduction to statistical learning. Springer](http://faculty.marshall.usc.edu/gareth-james/ISL/ISLR%20Seventh%20Printing.pdf). In addition, the material is based on a machine learning class at the Essex Summer School with [Lucas Leemann](https://lucasleemann.ch) and [Philipp Broniecki](https://philippbroniecki.com). The infrastructure for this website is in large parts adopted from work by UCL's [Altaf Ali](https://iris.ucl.ac.uk/iris/browse/profile?upi=ALIAX58), [Jack Blumenau](https://www.jackblumenau.com/), [Lucas Leemann](https://lucasleemann.ch), [Slava Jankin Mikhaylov](https://sjankin.com/), and [Philipp Broniecki](https://philippbroniecki.com). The ESRC Business and Local Government Data Research Centre is funded by the [Economic and Social Research Council (ESRC)](https://esrc.ukri.org).
 
 ----
 
 <div class="container btn-container">
-  <button type = "button" class = "btn btn-lg btn-primary" onclick="window.open('https://github.com/philippbroniecki/statistics1/raw/master/admin/placeholder.pdf');">Placeholder</button>
+<button type = "button" class = "btn btn-lg btn-primary" onclick="window.open('https://github.com/esrc-blg/ml101/raw/master/data/all data sets.zip');">slides</button>
+<button type = "button" class = "btn btn-lg btn-primary" onclick="window.open('https://github.com/esrc-blg/ml101/raw/master/slides/slides.pdf');">data</button>
 </div>

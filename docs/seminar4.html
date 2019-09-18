@@ -138,7 +138,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="1" data-path="seminar1.html"><a href="seminar1.html"><i class="fa fa-check"></i><b>1</b> Linear Regression</a><ul>
 <li class="chapter" data-level="1.1" data-path="seminar1.html"><a href="seminar1.html#learning-objectives"><i class="fa fa-check"></i><b>1.1</b> Learning objectives</a><ul>
 <li class="chapter" data-level="1.1.1" data-path="seminar1.html"><a href="seminar1.html#dplyr-package"><i class="fa fa-check"></i><b>1.1.1</b> Dplyr package</a></li>
-<li class="chapter" data-level="1.1.2" data-path="seminar1.html"><a href="seminar1.html#visualising-a-relationship-bw-two-continuous-variables"><i class="fa fa-check"></i><b>1.1.2</b> Visualising a relationship b/w two continuous variables</a></li>
+<li class="chapter" data-level="1.1.2" data-path="seminar1.html"><a href="seminar1.html#visualizing-a-relationship-bw-two-continuous-variables"><i class="fa fa-check"></i><b>1.1.2</b> Visualizing a relationship b/w two continuous variables</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="seminar2.html"><a href="seminar2.html"><i class="fa fa-check"></i><b>2</b> Classification</a><ul>
@@ -165,7 +165,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="4.1.3" data-path="seminar4.html"><a href="seminar4.html#forward-and-backward-stepwise-selection"><i class="fa fa-check"></i><b>4.1.3</b> Forward and Backward Stepwise Selection</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="seminar5.html"><a href="seminar5.html"><i class="fa fa-check"></i><b>5</b> Regularisation</a><ul>
+<li class="chapter" data-level="5" data-path="seminar5.html"><a href="seminar5.html"><i class="fa fa-check"></i><b>5</b> Regularization</a><ul>
 <li class="chapter" data-level="5.1" data-path="seminar5.html"><a href="seminar5.html#seminar-3"><i class="fa fa-check"></i><b>5.1</b> Seminar</a><ul>
 <li class="chapter" data-level="5.1.1" data-path="seminar5.html"><a href="seminar5.html#ridge-regression-and-the-lasso"><i class="fa fa-check"></i><b>5.1.1</b> Ridge Regression and the Lasso</a></li>
 </ul></li>
@@ -434,7 +434,7 @@ Selection Algorithm: exhaustive
 </div>
 <div id="forward-and-backward-stepwise-selection" class="section level3">
 <h3><span class="header-section-number">4.1.3</span> Forward and Backward Stepwise Selection</h3>
-<p>The default method used by <code>regsubsets()</code> is exhaustive but we can change it to forward or backward and compare the results. Best subset selection will take very long with many variables because the number of models to estimate grows exponentially. In thse cases, we will want to use forward and backward selection instead.</p>
+<p>The default method used by <code>regsubsets()</code> is exhaustive but we can change it to forward or backward and compare the results. Best subset selection will take very long with many variables because the number of models to estimate grows exponentially. In these cases, we will want to use forward and backward selection instead.</p>
 <p>Let’s carry out forward selection.</p>
 <div class="sourceCode" id="cb114"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb114-1" title="1"><span class="co"># run forward selection</span></a>
 <a class="sourceLine" id="cb114-2" title="2">regfit.fwd &lt;-<span class="st"> </span><span class="kw">regsubsets</span>(IMMBRIT <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> df, <span class="dt">nvmax =</span> <span class="dv">16</span>, <span class="dt">method =</span> <span class="st">&quot;forward&quot;</span>)</a>

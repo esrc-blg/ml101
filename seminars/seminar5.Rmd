@@ -1,4 +1,4 @@
-# Regularisation
+# Regularization
 
 ```{r, include = FALSE}
 par(bg = '#fdf6e3')
@@ -50,7 +50,7 @@ cat.vars <- unlist(lapply(data2, function(x) is.factor(x) | all(x == 0 | x==1) |
 data2[, !cat.vars] <- apply(data2[, !cat.vars], 2, scale)
 ```
 
-In order to run ridge regression, we create a matrix from our dataset using the `model.matrix()` function. We also need to remove the intercept from the resulting matrix because the function to run ridge regression automatically includes one. Furthermore, we will use the subjective rate of immigrants as response. Consequently, we have to remove `over.estimate` as it measures the same thing. Lastly, the party affiliation dummies are mutually exclusive, se we have to exclude the model category `Cons`.
+In order to run ridge regression, we create a matrix from our dataset using the `model.matrix()` function. We also need to remove the intercept from the resulting matrix because the function to run ridge regression automatically includes one. Furthermore, we will use the subjective rate of immigrants as response. Consequently, we have to remove `over.estimate` as it measures the same thing. Lastly, the party affiliation dummies are mutually exclusive, so we have to exclude the model category `Cons`.
 
 ```{r}
 # covariates in matrix form but remove the intercept, over.estimate, and Cons
@@ -88,7 +88,7 @@ ridge.mod <- glmnet(x, y, alpha = 0, lambda = grid)
 plot(ridge.mod, xvar = "lambda", label = TRUE)
 ```
 
-the object `ridge.mod` contains a set of coefficients for each of the lambdas which we can access by runing the `coef()` functio on the object `ridge.mod`. We tried 100 lambda values and therefore we get  100 coefficient sets. The object is a matrix where rows are variables and columns are the coefficients based on the chosen lambda values. 
+the object `ridge.mod` contains a set of coefficients for each of the lambdas which we can access by running the `coef()` function on the object `ridge.mod`. We tried 100 lambda values and therefore we get  100 coefficient sets. The object is a matrix where rows are variables and columns are the coefficients based on the chosen lambda values. 
 
 ```{r}
 # a set of coefficients for each lambda

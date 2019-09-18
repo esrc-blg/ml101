@@ -138,7 +138,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="1" data-path="seminar1.html"><a href="seminar1.html"><i class="fa fa-check"></i><b>1</b> Linear Regression</a><ul>
 <li class="chapter" data-level="1.1" data-path="seminar1.html"><a href="seminar1.html#learning-objectives"><i class="fa fa-check"></i><b>1.1</b> Learning objectives</a><ul>
 <li class="chapter" data-level="1.1.1" data-path="seminar1.html"><a href="seminar1.html#dplyr-package"><i class="fa fa-check"></i><b>1.1.1</b> Dplyr package</a></li>
-<li class="chapter" data-level="1.1.2" data-path="seminar1.html"><a href="seminar1.html#visualising-a-relationship-bw-two-continuous-variables"><i class="fa fa-check"></i><b>1.1.2</b> Visualising a relationship b/w two continuous variables</a></li>
+<li class="chapter" data-level="1.1.2" data-path="seminar1.html"><a href="seminar1.html#visualizing-a-relationship-bw-two-continuous-variables"><i class="fa fa-check"></i><b>1.1.2</b> Visualizing a relationship b/w two continuous variables</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="seminar2.html"><a href="seminar2.html"><i class="fa fa-check"></i><b>2</b> Classification</a><ul>
@@ -165,7 +165,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="4.1.3" data-path="seminar4.html"><a href="seminar4.html#forward-and-backward-stepwise-selection"><i class="fa fa-check"></i><b>4.1.3</b> Forward and Backward Stepwise Selection</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="seminar5.html"><a href="seminar5.html"><i class="fa fa-check"></i><b>5</b> Regularisation</a><ul>
+<li class="chapter" data-level="5" data-path="seminar5.html"><a href="seminar5.html"><i class="fa fa-check"></i><b>5</b> Regularization</a><ul>
 <li class="chapter" data-level="5.1" data-path="seminar5.html"><a href="seminar5.html#seminar-3"><i class="fa fa-check"></i><b>5.1</b> Seminar</a><ul>
 <li class="chapter" data-level="5.1.1" data-path="seminar5.html"><a href="seminar5.html#ridge-regression-and-the-lasso"><i class="fa fa-check"></i><b>5.1.1</b> Ridge Regression and the Lasso</a></li>
 </ul></li>
@@ -210,7 +210,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h1><span class="header-section-number">Chapter 7</span> Tree Based Models</h1>
 <div id="seminar-5" class="section level2">
 <h2><span class="header-section-number">7.1</span> Seminar</h2>
-<p>Tree models are non-parametric models. Depending on the data generation process, these models can be better predictive models than generalised linear models even with regularisation. We will start with the highly variable simple tree, followed by pruning, the random forrest model and boosting machines.</p>
+<p>Tree models are non-parametric models. Depending on the data generation process, these models can be better predictive models than generalized linear models even with regularization. We will start with the highly variable simple tree, followed by pruning, the random forest model and boosting machines.</p>
 <p>We load post-election survey data from the 2004 British Election Survey. The data is available <a href="http://philippbroniecki.github.io/ML2017.io/data/bes.dta">here</a>.</p>
 <div class="sourceCode" id="cb212"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb212-1" title="1"><span class="co"># clear workspace</span></a>
 <a class="sourceLine" id="cb212-2" title="2"><span class="kw">rm</span>(<span class="dt">list=</span><span class="kw">ls</span>())</a>
@@ -248,7 +248,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <a class="sourceLine" id="cb217-5" title="5">bes[, categcorical] &lt;-<span class="st"> </span><span class="kw">lapply</span>(bes[, categcorical], factor)</a></code></pre></div>
 <div id="classification-trees" class="section level3">
 <h3><span class="header-section-number">7.1.1</span> Classification Trees</h3>
-<p>We use trees to classifyrespondents into voters and non-voters. Here we need the <code>tree</code> package which we have to install if is not already <code>install.packages("tree")</code>.</p>
+<p>We use trees to classify respondents into voters and non-voters. Here we need the <code>tree</code> package which we have to install if is not already <code>install.packages("tree")</code>.</p>
 <div class="sourceCode" id="cb218"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb218-1" title="1"><span class="kw">library</span>(tree)</a>
 <a class="sourceLine" id="cb218-2" title="2"></a>
 <a class="sourceLine" id="cb218-3" title="3"><span class="co"># build classification tree (- in formula language means except)</span></a>
@@ -436,7 +436,7 @@ Distribution of residuals:
 <a class="sourceLine" id="cb250-2" title="2">mse.pruned &lt;-<span class="st"> </span><span class="kw">mean</span>((yhat <span class="op">-</span><span class="st"> </span>bes.test<span class="op">$</span>Income)<span class="op">^</span><span class="dv">2</span>)</a></code></pre></div>
 <div id="bagging-and-random-forests" class="section level4">
 <h4><span class="header-section-number">7.1.2.1</span> Bagging and Random Forests</h4>
-<p>We now apply bagging and random forests to improve our prediction. Bagging is the idea that the high variance of a single bushy tree can be reduced by bootstapping samples and averaging over trees that were grown on the samples.</p>
+<p>We now apply bagging and random forests to improve our prediction. Bagging is the idea that the high variance of a single bushy tree can be reduced by bootstrapping samples and averaging over trees that were grown on the samples.</p>
 <p>Note: Bagging gets an estimate of the test error for free as it always leaves out some observations when a tree is fit. The reported out-of-bag MSE is thus an estimate of test error. We also estimate test error separately on a test set. This is one particular test set, so the test error may vary.</p>
 <p>In our run below the OOB MSE may be a better estimate of test error. It is reported to be lower than our test error estimate. We need to install the <code>randomForest</code> package like so: <code>install.packages("randomForest")</code>.</p>
 <div class="sourceCode" id="cb251"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb251-1" title="1"><span class="kw">set.seed</span>(<span class="dv">123</span>)</a>
@@ -475,7 +475,7 @@ No. of variables tried at each split: 19
 <a class="sourceLine" id="cb259-5" title="5">yhat.bag2 &lt;-<span class="st"> </span><span class="kw">predict</span>(bag2, <span class="dt">newdata =</span> bes.test)</a>
 <a class="sourceLine" id="cb259-6" title="6">mse.bag2 &lt;-<span class="st"> </span>( (yhat.bag2 <span class="op">-</span><span class="st"> </span>bes.test<span class="op">$</span>Income)<span class="op">^</span><span class="dv">2</span> )</a></code></pre></div>
 <p>The result is that our rate increases substantially again.</p>
-<p>We now apply random forest. The trick is to decorrelate the trees by randomly considering only a subset of variables at every split. We thereby reduce variance further. The number of variables argument <code>mtry</code> is a tuning parameter.</p>
+<p>We now apply random forest. The trick is to de-corelate the trees by randomly considering only a subset of variables at every split. We thereby reduce variance further. The number of variables argument <code>mtry</code> is a tuning parameter.</p>
 <div class="sourceCode" id="cb260"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb260-1" title="1"><span class="co"># Random Forest: not trying all vars at each split decorrelates the trees</span></a>
 <a class="sourceLine" id="cb260-2" title="2"><span class="kw">set.seed</span>(<span class="dv">123</span>)</a>
 <a class="sourceLine" id="cb260-3" title="3"></a>
@@ -517,7 +517,7 @@ Use 10 variables at each split</code></pre>
 <a class="sourceLine" id="cb263-7" title="7"><span class="co"># on previous random forests model</span></a>
 <a class="sourceLine" id="cb263-8" title="8">(mse.rf <span class="op">-</span><span class="st"> </span>mse.bag) <span class="op">/</span><span class="st"> </span>mse.bag</a></code></pre></div>
 <pre><code>[1] -0.03454119</code></pre>
-<p>We reduced the error rate by another 3.45<span class="math inline">\(\%\)</span> by decorrelating the trees. We can exmine variable importance as well. Variable reduction is obtained as the average that a predictor reduces error at splits within a tree where it was used and averaged again over all trees. Similarly, node purity is based on the gini index of how heterogenous a group becomes due to a split.</p>
+<p>We reduced the error rate by another 3.45<span class="math inline">\(\%\)</span> by de-correlating the trees. We can examine variable importance as well. Variable reduction is obtained as the average that a predictor reduces error at splits within a tree where it was used and averaged again over all trees. Similarly, node purity is based on the gini index of how heterogeneous a group becomes due to a split.</p>
 <div class="sourceCode" id="cb265"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb265-1" title="1"><span class="kw">par</span>(<span class="dt">mfrow =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">1</span>))</a>
 <a class="sourceLine" id="cb265-2" title="2"><span class="co"># which varaibles help explain outcome</span></a>
 <a class="sourceLine" id="cb265-3" title="3"><span class="kw">importance</span>(rf1)</a></code></pre></div>
@@ -552,8 +552,8 @@ CivicDutyScores 25.916963    1684.33658</code></pre>
 <div class="sourceCode" id="cb268"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb268-1" title="1"><span class="kw">library</span>(gbm)</a></code></pre></div>
 <pre><code>Loaded gbm 2.1.5</code></pre>
 <div class="sourceCode" id="cb270"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb270-1" title="1"><span class="kw">set.seed</span>(<span class="dv">1234</span>)</a></code></pre></div>
-<p>We run gradient boosting. The tuning parameters are the tree size. Tree size is directly related to the second tuning parameter: the learning rate. When the learning rate is smaller, we need more trees. The third tuning parameter interaction.depth determines how bushy the tree is. Common choices are 1, 2, 4, 8. When interaction depth is 1, each tree is a stump. If we increase to two we can get bivariate interactions with 2 splits and so. A final parameter that is related to the complexity of the tree could be minimum number of observations in the terminal node which defaults to 10.</p>
-<p>Notice that we just set hyperparameters. We might achieve better predictions by training the boosting model properly (however, this would take very long).</p>
+<p>We run gradient boosting. The tuning parameters are the tree size. Tree size is directly related to the second tuning parameter: the learning rate. When the learning rate is smaller, we need more trees. The third tuning parameter interaction.depth determines how bushy the tree is. Common choices are 1, 2, 4, 8. When interaction depth is 1, each tree is a stump. If we increase to two we can get bi-variate interactions with 2 splits and so. A final parameter that is related to the complexity of the tree could be minimum number of observations in the terminal node which defaults to 10.</p>
+<p>Notice that we just set hyper-parameters. We might achieve better predictions by training the boosting model properly (however, this would take very long).</p>
 <div class="sourceCode" id="cb271"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb271-1" title="1"><span class="co"># gradient boosting</span></a>
 <a class="sourceLine" id="cb271-2" title="2">gb1 &lt;-<span class="st"> </span><span class="kw">gbm</span>(Income <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> bes[train, ], </a>
 <a class="sourceLine" id="cb271-3" title="3">           <span class="dt">distribution =</span> <span class="st">&quot;gaussian&quot;</span>, </a>

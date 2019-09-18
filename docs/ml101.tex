@@ -138,11 +138,11 @@
 
 This course will introduce participants to a fascinating field of statistics. We will see how we can rely on statistical models to gain a deep understanding from data. This often involves finding optimal predictions and classifications. Machine Learning (also known as Statistical Learning) is quickly developing and is being applied in various fields such as business analytics, political science, sociology, and elsewhere.
 
-Machine learning can be divided into supervised learning and unsupervised learning. We cover supervised machine learning. Supervised learning involves models where we have a dependent variable - often referred to as labelled data. In unsupervised learning the outcome variable is not known - often referred to as unlabelled data.
+Machine learning can be divided into supervised learning and unsupervised learning. We cover supervised machine learning. Supervised learning involves models where we have a dependent variable - often referred to as labelled data. In unsupervised learning the outcome variable is not known - often referred to as unlabeled data.
 
 \textbf{\emph{Course Objectives}}
 
-This course aims to provide an introduction to the data science approach to the quantitative analysis of data using the methods of statistical learning, an approach blending classical statistical methods with recent advances in computational and machine learning. The course will cover the main analytical methods from this field focussing on hands-on applications using example datasets. This will allow participants to gain experience with and confidence in using the methods we cover.
+This course aims to provide an introduction to the data science approach to the quantitative analysis of data using the methods of statistical learning, an approach blending classical statistical methods with recent advances in computational and machine learning. The course will cover the main analytic methods from this field focusing on hands-on applications using example datasets. This will allow participants to gain experience with and confidence in using the methods we cover.
 
 \textbf{\emph{Course Prerequisites}}
 
@@ -173,11 +173,13 @@ Participants are expected to have a solid understanding of linear regression mod
 
 \textbf{\emph{Acknowledgements}}
 
-The material in this course is based on the textbook: \href{http://faculty.marshall.usc.edu/gareth-james/ISL/ISLR\%20Seventh\%20Printing.pdf}{James Gareth, Daniela Witten, Trevor Hastie and Robert Tibshirani. 2013. An introduction to statistical learning. Springer}. In addition, the material is based on a machine learning class at the Essex Summer School with \href{https://lucasleemann.ch}{Lucas Leemann} and \href{https://philippbroniecki.com}{Philipp Broniecki}. The infrastracture for this website is in large parts adopted from work by UCL's \href{https://iris.ucl.ac.uk/iris/browse/profile?upi=ALIAX58}{Altaf Ali}, \href{https://www.jackblumenau.com/}{Jack Blumenau}, \href{https://lucasleemann.ch}{Lucas Leemann}, \href{https://sjankin.com/}{Slava Jankin Mikhaylov}, and \href{https://www.philippbroniecki.com/}{Philipp Broniecki}.
+The material in this course is based on the textbook: \href{http://faculty.marshall.usc.edu/gareth-james/ISL/ISLR\%20Seventh\%20Printing.pdf}{James Gareth, Daniela Witten, Trevor Hastie and Robert Tibshirani. 2013. An introduction to statistical learning. Springer}. In addition, the material is based on a machine learning class at the Essex Summer School with \href{https://lucasleemann.ch}{Lucas Leemann} and \href{https://philippbroniecki.com}{Philipp Broniecki}. The infrastructure for this website is in large parts adopted from work by UCL's \href{https://iris.ucl.ac.uk/iris/browse/profile?upi=ALIAX58}{Altaf Ali}, \href{https://www.jackblumenau.com/}{Jack Blumenau}, \href{https://lucasleemann.ch}{Lucas Leemann}, \href{https://sjankin.com/}{Slava Jankin Mikhaylov}, and \href{https://philippbroniecki.com}{Philipp Broniecki}. The ESRC Business and Local Government Data Research Centre is funded by the \href{https://esrc.ukri.org}{Economic and Social Research Council (ESRC)}.
 
 \begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
 
-Placeholder
+slides
+
+data
 
 \hypertarget{linear-regression}{%
 \section{Linear Regression}\label{linear-regression}}
@@ -185,7 +187,7 @@ Placeholder
 \hypertarget{learning-objectives}{%
 \subsection{Learning objectives}\label{learning-objectives}}
 
-In this part, we cover the linear regression model. The linear model is commonly applied and versatile enough to be suitable for most tasks. We will use a dataset from the 1990 US Census which provides demographic and socio-economic data. The dataset includes observations from 1994 communities with each observation identified by a \texttt{state} and \texttt{communityname} variable. Before we start analysing, we load the dataset and do some pre-processing.
+In this part, we cover the linear regression model. The linear model is commonly applied and versatile enough to be suitable for most tasks. We will use a dataset from the 1990 US Census which provides demographic and socio-economic data. The dataset includes observations from 1994 communities with each observation identified by a \texttt{state} and \texttt{communityname} variable. Before we start analyzing, we load the dataset and do some pre-processing.
 
 We load a part of the census data using the \texttt{read.csv()} function and confirm that the \texttt{state} and \texttt{communityname} are present in each dataset. The dataset is named \texttt{communities.csv} and is included on your memory stick. You can copy it over to your computer and set the working directory in R to work in that folder. Alternatively, you can download the dataset \href{http://philippbroniecki.github.io/ML2017.io/data/communities.csv}{here}.
 
@@ -223,10 +225,10 @@ Since our dataset has more columns (variables) than we need, let's select only a
 
 Note that the first argument in \texttt{dplyr::select} is the name of the dataset (\texttt{communities} in our case). The remaining arguments are the variables that we keep. The first variable \texttt{state} has a meaningful name and does not need to be renamed. The second variable \texttt{communityname} could be shorter and we rename it to \texttt{community}. Similarly, we rename \texttt{PctUnemployed}, \texttt{PctNotHSGrad} and \texttt{racePctWhite}.
 
-\hypertarget{visualising-a-relationship-bw-two-continuous-variables}{%
-\subsubsection{Visualising a relationship b/w two continuous variables}\label{visualising-a-relationship-bw-two-continuous-variables}}
+\hypertarget{visualizing-a-relationship-bw-two-continuous-variables}{%
+\subsubsection{Visualizing a relationship b/w two continuous variables}\label{visualizing-a-relationship-bw-two-continuous-variables}}
 
-A good way gauge whether two variables that both contiunous are related is to draw a scatter plot. We do so for the unemployment rate and for the lack of high shool education. Both variables are measured in percent, where \texttt{NoHighSchool} is the percentage of adults without high school education in a community.
+A good way gauge whether two variables that both continuous are related is to draw a scatter plot. We do so for the unemployment rate and for the lack of high school education. Both variables are measured in percent, where \texttt{NoHighSchool} is the percentage of adults without high school education in a community.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -277,7 +279,7 @@ For more information on the \texttt{lm()} function, run \texttt{?lm()}. Let's ru
 \end{Highlighting}
 \end{Shaded}
 
-The \texttt{lm()} function modele the relationship between \texttt{UnemploymentRate} and \texttt{NoHighSchool} and we've assigned the estimated model to the object \texttt{m1}. We can use the \texttt{summary()} function on \texttt{m1} for the key results.
+The \texttt{lm()} function models the relationship between \texttt{UnemploymentRate} and \texttt{NoHighSchool} and we've assigned the estimated model to the object \texttt{m1}. We can use the \texttt{summary()} function on \texttt{m1} for the key results.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -365,7 +367,7 @@ The \emph{R-squared} and \emph{adjusted R-squared} tell us how much of the varia
 \hypertarget{predictions}{%
 \paragraph{Predictions}\label{predictions}}
 
-We are often interested in predicting values for the dependent variable based on a values for the independent variable. For instance, what is the predicted unemployment rate given 50 percent of the adults without high school education? We use the \texttt{predict()} function to assess this. Instead of making the forecaset for the case were 50 percent do not have high school education, we make a prediction for each level of low education.
+We are often interested in predicting values for the dependent variable based on a values for the independent variable. For instance, what is the predicted unemployment rate given 50 percent of the adults without high school education? We use the \texttt{predict()} function to assess this. Instead of making the forecast for the case were 50 percent do not have high school education, we make a prediction for each level of low education.
 
 We create a sequence of values for low education using the sequence function first \texttt{seq()}. We create 100 values from 0 to 1.
 
@@ -401,7 +403,7 @@ We now use the \texttt{predict()} function to make a prediction for each of the 
 \end{Highlighting}
 \end{Shaded}
 
-We create a new dataset including the education values from 0 to 1 and the predictions. In the \texttt{predict()} function, we set the argument \texttt{se.fit} to TRUE. This returns a standard error for our prediction and lets us quantify our uncertainty. IN the dataset, we will save the point estimates (the best quesses) as well as values for the upper and lower bound of our confidence intervals
+We create a new dataset including the education values from 0 to 1 and the predictions. In the \texttt{predict()} function, we set the argument \texttt{se.fit} to TRUE. This returns a standard error for our prediction and lets us quantify our uncertainty. IN the dataset, we will save the point estimates (the best guesses) as well as values for the upper and lower bound of our confidence intervals
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -549,11 +551,11 @@ RMSE             0.14         0.17
 *** p < 0.001, ** p < 0.01, * p < 0.05
 \end{verbatim}
 
-Contemplate the output from the table for a moment. Slope coefficients (everything except the intercept) are always the effect of a 1-unit change of the indepedent variable on the dependent variable in the units of the dependent variable. Both our independent variables are proportions. Hence a 1-unit change covers the entire ranges of our independent variables (0 to 1). Model 1 suggests that the unemployment rate is 74 percent larger in a district where no one has a high school degree than in a district where everone has a high school degree. Similarly, model 2 suggests that in a district where everone has a minority background (making everyone is a minority an oxymoron), the unemployment rate 43 percent higher than in a community where no one is. Please note that these predictive models should not be mistaken to capture causal relationships.
+Contemplate the output from the table for a moment. Slope coefficients (everything except the intercept) are always the effect of a 1-unit change of the independent variable on the dependent variable in the units of the dependent variable. Both our independent variables are proportions. Hence a 1-unit change covers the entire ranges of our independent variables (0 to 1). Model 1 suggests that the unemployment rate is 74 percent larger in a district where no one has a high school degree than in a district where everyone has a high school degree. Similarly, model 2 suggests that in a district where everyone has a minority background (making everyone is a minority an oxymoron), the unemployment rate 43 percent higher than in a community where no one is. Please note that these predictive models should not be mistaken to capture causal relationships.
 
 \includegraphics{ml101_files/figure-latex/unnamed-chunk-21-1.pdf}
 
-These are the two plots that we created earlier. In the model using \texttt{NoHighSchool} the points which are the actual unemployment rates are much closer to our prediction (the regression line) than in the model using \texttt{Minority}. This means that variation in \texttt{NoHighSchool} better explains variation in \texttt{UnemploymentRate} than variation in \texttt{Minority}. This is captured in the \texttt{R\^{}2} and \texttt{Adj.\ R\^{}2}. Both \texttt{R\^{}2} and \texttt{Adj.\ R\^{}2} are measues of model fit. The difference between them is that \texttt{Adj.\ R\^{}2} is a measure that penalises model complexity (more variables). In models with more than one independent variable, we rely on \texttt{Adj.\ R\^{}2} and in models with one independent variable, we use \texttt{R\^{}2}, i.e.~here we would use \texttt{R\^{}2}.
+These are the two plots that we created earlier. In the model using \texttt{NoHighSchool} the points which are the actual unemployment rates are much closer to our prediction (the regression line) than in the model using \texttt{Minority}. This means that variation in \texttt{NoHighSchool} better explains variation in \texttt{UnemploymentRate} than variation in \texttt{Minority}. This is captured in the \texttt{R\^{}2} and \texttt{Adj.\ R\^{}2}. Both \texttt{R\^{}2} and \texttt{Adj.\ R\^{}2} are measures of model fit. The difference between them is that \texttt{Adj.\ R\^{}2} is a measure that penalizes model complexity (more variables). In models with more than one independent variable, we rely on \texttt{Adj.\ R\^{}2} and in models with one independent variable, we use \texttt{R\^{}2}, i.e.~here we would use \texttt{R\^{}2}.
 
 \hypertarget{classification}{%
 \section{Classification}\label{classification}}
@@ -685,9 +687,9 @@ The dataset is on your memory sticks and also available for download \href{http:
 \end{Highlighting}
 \end{Shaded}
 
-In our data manipulation, we first turned \texttt{RSex} into a factor variable. Factor is a variable type in R, that is handy because we declare that a variable is categorical. When we run models with a factor variable, R will handle them correctly, i.e.~break them up into binary variables internaly.
+In our data manipulation, we first turned \texttt{RSex} into a factor variable. Factor is a variable type in R, that is handy because we declare that a variable is categorical. When we run models with a factor variable, R will handle them correctly, i.e.~break them up into binary variables internally.
 
-Alternatively, with \texttt{urban}, we show how to break up such a variable into binary variables manually. We use the \texttt{ifelse()} function were the first argument is a logical condition such as \texttt{fdata\$urban\ ==\ 1} meaning "if the variable \texttt{urban} in \texttt{fdata} takes on the value 1. This condition is evaluated for every observation in the dataset and if it is met we asign a 1 (\texttt{yes\ =\ 1}) and if not we assign a 0 (\texttt{no\ =\ 0}).
+Alternatively, with \texttt{urban}, we show how to break up such a variable into binary variables manually. We use the \texttt{ifelse()} function were the first argument is a logical condition such as \texttt{fdata\$urban\ ==\ 1} meaning "if the variable \texttt{urban} in \texttt{fdata} takes on the value 1. This condition is evaluated for every observation in the dataset and if it is met we assign a 1 (\texttt{yes\ =\ 1}) and if not we assign a 0 (\texttt{no\ =\ 0}).
 
 \hypertarget{logistic-regression}{%
 \subsubsection{Logistic Regression}\label{logistic-regression}}
@@ -712,18 +714,18 @@ We want to predict whether respondents over-estimate immigration from non-wester
 \end{Highlighting}
 \end{Shaded}
 
-First, we copied the variable IMMBRIT before normalising it. Don't worry about this now, it will become clear why we did this further down in the code.
+First, we copied the variable IMMBRIT before normalizing it. Don't worry about this now, it will become clear why we did this further down in the code.
 
-We then define our own function. A function takes some input which we called \texttt{x} and does something with that input. In case, x is a numeric variable. For every value of x, we substract the mean of x. Therefore, we centre the variable on 0, i.e.~the new mean will be 0. We then divide by the standard deviation of the variable. This is necessary to make the variables comparable. The units of all variables are then represented in average deviations from their means.
+We then define our own function. A function takes some input which we called \texttt{x} and does something with that input. In case, x is a numeric variable. For every value of x, we subtract the mean of x. Therefore, we center the variable on 0, i.e.~the new mean will be 0. We then divide by the standard deviation of the variable. This is necessary to make the variables comparable. The units of all variables are then represented in average deviations from their means.
 
-In the next step, we create a characer vector with the variable names of all variables that are continuous and lastly we normalise. We do this by subsetting our data with square brackets. So \texttt{fdata{[}\ ,\ c.vars{]}} is the part of our dataset that includes the continuous variables. The function \texttt{apply()} lets us carry out the same operation repeadetly for all the variables. The argument \texttt{X} is the data. The argument \texttt{MARGIN} says we want to apply our normalisation column-wise. The argument \texttt{FUN} means function. Here, we input our normlisation function.
+In the next step, we create a character vector with the variable names of all variables that are continuous and lastly we normalize. We do this by sub-setting our data with square brackets. So \texttt{fdata{[}\ ,\ c.vars{]}} is the part of our dataset that includes the continuous variables. The function \texttt{apply()} lets us carry out the same operation repeatedly for all the variables. The argument \texttt{X} is the data. The argument \texttt{MARGIN} says we want to apply our normalization column-wise. The argument \texttt{FUN} means function. Here, we input our normalization function.
 
 We now have a look at our dependent variable of interest. The variable \texttt{over.estimate} measures whether a respondent over estimates the number of non-western immigrants or not (yes = 1; no = 0). The actual percentage of non-western immigrants was 10.7 percent at the time of the survey.
 
 \hypertarget{the-naive-guess}{%
 \paragraph{The naive guess}\label{the-naive-guess}}
 
-The naive guess is the best prediction without a model. Or put differently, the best prediction we could make without having any context information. Have a look at the variable \texttt{over.estimate} and decide on your own what you would do to maximise your predictive accuracy\ldots{}
+The naive guess is the best prediction without a model. Or put differently, the best prediction we could make without having any context information. Have a look at the variable \texttt{over.estimate} and decide on your own what you would do to maximize your predictive accuracy\ldots{}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -989,7 +991,7 @@ prediction   0   1
 [1] 0.7238095
 \end{verbatim}
 
-The accuarcy of the model is slightly lower in the test dataset than in the training data. The difference is not big here but in practice it can be quite large.
+The accuracy of the model is slightly lower in the test dataset than in the training data. The difference is not big here but in practice it can be quite large.
 
 Let's try to improve the classification model by relying on the best predictors.
 
@@ -1026,7 +1028,7 @@ We improved our model by removing variables. This will never be the case if we a
 \hypertarget{k-nearest-neighbors}{%
 \subsubsection{K-Nearest Neighbors}\label{k-nearest-neighbors}}
 
-Thera are many models for classification. One of the more simple ones is KNN. For it, we need to provide the data in a slightly different format and we need to install the \texttt{class} package.
+There are many models for classification. One of the more simple ones is KNN. For it, we need to provide the data in a slightly different format and we need to install the \texttt{class} package.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1083,7 +1085,7 @@ We can try and increase the accuracy by changing the number of nearest neighbors
 \hypertarget{model-the-underlying-continuous-process}{%
 \subsubsection{Model the Underlying Continuous Process}\label{model-the-underlying-continuous-process}}
 
-We can try to model the underlying process and classify afterwards. By doing that, the depdendent variable provides more information. In effect we turn our classification problem into a regression problem.
+We can try to model the underlying process and classify afterwards. By doing that, the dependent variable provides more information. In effect we turn our classification problem into a regression problem.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1274,7 +1276,7 @@ Next, we compare our predictions on the test set to the real outcomes. Our loss 
 
 The error rate for a linear model is 435.41. We can also fit higher degree polynomials with the \texttt{poly()} function. First, let's try a quadratic model.
 
-So far, we have modelled the relationship between \texttt{RAge} and \texttt{IMMBRIT} as linear. It is possible that the relationship is non-linear. We can model this using polynomials, i.e.~raising \texttt{RAge} to some power. We start with the square. We could use the \texttt{\^{}2} operator to raise \texttt{RAge} to the second power like so: \texttt{data2\$RAge\^{}2}. However, it's generally not a good idea to do this because polynomials are correlated introducing collinearity into the model. We can avoid this using the \texttt{poly()} function which decorrelates the variable and its powers.
+So far, we have modeled the relationship between \texttt{RAge} and \texttt{IMMBRIT} as linear. It is possible that the relationship is non-linear. We can model this using polynomials, i.e.~raising \texttt{RAge} to some power. We start with the square. We could use the \texttt{\^{}2} operator to raise \texttt{RAge} to the second power like so: \texttt{data2\$RAge\^{}2}. However, it's generally not a good idea to do this because polynomials are correlated introducing colinearity into the model. We can avoid this using the \texttt{poly()} function which de-correlates the variable and its powers.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1312,7 +1314,7 @@ RMSE             17.92
 *** p < 0.001, ** p < 0.01, * p < 0.05
 \end{verbatim}
 
-Interpreting polynomials is not straightforward because the effect is not linear, i.e.~it is not constant. Here, \texttt{poly(RAge,\ 2)1} is \texttt{RAge} and \texttt{poly(RAge,\ 2)1} is the square of \texttt{RAge}. The effect is significant. However, to interpret the effect we would need to plot it. Instead, we will proceed by making predictions on the validation set (test set) again and calcuate the MSE.
+Interpreting polynomials is not straightforward because the effect is not linear, i.e.~it is not constant. Here, \texttt{poly(RAge,\ 2)1} is \texttt{RAge} and \texttt{poly(RAge,\ 2)1} is the square of \texttt{RAge}. The effect is significant. However, to interpret the effect we would need to plot it. Instead, we will proceed by making predictions on the validation set (test set) again and calculate the MSE.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1410,7 +1412,7 @@ RMSE                            19.45
 *** p < 0.001, ** p < 0.01, * p < 0.05
 \end{verbatim}
 
-The coefficient estimates are similar but the fit statistics that are reported differ. Generally a GLM maximises the likelihood whereas LM minimises the sum of squared deviations from the regression line. Maximum likelihood estimation is more general and used in most statistical models.
+The coefficient estimates are similar but the fit statistics that are reported differ. Generally a GLM maximizes the likelihood whereas LM minimizes the sum of squared deviations from the regression line. Maximum likelihood estimation is more general and used in most statistical models.
 
 We will use the \texttt{glm()} function from here on because it can be used with \texttt{cv.glm()} which allows us to estimate the k-fold cross-validation prediction error. We also need to install a new package called \texttt{boot} using \texttt{install.packages("boot")}.
 
@@ -1443,11 +1445,11 @@ We will use the \texttt{glm()} function from here on because it can be used with
 
 The returned value from \texttt{cv.glm()} contains a delta vector of components - the raw cross-validation estimate and the adjusted cross-validation estimate respectively. We are interested in the raw cross-validation error.
 
-NOTE: if we do not provide the option \textbf{K} in \texttt{cv.glm()} we automatically perfrom leave-one-out cross-validation (LOOCV).
+NOTE: if we do not provide the option \textbf{K} in \texttt{cv.glm()} we automatically perform leave-one-out cross-validation (LOOCV).
 
 We repeat this process in a \texttt{for()} loop to compare the cross-validation error of higher-order polynomials. The following example estimates the polynomial fit of the order 1 through 7 and stores the result in a cv.error vector.
 
-We will also record the in-sample prediction error to illustrate that we do need to test our models using new data rather than improving them in-sample due to the bias-variance tradeoff.
+We will also record the in-sample prediction error to illustrate that we do need to test our models using new data rather than improving them in-sample due to the bias-variance trade-off.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1490,12 +1492,12 @@ Next, we plot the effect of increasing the complexity of the model. We also plot
 
 \includegraphics{ml101_files/figure-latex/non.finished.plotting-1.pdf}
 
-Apparently, the cubic model performs best. We would have missed this using the initial split of the data into one training set and one test set. Futhermore, the in-sample MSE keeps decreasing the more complex we make our model (although with diminishing marginal returns). However, the more complex models start fitting ideosyncratic aspects of the sample (noise) and perform badly with new data.
+Apparently, the cubic model performs best. We would have missed this using the initial split of the data into one training set and one test set. Furthermore, the in-sample MSE keeps decreasing the more complex we make our model (although with diminishing marginal returns). However, the more complex models start fitting idiosyncratic aspects of the sample (noise) and perform badly with new data.
 
 \hypertarget{k-fold-cross-validation}{%
 \subsubsection{k-Fold Cross-Validation}\label{k-fold-cross-validation}}
 
-K-fold cross-validation splits the datset into k datasets. Common choices for k are 5 and 10. Using 5, we would split the data into five folds. We would then train our model on the first fold and predict on the remaining folds. Next, we would train our model on the second fold and predict on the four remaining ones and so on until we train on the fith fold and predict on the remaining folds. Each time we will get an error (e.g.~MSE). We would then average over the five MSEs to obtain the overall k-fold cross-validation MSE.
+K-fold cross-validation splits the datset into k datasets. Common choices for k are 5 and 10. Using 5, we would split the data into five folds. We would then train our model on the first fold and predict on the remaining folds. Next, we would train our model on the second fold and predict on the four remaining ones and so on until we train on the fifth fold and predict on the remaining folds. Each time we will get an error (e.g.~MSE). We would then average over the five MSEs to obtain the overall k-fold cross-validation MSE.
 
 In addition to LOOCV, \texttt{cv.glm()} can also be used to run k-fold cross-validation. In the following example, we estimate the cross-validation error of polynomials of the order \(1\) through \(7\) using \(10\)-fold cross-validation.
 
@@ -1532,7 +1534,7 @@ We add the results to the plot:
 
 \includegraphics{ml101_files/figure-latex/unnamed-chunk-59-1.pdf}
 
-The 10-fold cross-validation error is more wiggly. In this expample, it estimates the best performance with a square model of age wehreas the LOOCV errror finds a minimum at the cube of age. Eyeballing the results, we suggest that there are no substantial improvements beyond the squared term. However, using the cubic model would be an alternative.
+The 10-fold cross-validation error is more wiggly. In this example, it estimates the best performance with a square model of age whereas the LOOCV error finds a minimum at the cube of age. Eyeballing the results, we suggest that there are no substantial improvements beyond the squared term. However, using the cubic model would be an alternative.
 
 \hypertarget{subset-selection}{%
 \section{Subset Selection}\label{subset-selection}}
@@ -1892,7 +1894,7 @@ To show the coefficients associated with the model with the lowest \(BIC\), we u
 \hypertarget{forward-and-backward-stepwise-selection}{%
 \subsubsection{Forward and Backward Stepwise Selection}\label{forward-and-backward-stepwise-selection}}
 
-The default method used by \texttt{regsubsets()} is exhaustive but we can change it to forward or backward and compare the results. Best subset selection will take very long with many variables because the number of models to estimate grows exponentially. In thse cases, we will want to use forward and backward selection instead.
+The default method used by \texttt{regsubsets()} is exhaustive but we can change it to forward or backward and compare the results. Best subset selection will take very long with many variables because the number of models to estimate grows exponentially. In these cases, we will want to use forward and backward selection instead.
 
 Let's carry out forward selection.
 
@@ -2429,8 +2431,8 @@ Finally, we run \texttt{regsubsets()} on the full dataset and show the coefficie
  8.81702077  2.46964179 -1.61703898 
 \end{verbatim}
 
-\hypertarget{regularisation}{%
-\section{Regularisation}\label{regularisation}}
+\hypertarget{regularization}{%
+\section{Regularization}\label{regularization}}
 
 \hypertarget{seminar-3}{%
 \subsection{Seminar}\label{seminar-3}}
@@ -2463,7 +2465,7 @@ We then need to normalize all numeric variables to put them on the same scale. R
 \end{Highlighting}
 \end{Shaded}
 
-In order to run ridge regression, we create a matrix from our dataset using the \texttt{model.matrix()} function. We also need to remove the intercept from the resulting matrix because the function to run ridge regression automatically includes one. Furthermore, we will use the subjective rate of immigrants as response. Consequently, we have to remove \texttt{over.estimate} as it measures the same thing. Lastly, the party affiliation dummies are mutually exclusive, se we have to exclude the model category \texttt{Cons}.
+In order to run ridge regression, we create a matrix from our dataset using the \texttt{model.matrix()} function. We also need to remove the intercept from the resulting matrix because the function to run ridge regression automatically includes one. Furthermore, we will use the subjective rate of immigrants as response. Consequently, we have to remove \texttt{over.estimate} as it measures the same thing. Lastly, the party affiliation dummies are mutually exclusive, so we have to exclude the model category \texttt{Cons}.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -2547,7 +2549,7 @@ We now run ridge regression. We tune \texttt{lambda} and set \texttt{alpha} to 0
 
 \includegraphics{ml101_files/figure-latex/unnamed-chunk-98-1.pdf}
 
-the object \texttt{ridge.mod} contains a set of coefficients for each of the lambdas which we can access by runing the \texttt{coef()} functio on the object \texttt{ridge.mod}. We tried 100 lambda values and therefore we get 100 coefficient sets. The object is a matrix where rows are variables and columns are the coefficients based on the chosen lambda values.
+the object \texttt{ridge.mod} contains a set of coefficients for each of the lambdas which we can access by running the \texttt{coef()} function on the object \texttt{ridge.mod}. We tried 100 lambda values and therefore we get 100 coefficient sets. The object is a matrix where rows are variables and columns are the coefficients based on the chosen lambda values.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -2792,9 +2794,9 @@ We select the best Lambda value and the cross-validation error.
 \hypertarget{seminar-4}{%
 \subsection{Seminar}\label{seminar-4}}
 
-In this exercise, we will learn how to model non-linearities in generalised linear models. This exercise is based on based on James et al.~2013. We begin by loading that \texttt{ISLR} package and attaching to the Wage dataset that we will be using throughout this exercise. When we attach a dataset, we do not need to write \texttt{dataset.name\$variable.name} to access a variable but we can instead just write \texttt{variable.name} to access it.
+In this exercise, we will learn how to model non-linear relationships using generalized linear models. This exercise is based on based on James et al.~2013. We begin by loading that \texttt{ISLR} package and attaching to the Wage dataset that we will be using throughout this exercise. When we attach a dataset, we do not need to write \texttt{dataset.name\$variable.name} to access a variable but we can instead just write \texttt{variable.name} to access it.
 
-Note: We need to install the \texttt{ISLR} package if it is not installed alread like so: \texttt{install.packages("ISLR")}
+Note: We need to install the \texttt{ISLR} package if it is not installed already like so: \texttt{install.packages("ISLR")}
 Note2: The \texttt{Wage} dataset is spelled with a capital W.
 
 \begin{Shaded}
@@ -2831,7 +2833,7 @@ poly(age, 4)3  125.52169 39.9147851   3.144742 1.678622e-03
 poly(age, 4)4  -77.91118 39.9147851  -1.951938 5.103865e-02
 \end{verbatim}
 
-We can also obtain raw instead of orthogonal polynomials by passing the \texttt{raw\ =\ TRUE} argument to \texttt{poly()}. The coefficients will change the fit should be largely unaffected. It is not advisable to use the raw argument because it introduces unnecessary multicollinearity into the model.
+We can also obtain raw instead of orthogonal polynomials by passing the \texttt{raw\ =\ TRUE} argument to \texttt{poly()}. The coefficients will change the fit should be largely unaffected. It is not advisable to use the raw argument because it introduces unnecessary multicolinearity into the model.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -2903,7 +2905,7 @@ We can create an age grid (minimum age to maximum age) and pass the grid to \tex
 \end{Highlighting}
 \end{Shaded}
 
-We can plot the data and add the fit from the degree-4 polynomial. We set the margins and outer margins in our plot the later plot a title that will be the overall title for two plots that we plot next to each other. The function \texttt{matlines()} lets us draw the lines fo the uncertainty bounds in one go.
+We can plot the data and add the fit from the degree-4 polynomial. We set the margins and outer margins in our plot the later plot a title that will be the overall title for two plots that we plot next to each other. The function \texttt{matlines()} lets us draw the lines for the uncertainty bounds in one go.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -2926,7 +2928,7 @@ We can plot the data and add the fit from the degree-4 polynomial. We set the ma
 
 \includegraphics{ml101_files/figure-latex/unnamed-chunk-118-1.pdf}
 
-We compare the orthogonolized polynomials that we saved in the object called \texttt{fit} with the polynomials that plain polynomials sved in \texttt{fit2}. The difference will be close to \(0\). We predict the outcome from the fit with the raw polynomials and take the diffence to the fit with the independent linear combinations of the powers of age.
+We compare the orthogonolized polynomials that we saved in the object called \texttt{fit} with the polynomials that plain polynomials saved in \texttt{fit2}. The difference will be close to \(0\). We predict the outcome from the fit with the raw polynomials and take the difference to the fit with the independent linear combinations of the powers of age.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -3027,7 +3029,7 @@ Note: If we do \textbf{not} set \texttt{type="response"} in the \texttt{predict(
 \end{Highlighting}
 \end{Shaded}
 
-We add the results next to the plot where wage is continuous. With the \texttt{points()} function we add the actual data to the plot. The argument \texttt{pch="\textbar{}"} draws a bar as the symbol for each point. Also notice the y-coordinate of each point. In the \texttt{plot()} function we set the range of the y-axis with \texttt{ylim\ =\ c(0,\ 0.2)} to range from \(0\) to \(0.2\). If the true outcome is \(1\) we want to draw the \textbar{} at \(y=0.2\) and otherwhise at \(y=0\). We achieve this with \texttt{I((wage\ \textgreater{}\ 250)/5)}. Play around to see why.
+We add the results next to the plot where wage is continuous. With the \texttt{points()} function we add the actual data to the plot. The argument \texttt{pch="\textbar{}"} draws a bar as the symbol for each point. Also notice the y-coordinate of each point. In the \texttt{plot()} function we set the range of the y-axis with \texttt{ylim\ =\ c(0,\ 0.2)} to range from \(0\) to \(0.2\). If the true outcome is \(1\) we want to draw the \textbar{} at \(y=0.2\) and otherwise at \(y=0\). We achieve this with \texttt{I((wage\ \textgreater{}\ 250)/5)}. Play around to see why.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -3050,7 +3052,7 @@ Notice, that the confidence interval becomes very large in the range of the data
 
 Instead of using polynomials to create a non-linear prediction, we could also use step functions. With step functions we fit different lines for different data ranges.
 
-We use the \texttt{cut()} function to create equally spaced cutpoints in our data. We use the now categorical variable age as predictor in our linear model.
+We use the \texttt{cut()} function to create equally spaced cut-points in our data. We use the now categorical variable age as predictor in our linear model.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -3115,7 +3117,7 @@ We first use \texttt{bs()} to generate a basis matrix for a polynomial spline an
 \hypertarget{seminar-5}{%
 \subsection{Seminar}\label{seminar-5}}
 
-Tree models are non-parametric models. Depending on the data generation process, these models can be better predictive models than generalised linear models even with regularisation. We will start with the highly variable simple tree, followed by pruning, the random forrest model and boosting machines.
+Tree models are non-parametric models. Depending on the data generation process, these models can be better predictive models than generalized linear models even with regularization. We will start with the highly variable simple tree, followed by pruning, the random forest model and boosting machines.
 
 We load post-election survey data from the 2004 British Election Survey. The data is available \href{http://philippbroniecki.github.io/ML2017.io/data/bes.dta}{here}.
 
@@ -3185,7 +3187,7 @@ Next, we declare the categorical variables in the dataset to be factors en bulk.
 \hypertarget{classification-trees}{%
 \subsubsection{Classification Trees}\label{classification-trees}}
 
-We use trees to classifyrespondents into voters and non-voters. Here we need the \texttt{tree} package which we have to install if is not already \texttt{install.packages("tree")}.
+We use trees to classify respondents into voters and non-voters. Here we need the \texttt{tree} package which we have to install if is not already \texttt{install.packages("tree")}.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -3553,7 +3555,7 @@ We estimate the Brier Score (prediction error).
 \hypertarget{bagging-and-random-forests}{%
 \paragraph{Bagging and Random Forests}\label{bagging-and-random-forests}}
 
-We now apply bagging and random forests to improve our prediction. Bagging is the idea that the high variance of a single bushy tree can be reduced by bootstapping samples and averaging over trees that were grown on the samples.
+We now apply bagging and random forests to improve our prediction. Bagging is the idea that the high variance of a single bushy tree can be reduced by bootstrapping samples and averaging over trees that were grown on the samples.
 
 Note: Bagging gets an estimate of the test error for free as it always leaves out some observations when a tree is fit. The reported out-of-bag MSE is thus an estimate of test error. We also estimate test error separately on a test set. This is one particular test set, so the test error may vary.
 
@@ -3625,7 +3627,7 @@ We reduce the error rate by 5.76\(\%\) by using bagging. We examine what happens
 
 The result is that our rate increases substantially again.
 
-We now apply random forest. The trick is to decorrelate the trees by randomly considering only a subset of variables at every split. We thereby reduce variance further. The number of variables argument \texttt{mtry} is a tuning parameter.
+We now apply random forest. The trick is to de-corelate the trees by randomly considering only a subset of variables at every split. We thereby reduce variance further. The number of variables argument \texttt{mtry} is a tuning parameter.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -3691,7 +3693,7 @@ We use 3 as the optimal value for \texttt{mtry}. In cases where it is hard to de
 [1] -0.03454119
 \end{verbatim}
 
-We reduced the error rate by another 3.45\(\%\) by decorrelating the trees. We can exmine variable importance as well. Variable reduction is obtained as the average that a predictor reduces error at splits within a tree where it was used and averaged again over all trees. Similarly, node purity is based on the gini index of how heterogenous a group becomes due to a split.
+We reduced the error rate by another 3.45\(\%\) by de-correlating the trees. We can examine variable importance as well. Variable reduction is obtained as the average that a predictor reduces error at splits within a tree where it was used and averaged again over all trees. Similarly, node purity is based on the gini index of how heterogeneous a group becomes due to a split.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -3747,9 +3749,9 @@ Install the \texttt{gbm} package like so \texttt{install.packages("gbm")}.
 \end{Highlighting}
 \end{Shaded}
 
-We run gradient boosting. The tuning parameters are the tree size. Tree size is directly related to the second tuning parameter: the learning rate. When the learning rate is smaller, we need more trees. The third tuning parameter interaction.depth determines how bushy the tree is. Common choices are 1, 2, 4, 8. When interaction depth is 1, each tree is a stump. If we increase to two we can get bivariate interactions with 2 splits and so. A final parameter that is related to the complexity of the tree could be minimum number of observations in the terminal node which defaults to 10.
+We run gradient boosting. The tuning parameters are the tree size. Tree size is directly related to the second tuning parameter: the learning rate. When the learning rate is smaller, we need more trees. The third tuning parameter interaction.depth determines how bushy the tree is. Common choices are 1, 2, 4, 8. When interaction depth is 1, each tree is a stump. If we increase to two we can get bi-variate interactions with 2 splits and so. A final parameter that is related to the complexity of the tree could be minimum number of observations in the terminal node which defaults to 10.
 
-Notice that we just set hyperparameters. We might achieve better predictions by training the boosting model properly (however, this would take very long).
+Notice that we just set hyper-parameters. We might achieve better predictions by training the boosting model properly (however, this would take very long).
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -3907,9 +3909,9 @@ In this exercise, we introduce a simulation approach to quantifying uncertainty 
 \hypertarget{monte-carlo-simulation}{%
 \subsubsection{Monte Carlo simulation}\label{monte-carlo-simulation}}
 
-In Monte Carlo simulation we create a fake data set were we define a causal model of the outcome directly. That way, we know what the true outcome has to be. We can then keep everything constant but make on change to our estimation to assess the effect of that change on our prediction accuarcy. We could, for instance, be interested in finding out whether our prediction accuracy suffers when independent variables are highly correlated.
+In Monte Carlo simulation we create a fake data set were we define a causal model of the outcome directly. That way, we know what the true outcome has to be. We can then keep everything constant but make on change to our estimation to assess the effect of that change on our prediction accuracy. We could, for instance, be interested in finding out whether our prediction accuracy suffers when independent variables are highly correlated.
 
-So, we set up an MC analysis to see whether problems of multicollinearity (high correlation between explanatory variables) go away as the sample size increases. The goal is to see how well we are able to retrieve the true value of \(\beta_{1}\) for varying strengths of correlation and sample sizes.
+So, we set up an MC analysis to see whether problems of multicolinearity (high correlation between explanatory variables) go away as the sample size increases. The goal is to see how well we are able to retrieve the true value of \(\beta_{1}\) for varying strengths of correlation and sample sizes.
 
 The basic setup of the simulation is as follows:
 
@@ -3997,7 +3999,7 @@ We average over the simulations by taking the column means. This returns a matri
 \end{Highlighting}
 \end{Shaded}
 
-To show the effect of multicollinearity for increasing levels of correlation and for increasing sample sizes, we plot correlation on the x-axis and the MSE on the y-axis in four plots where sample size increases by plot.
+To show the effect of multicolinearity for increasing levels of correlation and for increasing sample sizes, we plot correlation on the x-axis and the MSE on the y-axis in four plots where sample size increases by plot.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -4026,7 +4028,7 @@ To show the effect of multicollinearity for increasing levels of correlation and
 
 \begin{center}\includegraphics{ml101_files/figure-latex/unnamed-chunk-178-2} \end{center}
 
-The two take-aways are that (1) with increasing sample size the problem of multicollinearity decreases substantially and (2) bias increases exponentially with increasing levels of correlation.
+The two take-aways are that (1) with increasing sample size the problem of multicolinearity decreases substantially and (2) bias increases exponentially with increasing levels of correlation.
 
 \hypertarget{simulation-approach-to-uncertainty}{%
 \subsubsection{Simulation approach to uncertainty}\label{simulation-approach-to-uncertainty}}
@@ -4110,7 +4112,7 @@ As we draw randomly from a distribution we want to set the random number generat
 [11,]        1   1.0     0.4633952 0.7537161
 \end{verbatim}
 
-\textbf{Simulation step 3:} Predict the outcome. We have set our covariates and we have drawn our coefficients. This is all we need to predict \(y\). Depending on the flavour of generalized linear model, \(y\) may have to be sent through a link function. In logistic regression we would send latent \(y\) trough the logit link function: \(\frac{1}{1 + exp^{-y}}\) to get probabilities that \(y\) is 1. Here, we ran a simple linear model so in linear algebra notation our prediction is simply \(Y=X\beta\).
+\textbf{Simulation step 3:} Predict the outcome. We have set our covariates and we have drawn our coefficients. This is all we need to predict \(y\). Depending on the flavor of generalized linear model, \(y\) may have to be sent through a link function. In logistic regression we would send latent \(y\) trough the logit link function: \(\frac{1}{1 + exp^{-y}}\) to get probabilities that \(y\) is 1. Here, we ran a simple linear model so in linear algebra notation our prediction is simply \(Y=X\beta\).
 
 We estimate \texttt{y\_hat} as a matrix where its rows are the number of simulations and its columns are the different covariate scenarios.
 
