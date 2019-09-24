@@ -35,7 +35,7 @@ beta.catcher <- array(NA, c(sim.n, 4, 10))
 
 We start simulating. This will take a while because we are iterating through $sim.n * Rho * sample.N$ iterations, i.e. $40,000$ iterations. Each time we regress $y$ on our covariates. 
 
-```{r}
+```{r, eval=FALSE}
 # loop over the correlations
 for (i in 1:length(Rho)){
   
@@ -63,36 +63,41 @@ for (i in 1:length(Rho)){
       } # end of loop over number of sims
     } # end of loop over sample sizes
   } # end of loop over correlations
-
 ```
 
 You can have a look at the container by calling it with `beta.catcher`. We remind ourselves of the dimensions with:
 
-```{r}
+```{r, eval = FALSE}
 dim(beta.catcher)
 ```
 
+    [1] 1000    4   10
+
 We take the MSE of each coefficient estimate in the container. This is an element-wise operation so the resulting object `error.sq` has the same dimensions as the container.
 
-```{r}
+```{r, eval = FALSE}
 error.sq <- (beta.catcher-1)^2 
 ```
 
 We average over the simulations by taking the column means. This returns a matrix where the rows are now the different sample sizes (previously in the columns) and the columns are the correlations (previously in the layers). The `matrix mse.beta`, thus, has 4 rows and 10 columns.
 
-```{r}
+```{r, eval = FALSE}
 mse.beta1 <- colMeans(error.sq) 
 ```
 
 To show the effect of multicolinearity for increasing levels of correlation and for increasing sample sizes, we plot correlation on the x-axis and the MSE on the y-axis in four plots where sample size increases by plot.
 
-```{r, fig.align="center", fig.height=5}
+```{r, fig.align="center", fig.height=5, eval = FALSE}
 par(mfrow=c(1,4))
 plot(c(0:9)/10,mse.beta1[1,], xlab="correlation", ylab="Mean Squared Error", type="o", pch=19, bty="n", main="N=100", ylim=c(0,.2))
 plot(c(0:9)/10,mse.beta1[2,], xlab="correlation", ylab="Mean Squared Error", type="o", pch=19, bty="n", main="N=500", ylim=c(0,.2))
 plot(c(0:9)/10,mse.beta1[3,], xlab="correlation", ylab="Mean Squared Error", type="o", pch=19, bty="n", main="N=1000", ylim=c(0,.2))
 plot(c(0:9)/10,mse.beta1[4,], xlab="correlation", ylab="Mean Squared Error", type="o", pch=19, bty="n", main="N=2000", ylim=c(0,.2))
+```
 
+![](./img/unnamed-chunk-178-1.png){width=90%}
+
+```{r, fig.align="center", fig.height=5, eval = FALSE}
 error.abs <- abs(beta.catcher-1)
 mae.beta1 <- colMeans(error.abs)
 
@@ -103,6 +108,8 @@ plot(c(0:9)/10,mae.beta1[3,], xlab="correlation", ylab="Means Absolute Error", t
 plot(c(0:9)/10,mae.beta1[4,], xlab="correlation", ylab="Means Absolute Error", type="o", pch=19, bty="n", main="N=2000", ylim=c(0,.2))
 ```
 
+![](./img/unnamed-chunk-178-2.png){width=90%}
+
 The two take-aways are that (1) with increasing sample size the problem of multicolinearity decreases substantially and (2) bias increases exponentially with increasing levels of correlation.
 
 ### Simulation approach to uncertainty
@@ -112,7 +119,7 @@ Simulation is the Swiss army knife of statistics. Quantifying the uncertainty of
 **For simulation, the process is always the same regardless of the model.**
 
 We start by loading data and fitting a linear model on the unemployment rate.
-```{r}
+```{r, eval=FALSE}
 # clear workspace
 rm(list=ls())
 # load data
@@ -125,7 +132,7 @@ To characterize the shape of the distribution we need to know its mean and its v
 
 As we draw randomly from a distribution we want to set the random number generator with `set.seed()` to make our results replicable and we pick the number of coefficients to draw form the distribution (the number of simulations).
 
-```{r}
+```{r,eval=FALSE}
 # run a model
 m1 <- lm(PctUnemployed ~ pctUrban + householdsize + racePctWhite, data = df)
 
@@ -141,7 +148,7 @@ S <- MASS::mvrnorm(n.sim, coef(m1), vcov(m1))
 
 **Simulation step 2:** Choose a scenario for which you want to make a prediction. That means we have to set our covariates to some value. We will vary the percentage of the urban population and keep all other covariates constant. We also check the range of the variable of interest so that we don't extrapolate to something that is outside of our data range.
 
-```{r}
+```{r, eval=FALSE}
 # choose a scenario to predict the outcome for
 summary(df$pctUrban)
 
@@ -155,26 +162,47 @@ X <- cbind( constant = 1,
 X            
 ```
 
+          constant urban householdsize  pctwhite
+     [1,]        1   0.0     0.4633952 0.7537161
+     [2,]        1   0.1     0.4633952 0.7537161
+     [3,]        1   0.2     0.4633952 0.7537161
+     [4,]        1   0.3     0.4633952 0.7537161
+     [5,]        1   0.4     0.4633952 0.7537161
+     [6,]        1   0.5     0.4633952 0.7537161
+     [7,]        1   0.6     0.4633952 0.7537161
+     [8,]        1   0.7     0.4633952 0.7537161
+     [9,]        1   0.8     0.4633952 0.7537161
+    [10,]        1   0.9     0.4633952 0.7537161
+    [11,]        1   1.0     0.4633952 0.7537161
 
 **Simulation step 3:** Predict the outcome. We have set our covariates and we have drawn our coefficients. This is all we need to predict $y$. Depending on the flavor of generalized linear model, $y$ may have to be sent through a link function. In logistic regression we would send latent $y$ trough the logit link function: $\frac{1}{1 + exp^{-y}}$ to get probabilities that $y$ is 1. Here, we ran a simple linear model so in linear algebra notation our prediction is simply $Y=X\beta$.
 
 We estimate `y_hat` as a matrix where its rows are the number of simulations and its columns are the different covariate scenarios.
 
-```{r}
+```{r, eval=FALSE}
 # predict outcome, ie betas * X for all scenarios
 y_hat <- S %*% t(as.matrix(X))
 ```
 
 Finally, all that is left is the interpretation of the result. We can simply look at the numerical outcomes similar to using the `summary()` function on the Zelig simulation object.
 
-```{r}
+```{r,eval=FALSE}
 # output like the zelig summary (including estimation uncertainty)
 apply(y_hat, 2, quantile, probs = c(.025, .5, .975))
 ```
 
+               [,1]      [,2]      [,3]      [,4]      [,5]      [,6]
+    2.5%  0.4316010 0.4214979 0.4105675 0.4000181 0.3893180 0.3784349
+    50%   0.4450405 0.4332109 0.4215157 0.4097547 0.3981805 0.3864607
+    97.5% 0.4584981 0.4454806 0.4327917 0.4198413 0.4070521 0.3945582
+               [,7]      [,8]      [,9]     [,10]     [,11]
+    2.5%  0.3672170 0.3557150 0.3439413 0.3318641 0.3196062
+    50%   0.3747705 0.3630690 0.3512949 0.3396307 0.3279723
+    97.5% 0.3823658 0.3703668 0.3586515 0.3473086 0.3363178
+
 We can also draw a plot that shows our mean prediction and the uncertainty around in a few lines.
 
-```{r}
+```{r,eval=FALSE}
 # plot like zelig's ci plot
 par( mfrow = c(1,1))
 plot(0, bty = "n", xlab = "Pct Urban", ylab = "Unemployment Rate", 
@@ -185,3 +213,5 @@ polygon(x =  c(rev(X[,"urban"]), X[,"urban"]),
         col = "lightblue")
 lines(x = X[,"urban"], y = apply(y_hat, 2, quantile, probs = .5), lwd = 1)
 ```
+
+![](./img/unnamed-chunk-184-1.png){width=90%}

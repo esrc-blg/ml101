@@ -1,0 +1,150 @@
+# Linear Regression
+
+```{r package_options, include=FALSE}
+knitr::opts_knit$set(global.par = TRUE)
+```
+
+```{r, include = FALSE}
+par(bg = '#fdf6e3')
+```
+
+## Learning objectives
+
+In this exercise, we create the dataset that we will use in the evaluation of our introductory tour through data science methods. Our goal is to most accuarately predict the outcome. We should note right from the start, that the best data science method depends on the problem that we analyse. It is not clear that the algorithm or approach that works best in this tour will generally be the best approach.
+
+Let's clear our workspace before we start.
+
+```{r, include = FALSE}
+rm(list=ls())
+```
+
+For reproducibility of the code, we set the random number generator (RNG). Setting the RNG makes sure that we all get the same results when running code that inolves taking draws at random. In April 2019, the RNG was changed in R. Please make sure that your version of R is up to date. The function for setting the RNG is `set.seed()`. Between the brackets, we set some numbers (it does not matter which).
+
+```{r}
+set.seed(123)
+```
+
+Let's take 5 random draws from the integers 0 to 10 where all values are equally likely to illustrate that we all get similar results. We will use the `sample()` function. The first arguemnt is the data to sample from. Second, `size` is the number of draws and with `replace = TRUE` we allow to sample the same number more than once.
+
+```{r}
+sample(0:10, size = 5, replace = TRUE)
+```
+
+We should all get the same numbers: 2, 2, 9, 1 and 5. Let's sample again.
+
+```{r}
+sample(0:10, size = 5, replace = TRUE)
+```
+
+In the second run, we should all get the same numbers again: 10, 4, 3, 5 and 8. Those are not the same numbers as in the first run. However, were we to reset the RNG, we would again draw 2, 2, 9, 1 and 5. Let's do that.
+
+```{r}
+set.seed(123)
+sample(0:10, size = 5, replace = TRUE)
+```
+
+So this how the `set.seed()` function works. The RNG does not produce random numbers but it does produce numbers that are indistinguishable from random numbers for us.
+
+
+We will not start to generate data. This is fake data in the sense that we are making it up. The reason that we do this is that, we can then define how our predictor variables are related to the outcome. We can then test how well we are able to predict the real outcome based on our predictors.
+
+We want to create 3 variables that are correlated. We can do this by defining the covariance structure of these variables and draw at random from a multivariate normal distribution with the covariance structure that we defined. You may read the table below like a correlation table: Each variable correlates perfectly with itself. Hence the correlation of $1$ on the diagonal. The correlation between variable 1 and variable 2 is $0.8$. The correlation between variable 1 and variable 3 is $0.5$. The correlation between variable 2 and variable 3 is $0.6$.
+
+```{r}
+# covariance
+cov.mat <- matrix( c(1.0, 0.8, 0.5,
+                     0.8, 1.0, 0.6,
+                     0.5, 0.6, 1.0),
+                   nrow = 3, ncol = 3
+)
+```
+
+We now use the co-variance structure to draw 2000 observations of three variables from the multivariate normal distribution at random. The argument `mu = c(2, -5, 15)` defines the mean of each variable. The argument `Sigma = varcov` is the covariance matrix.
+
+```{r}
+library(MASS)
+dat <- mvrnorm(n = 2000, mu = c(2, -5, 15), Sigma = cov.mat)
+```
+
+Let's quickly check that the correlations that we have set, are reflected in our data.
+
+```{r}
+cor(dat)
+```
+
+The correlations are very close to what we have pre-set. The very slight deviations are due to randomly drawing from the distribution. 
+
+Next, we turn our numeric matrix `dat` into a data frame object. 
+
+```{r}
+dat <- data.frame(
+  x1 = dat[, 1],
+  x2 = dat[, 2],
+  x3 = dat[, 3]
+)
+```
+
+We named the columns in the dataset, *x1*, *x2*, and *x3*. To each variable we assgin one column. Recall that we subset two-dimensional objects like a matrix with `[,]` brackets. Before the comma, we insert row-coodrinates. After the comma, we insert column-coordinates.
+
+In the next step, we will add a new variable that interacts *x1* and *x3*. 
+
+```{r}
+dat$x4 <- dat$x1 * dat$x3
+```
+
+We add two more variables. One is uniformly distributed and between 0 and 100. The other comes from a negative binomial distribution (mimicing a count variable).
+
+```{r}
+# uniformly distributed variable
+dat$x5 <- runif(2000, min = 0, max = 100)
+
+# negative binomial distributed variable
+dat$x6 <- rnegbin(n = 2000, mu = 11, theta = 12)
+```
+
+```{r}
+dat <- as.data.frame(apply(dat, 2, function(x) scale(x)))
+```
+
+In the next step, we will generate our outcome *y* as a function of *x4*, *x2*, *x3* and *x6*.
+
+```{r}
+dat$y <- dat$x4 * 1.2 + dat$x2 * -1.4 + log(dat$x3) * 1.15 + dat$x6 * -1.7 + dat$x6^2 * 0.3 + dat$x6^3 * -0.02
+```
+
+We will add to the outcome an effect that is a stepfunction.
+
+```{r}
+dat$y <- dat$y + ifelse(dat$x5 < 25, yes = 1.3 * dat$x5, no = 0) + ifelse(dat$x5 > 25 & dat$x5 < 50, yes = 1.9 * dat$x5, no = 0) +
+  ifelse(dat$x5 > 50 & dat$x5 < 75, yes = 0.05 * dat$x5, no = 0) + ifelse(dat$x5 > 75, yes = -1.3 * dat$x5, no = 0)
+```
+
+In addition, we also want to add some random noise to outcome variable. Which reflects that even if we add the right model, we could not perfectly predict the outcome, i.e. our world is not deterministic but probabilistic. We draw from a normal distribution. The mean of all our draws should be 0, i.e. the error is not systematic. The size of the error is controlled with the dispersion parameter (the standard deviation).
+
+```{r}
+# random noise
+dat$y <- dat$y + rnorm(n = 2000, mean = 0, sd = 5)
+```
+
+Our data generating process is complete. We next plot descripive statistics and scatter plots between each independent variable and the the outcome.
+
+```{r}
+for (i in 1:6){
+ plot(
+   x = dat[,i],
+   y = dat$y,
+   pch = 16,
+   col = "darkgrey",
+   xlab = names(dat)[i],
+   ylab = "y"
+ )
+  # linear relationship between variables
+  abline( lm(dat$y ~ dat[,i]), lwd = 2 )
+}
+```
+
+
+
+
+
+

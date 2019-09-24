@@ -173,13 +173,13 @@ Participants are expected to have a solid understanding of linear regression mod
 
 \textbf{\emph{Acknowledgements}}
 
-The material in this course is based on the textbook: \href{http://faculty.marshall.usc.edu/gareth-james/ISL/ISLR\%20Seventh\%20Printing.pdf}{James Gareth, Daniela Witten, Trevor Hastie and Robert Tibshirani. 2013. An introduction to statistical learning. Springer}. In addition, the material is based on a machine learning class at the Essex Summer School with \href{https://lucasleemann.ch}{Lucas Leemann} and \href{https://philippbroniecki.com}{Philipp Broniecki}. The infrastructure for this website is in large parts adopted from work by UCL's \href{https://iris.ucl.ac.uk/iris/browse/profile?upi=ALIAX58}{Altaf Ali}, \href{https://www.jackblumenau.com/}{Jack Blumenau}, \href{https://lucasleemann.ch}{Lucas Leemann}, \href{https://sjankin.com/}{Slava Jankin Mikhaylov}, and \href{https://philippbroniecki.com}{Philipp Broniecki}. The ESRC Business and Local Government Data Research Centre is funded by the \href{https://esrc.ukri.org}{Economic and Social Research Council (ESRC)}.
+The material in this course is based on the textbook: \href{http://faculty.marshall.usc.edu/gareth-james/ISL/ISLR\%20Seventh\%20Printing.pdf}{James Gareth, Daniela Witten, Trevor Hastie and Robert Tibshirani. 2013. An introduction to statistical learning. Springer}. In addition, the material is based on a machine learning class at the Essex Summer School with \href{https://lucasleemann.ch}{Lucas Leemann} and \href{https://philippbroniecki.com}{Philipp Broniecki}. The infrastructure for this website is in large parts adopted from carried out at UCL by \href{https://iris.ucl.ac.uk/iris/browse/profile?upi=ALIAX58}{Altaf Ali}, \href{https://www.jackblumenau.com/}{Jack Blumenau}, \href{https://lucasleemann.ch}{Lucas Leemann}, \href{https://sjankin.com/}{Slava Jankin Mikhaylov}, and \href{https://philippbroniecki.com}{Philipp Broniecki}. The ESRC Business and Local Government Data Research Centre is funded by the \href{https://esrc.ukri.org}{Economic and Social Research Council (ESRC)}.
 
 \begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
 
-slides
-
 data
+
+slides
 
 \hypertarget{linear-regression}{%
 \section{Linear Regression}\label{linear-regression}}
@@ -3148,7 +3148,6 @@ We clean the \texttt{in\_school} variable which should be binary indicating whet
 \end{Shaded}
 
 \begin{verbatim}
-
  -0.405100243979883  -0.286622836951644 -0.0932005119161492 
                   1                   1                   1 
   -0.08278915151733                   0  0.0403350016659423 
@@ -3167,7 +3166,6 @@ We use the \texttt{ifelse()} function to classify into 0 and 1.
 \end{Shaded}
 
 \begin{verbatim}
-
    0    1 
 4127   34 
 \end{verbatim}
@@ -3200,7 +3198,6 @@ We use trees to classify respondents into voters and non-voters. Here we need th
 \end{Shaded}
 
 \begin{verbatim}
-
 Classification tree:
 tree(formula = Turnout ~ . - CivicDutyScores, data = bes)
 Variables actually used in tree construction:
@@ -3220,7 +3217,7 @@ We can plot the tree using the standard plot function. On every split a conditio
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{ml101_files/figure-latex/unnamed-chunk-136-1.pdf}
+\includegraphics[width=0.9\textwidth,height=\textheight]{./img/unnamed-chunk-136-1.png}
 
 We can also examine the splits as text.
 
@@ -3274,6 +3271,9 @@ We predict outcomes using the \texttt{predict()} function.
 
 \CommentTok{# confusion matrix}
 \KeywordTok{table}\NormalTok{(}\DataTypeTok{prediction =}\NormalTok{ t2.pred, }\DataTypeTok{truth =}\NormalTok{ turnout.test)}
+
+\CommentTok{# percent correctly classified}
+\KeywordTok{mean}\NormalTok{( t2.pred }\OperatorTok{==}\StringTok{ }\NormalTok{turnout.test )}
 \end{Highlighting}
 \end{Shaded}
 
@@ -3284,18 +3284,7 @@ prediction   0   1
          1 186 978
 \end{verbatim}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# percent correctly classified}
-\KeywordTok{mean}\NormalTok{( t2.pred }\OperatorTok{==}\StringTok{ }\NormalTok{turnout.test )}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-[1] 0.8176678
-\end{verbatim}
-
-We correctly classify 82\% of the observations. In classification models, the Brier Score is often used as as measure of model quality. We estimate it as the average of the squared differences between predicted probabilities and true outcomes. It is, thus, similar to the MSE.
+We correctly classify \(82\%\) of the observations. In classification models, the Brier Score is often used as as measure of model quality. We estimate it as the average of the squared differences between predicted probabilities and true outcomes. It is, thus, similar to the MSE.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -3341,7 +3330,7 @@ We turn to cost-complexity pruning to see if we can simplify the tree and thus d
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{ml101_files/figure-latex/unnamed-chunk-142-1.pdf}
+\includegraphics[width=0.9\textwidth,height=\textheight]{./img/unnamed-chunk-142-1.png}
 
 We can prune the tree to four terminal nodes.
 
@@ -3355,7 +3344,7 @@ We can prune the tree to four terminal nodes.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{ml101_files/figure-latex/unnamed-chunk-143-1.pdf}
+\includegraphics[width=0.9\textwidth,height=\textheight]{./img/unnamed-chunk-143-1.png}
 
 We then predict outcomes.
 
@@ -3383,7 +3372,7 @@ Let's estimate the Brier Score
 \end{Highlighting}
 \end{Shaded}
 
-We still correctly classify 0\(\%\) of the observations and the brier score remained stable. In the previous plots, we saw that we should do worse if we prune back the tree to have less than 4 terminal nodes. We examine what happens if we overdo it.
+We still correctly classify a similar share of observations and the brier score remained stable. In the previous plots, we saw that we should do worse if we prune back the tree to have less than 4 terminal nodes. We examine what happens if we overdo it.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -3394,7 +3383,7 @@ We still correctly classify 0\(\%\) of the observations and the brier score rema
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{ml101_files/figure-latex/unnamed-chunk-146-1.pdf}
+\includegraphics[width=0.9\textwidth,height=\textheight]{./img/unnamed-chunk-146-1.png}
 
 We now predict outcomes based on the tree that is too small.
 
@@ -3438,7 +3427,6 @@ We predict the continuous variable \texttt{Income}. The plot of the regression t
 \end{Shaded}
 
 \begin{verbatim}
-
 Regression tree:
 tree(formula = Income ~ ., data = bes, subset = train)
 Variables actually used in tree construction:
@@ -3460,7 +3448,7 @@ Let's plot the tree.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{ml101_files/figure-latex/unnamed-chunk-150-1.pdf}
+\includegraphics[width=0.9\textwidth,height=\textheight]{./img/unnamed-chunk-150-1.png}
 
 We can also examine the same output as text.
 
@@ -3507,7 +3495,7 @@ We apply pruning again to get a smaller more interpretable tree.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{ml101_files/figure-latex/unnamed-chunk-153-1.pdf}
+\includegraphics[width=0.9\textwidth,height=\textheight]{./img/unnamed-chunk-153-1.png}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -3515,7 +3503,7 @@ We apply pruning again to get a smaller more interpretable tree.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{ml101_files/figure-latex/unnamed-chunk-153-2.pdf}
+\includegraphics[width=0.9\textwidth,height=\textheight]{./img/unnamed-chunk-153-2.png}
 
 This is time we will increase error by pruning the tree. We choose four as a smaller tree size that does not increase RSS by much.
 
@@ -3528,7 +3516,7 @@ This is time we will increase error by pruning the tree. We choose four as a sma
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{ml101_files/figure-latex/unnamed-chunk-154-1.pdf}
+\includegraphics[width=0.9\textwidth,height=\textheight]{./img/unnamed-chunk-154-1.png}
 
 We can predict the outcome based on our pruned back tree. We will predict four values because we have four terminal nodes. We can illustrate the groups and their variance and estimate the MSE of our prediction.
 
@@ -3541,7 +3529,7 @@ We can predict the outcome based on our pruned back tree. We will predict four v
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{ml101_files/figure-latex/unnamed-chunk-155-1.pdf}
+\includegraphics[width=0.9\textwidth,height=\textheight]{./img/unnamed-chunk-155-1.png}
 
 We estimate the Brier Score (prediction error).
 
@@ -3573,7 +3561,6 @@ In our run below the OOB MSE may be a better estimate of test error. It is repor
 \end{Shaded}
 
 \begin{verbatim}
-
 Call:
  randomForest(formula = Income ~ ., data = bes, mtry = 19, importance = TRUE,      subset = train) 
                Type of random forest: regression
@@ -3582,6 +3569,7 @@ No. of variables tried at each split: 19
 
           Mean of squared residuals: 3.680305
                     % Var explained: 37.89
+                
 \end{verbatim}
 
 We can use the predict function to predict outcomes from our random forests object.
@@ -3595,7 +3583,7 @@ We can use the predict function to predict outcomes from our random forests obje
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{ml101_files/figure-latex/unnamed-chunk-158-1.pdf}
+\includegraphics[width=0.9\textwidth,height=\textheight]{./img/unnamed-chunk-158-1.png}
 
 We estimate the MSE in the validation set
 
@@ -3612,7 +3600,7 @@ We estimate the MSE in the validation set
 [1] -0.05762335
 \end{verbatim}
 
-We reduce the error rate by 5.76\(\%\) by using bagging. We examine what happens when we reduce the number of trees we grow. The default is 500.
+We reduce the error rate by \(5.76\%\) by using bagging. We examine what happens when we reduce the number of trees we grow. The default is 500.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -3649,7 +3637,6 @@ We now apply random forest. The trick is to de-corelate the trees by randomly co
 \end{Shaded}
 
 \begin{verbatim}
-
 Use 1 variables at each split
 Use 2 variables at each split
 Use 3 variables at each split
@@ -3672,7 +3659,7 @@ Use 10 variables at each split
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{ml101_files/figure-latex/unnamed-chunk-161-1.pdf}
+\includegraphics[width=0.9\textwidth,height=\textheight]{./img/unnamed-chunk-161-1.png}
 
 We use 3 as the optimal value for \texttt{mtry}. In cases where it is hard to decide, it's a good idea to choose the less complex model.
 
@@ -3693,7 +3680,7 @@ We use 3 as the optimal value for \texttt{mtry}. In cases where it is hard to de
 [1] -0.03454119
 \end{verbatim}
 
-We reduced the error rate by another 3.45\(\%\) by de-correlating the trees. We can examine variable importance as well. Variable reduction is obtained as the average that a predictor reduces error at splits within a tree where it was used and averaged again over all trees. Similarly, node purity is based on the gini index of how heterogeneous a group becomes due to a split.
+We reduced the error rate by another \(3.45\%\) by de-correlating the trees. We can examine variable importance as well. Variable reduction is obtained as the average that a predictor reduces error at splits within a tree where it was used and averaged again over all trees. Similarly, node purity is based on the gini index of how heterogeneous a group becomes due to a split.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -3733,7 +3720,7 @@ CivicDutyScores 25.916963    1684.33658
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{ml101_files/figure-latex/unnamed-chunk-163-1.pdf}
+\includegraphics[width=0.9\textwidth,height=\textheight]{./img/unnamed-chunk-163-1.png}
 
 \hypertarget{boosting}{%
 \paragraph{Boosting}\label{boosting}}
@@ -3766,7 +3753,7 @@ Notice that we just set hyper-parameters. We might achieve better predictions by
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{ml101_files/figure-latex/unnamed-chunk-165-1.pdf}
+\includegraphics[width=0.9\textwidth,height=\textheight]{./img/unnamed-chunk-165-1.png}
 
 \begin{verbatim}
                             var     rel.inf
@@ -3799,18 +3786,12 @@ The importance plot does not inform us about the direction of the relationship. 
 \begin{Highlighting}[]
 \CommentTok{# partial dependence plots}
 \KeywordTok{plot}\NormalTok{(gb1, }\DataTypeTok{i =} \StringTok{"edu19plus"}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
-\includegraphics{ml101_files/figure-latex/unnamed-chunk-166-1.pdf}
-
-\begin{Shaded}
-\begin{Highlighting}[]
 \KeywordTok{plot}\NormalTok{(gb1, }\DataTypeTok{i =} \StringTok{"Age"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{ml101_files/figure-latex/unnamed-chunk-166-2.pdf}
+\includegraphics[width=0.9\textwidth,height=\textheight]{./img/unnamed-chunk-166-1.png}
+\includegraphics[width=0.9\textwidth,height=\textheight]{./img/unnamed-chunk-166-2.png}
 
 We predict the test MSE again and compare to our best model.
 
@@ -3895,8 +3876,7 @@ Let's compare our final BART prediction to the reigning champion gradient boosti
 [1] -0.01670494
 \end{verbatim}
 
-We have reduced the error by another 1.67\(\%\). Not bad\ldots{} However, keep in mind that we are usig the validation set approach here. A better evaluation would be based on cross-validation or a truly new dataset.
-+
+We have reduced the error by another \(1.67\%\). Not bad\ldots{} However, keep in mind that we are usig the validation set approach here. A better evaluation would be based on cross-validation or a truly new dataset.
 
 \hypertarget{simulation-and-monte-carlos}{%
 \section{Simulation and Monte Carlos}\label{simulation-and-monte-carlos}}
@@ -4011,7 +3991,7 @@ To show the effect of multicolinearity for increasing levels of correlation and 
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{ml101_files/figure-latex/unnamed-chunk-178-1} \end{center}
+\includegraphics[width=0.9\textwidth,height=\textheight]{./img/unnamed-chunk-178-1.png}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -4026,7 +4006,7 @@ To show the effect of multicolinearity for increasing levels of correlation and 
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{ml101_files/figure-latex/unnamed-chunk-178-2} \end{center}
+\includegraphics[width=0.9\textwidth,height=\textheight]{./img/unnamed-chunk-178-2.png}
 
 The two take-aways are that (1) with increasing sample size the problem of multicolinearity decreases substantially and (2) bias increases exponentially with increasing levels of correlation.
 
@@ -4076,16 +4056,7 @@ As we draw randomly from a distribution we want to set the random number generat
 \begin{Highlighting}[]
 \CommentTok{# choose a scenario to predict the outcome for}
 \KeywordTok{summary}\NormalTok{(df}\OperatorTok{$}\NormalTok{pctUrban)}
-\end{Highlighting}
-\end{Shaded}
 
-\begin{verbatim}
-   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
- 0.0000  0.0000  1.0000  0.6963  1.0000  1.0000 
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
 \CommentTok{# set the covariates (predictions for changes in pctUrban)}
 \NormalTok{X <-}\StringTok{ }\KeywordTok{cbind}\NormalTok{( }\DataTypeTok{constant =} \DecValTok{1}\NormalTok{,}
             \DataTypeTok{urban =} \KeywordTok{seq}\NormalTok{(}\DataTypeTok{from =} \DecValTok{0}\NormalTok{, }\DataTypeTok{to =} \DecValTok{1}\NormalTok{, }\DataTypeTok{by =} \FloatTok{.1}\NormalTok{),}
@@ -4159,7 +4130,7 @@ We can also draw a plot that shows our mean prediction and the uncertainty aroun
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{ml101_files/figure-latex/unnamed-chunk-184-1.pdf}
+\includegraphics[width=0.9\textwidth,height=\textheight]{./img/unnamed-chunk-184-1.png}
 
 
 \end{document}
